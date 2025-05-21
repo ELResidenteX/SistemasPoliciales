@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Nuevo Evento Policial{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">{% if editando %}Editar Evento Policial{% else %}Registrar Nuevo Evento Policial{% endif %}</h2>
+
+  {% if evento and evento.participantes.exists %}
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEventoCompleto">
+        👁️ Ver Evento Completo
+      </button>
+    </div>
+  {% endif %}
+
+  <ul class="nav nav-tabs mb-4" id="tabsEvento">
+    <li class="nav-item">
+      <a class="nav-link active" id="tab-evento" href="#contenido-evento" data-bs-toggle="tab">Evento</a>
+    </li>
+    <li class="nav-item">
+      {% if evento %}
+        <a class="nav-link" id="tab-participante" href="#contenido-participante" data-bs-toggle="tab">Participantes</a>
+      {% else %}
+        <a class="nav-link disabled">Participantes</a>
+      {% endif %}
+    </li>
+    <li class="nav-item">
+      {% if evento %}
+        <a class="nav-link" id="tab-especie" href="#contenido-especie" data-bs-toggle="tab">Especies</a>
+      {% else %}
+        <a class="nav-link disabled">Especies</a>
+      {% endif %}
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="contenido-evento">
+      {% if evento and not editando %}
+        <div id="eventoAlert" class="alert alert-success d-flex justify-content-between align-items-center">
+          <div>
+            Evento guardado correctamente. Número de evento generado:
+            <strong>{{ evento.numero_evento }}</strong>
+          </div>
+          <a href="{% url 'buscar_evento' %}?numero_evento={{ evento.numero_evento }}" class="btn btn-sm btn-outline-light ms-3">
+            Ver evento
+          </a>
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% if editando %}{% url 'guardar_edicion_evento' evento.id %}{% else %}{% url 'nuevo_evento' %}{% endif %}">
+        {% csrf_token %}
+        <div class="card shadow-sm p-4 bg-white rounded">
+          {% if form.errors %}
+            <div class="alert alert-danger">
+              <strong>Corrige los errores en el formulario:</strong>
+              <ul>
+                {% for field in form %}
+                  {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% for field in form %}
+            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
+              <div class="mb-3">
+                {{ field.label_tag }}{{ field }}
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          <div class="mb-3">
+            <label for="region" class="form-label">Región</label>
+            <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
+              <option value="">Seleccione región</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="provincia" class="form-label">Provincia</label>
+            <select id="provincia" name="provincia" class="form-select provincia-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.provincia|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.region %}disabled{% endif %}>
+              <option value="">Seleccione provincia</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="comuna" class="form-label">Comuna</label>
+            <select id="comuna" name="comuna" class="form-select comuna-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.comuna|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.provincia %}disabled{% endif %}>
+              <option value="">Seleccione comuna</option>
+            </select>
+          </div>
+
+          <div class="mb-3">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
+          <div class="mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
+          <div class="mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
+          <div class="mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
+          <div class="mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
+          <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
+          <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
+
+          <div class="mb-3">
+            <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
+            <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-success">{% if editando %}Actualizar{% else %}Guardar Evento{% endif %}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {% if evento %}
+    <div class="tab-pane fade" id="contenido-participante">
+      {% include "core/participantes_tab.html" %}
+    </div>
+
+    <div class="tab-pane fade" id="contenido-especie">
+      {% include "core/especies_tab.html" %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ✅ Modal con toda la información del evento -->
+{% if evento and evento.participantes.exists %}
+<div class="modal fade" id="modalEventoCompleto" tabindex="-1" aria-labelledby="modalEventoCompletoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalEventoCompletoLabel">Evento Completo - {{ evento.numero_evento }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        {% include "core/evento_completo.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Scripts separados -->
+<script src="{% static 'core/js/evento.js' %}"></script>
+<script src="{% static 'core/js/general.js' %}"></script>
+<script src="{% static 'core/js/especie.js' %}"></script>
+<!-- Scripts separados -->
+<script src="{% static 'core/js/evento.js' %}"></script>
+<script src="{% static 'core/js/general.js' %}"></script>
+<script src="{% static 'core/js/especie.js' %}"></script>
+<script src="{% static 'core/js/participantes.js' %}"></script>
+
+
+{% endblock %}

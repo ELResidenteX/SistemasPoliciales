@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Búsqueda de Partes de Infracción{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">Búsqueda de Partes de Infracción</h3>
+
+  <form method="get" class="row mb-4">
+    <div class="col-md-3">
+      <label for="fecha" class="form-label">Filtrar por Fecha</label>
+      <input type="date" name="fecha" id="fecha" class="form-control" value="{{ fecha|default:'' }}">
+    </div>
+    <div class="col-md-3">
+      <label for="numero_parte" class="form-label">N° de Parte</label>
+      <input type="text" name="numero_parte" id="numero_parte" class="form-control" placeholder="Ej: PI-00001" value="{{ numero_parte|default:'' }}">
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100">Buscar</button>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+      <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="btn btn-secondary w-100">Limpiar</a>
+    </div>
+  </form>
+
+  {% if partes %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>N° Parte</th>
+            <th>Fecha Creación</th>
+            <th>Tipo de Infracción</th>
+            <th>Juzgado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parte in partes %}
+            <tr>
+              <td>{{ parte.numero_parte }}</td>
+              <td>{{ parte.creado_en|date:"d/m/Y H:i" }}</td>
+              <td>
+                <ul class="mb-0">
+                  {% for tipo in parte.tipos_infraccion_list %}
+                    <li>{{ tipo }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td>{{ parte.juzgado }}</td>
+              <td>
+                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalParte{{ parte.id }}">
+                  Ver Detalles
+                </button>
+
+                <div class="modal fade" id="modalParte{{ parte.id }}" tabindex="-1" aria-labelledby="modalLabel{{ parte.id }}" aria-hidden="true">
+                  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel{{ parte.id }}">Vista Previa del Parte</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                      </div>
+                      <div class="modal-body" style="font-family: 'Courier New', Courier, monospace;">
+                        {% with infraccion=parte.infraccion tipos_infraccion_list=parte.tipos_infraccion_list parte=parte participantes=parte.infraccion.participantes.all %}
+                          {% include "infracciones/acta_modal_content.html" %}
+                        {% endwith %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No se encontraron partes de infracción para los criterios seleccionados.</p>
+  {% endif %}
+</div>
+{% endblock %}

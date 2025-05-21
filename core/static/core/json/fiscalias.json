@@ -1,0 +1,244 @@
+{
+  "Regiones": [
+    {
+      "Nombre": "Región de Arica y Parinacota",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Arica",
+          "Comuna": "Arica"
+        },
+        {
+          "Nombre": "Fiscalía Local de Putre",
+          "Comuna": "Putre"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región de Tarapacá",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Iquique",
+          "Comuna": "Iquique"
+        },
+        {
+          "Nombre": "Fiscalía Local de Alto Hospicio",
+          "Comuna": "Alto Hospicio"
+        },
+        {
+          "Nombre": "Fiscalía Local de Pozo Almonte",
+          "Comuna": "Pozo Almonte"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región de Antofagasta",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Antofagasta",
+          "Comuna": "Antofagasta"
+        },
+        {
+          "Nombre": "Fiscalía Local de Calama",
+          "Comuna": "Calama"
+        },
+        {
+          "Nombre": "Fiscalía Local de Tocopilla",
+          "Comuna": "Tocopilla"
+        },
+        {
+          "Nombre": "Fiscalía Local de Taltal",
+          "Comuna": "Taltal"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región de Atacama",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Copiapó",
+          "Comuna": "Copiapó"
+        },
+        {
+          "Nombre": "Fiscalía Local de Caldera",
+          "Comuna": "Caldera"
+        },
+        {
+          "Nombre": "Fiscalía Local de Vallenar",
+          "Comuna": "Vallenar"
+        },
+        {
+          "Nombre": "Fiscalía Local de Chañaral",
+          "Comuna": "Chañaral"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región de Coquimbo",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de La Serena",
+          "Comuna": "La Serena"
+        },
+        {
+          "Nombre": "Fiscalía Local de Coquimbo",
+          "Comuna": "Coquimbo"
+        },
+        {
+          "Nombre": "Fiscalía Local de Ovalle",
+          "Comuna": "Ovalle"
+        },
+        {
+          "Nombre": "Fiscalía Local de Illapel",
+          "Comuna": "Illapel"
+        },
+        {
+          "Nombre": "Fiscalía Local de Los Vilos",
+          "Comuna": "Los Vilos"
+        },
+        {
+          "Nombre": "Fiscalía Local de Vicuña",
+          "Comuna": "Vicuña"
+        },
+        {
+          "Nombre": "Fiscalía Local de Combarbalá",
+          "Comuna": "Combarbalá"
+        },
+        {
+          "Nombre": "Fiscalía Local de Andacollo",
+          "Comuna": "Andacollo"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región de Valparaíso",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Valparaíso",
+          "Comuna": "Valparaíso"
+        },
+        {
+          "Nombre": "Fiscalía Local de Viña del Mar",
+          "Comuna": "Viña del Mar"
+        },
+        {
+          "Nombre": "Fiscalía Local de Quilpué",
+          "Comuna": "Quilpué"
+        },
+        {
+          "Nombre": "Fiscalía Local de San Antonio",
+          "Comuna": "San Antonio"
+        },
+        {
+          "Nombre": "Fiscalía Local de San Felipe",
+          "Comuna": "San Felipe"
+        },
+        {
+          "Nombre": "Fiscalía Local de Los Andes",
+          "Comuna": "Los Andes"
+        },
+        {
+          "Nombre": "Fiscalía Local de La Ligua",
+          "Comuna": "La Ligua"
+        },
+        {
+          "Nombre": "Fiscalía Local de Quillota",
+          "Comuna": "Quillota"
+        }
+      ]
+    },
+    {
+      "Nombre": "Región Metropolitana de Santiago",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Regional Metropolitana Centro Norte",
+          "Comunas": [
+            "Santiago",
+            "Quinta Normal",
+            "Estación Central",
+            "Quilicura",
+            "Renca",
+            "Huechuraba",
+            "Conchalí",
+            "Independencia",
+            "Recoleta",
+            "Cerro Navia",
+            "Lo Prado",
+            "Colina",
+            "Lampa",
+            "Tiltil"
+          ]
+        },
+        {
+          "Nombre": "Fiscalía Regional Metropolitana Oriente",
+          "Comunas": [
+            "Las Condes",
+            "Vitacura",
+            "Lo Barnechea",
+            "La Reina",
+            "Providencia",
+            "Ñuñoa",
+            "La Florida",
+            "Peñalolén",
+            "Macul"
+          ]
+        },
+        {
+          "Nombre": "Fiscalía Regional Metropolitana Occidente",
+          "Comunas": [
+            "Pudahuel",
+            "Maipú",
+            "Cerrillos",
+            "San Bernardo",
+            "Calera de Tango",
+            "Buin",
+            "Paine",
+            "Talagante",
+            "Isla de Maipo",
+            "El Monte",
+            "Padre Hurtado",
+            "Peñaflor",
+            "Melipilla",
+            "San Pedro",
+            "Alhué",
+            "Curacaví",
+            "María Pinto"
+          ]
+        },
+        {
+          "Nombre": "Fiscalía Regional Metropolitana Sur",
+          "Comunas": [
+            "Puente Alto",
+            "San José de Maipo",
+            "Pirque",
+            "El Bosque",
+            "La Cisterna",
+            "La Granja",
+            "La Pintana",
+            "Lo Espejo",
+            "Pedro Aguirre Cerda",
+            "San Joaquín",
+            "San Miguel",
+            "San Ramón"
+          ]
+        }
+      ]
+    },
+    {
+      "Nombre": "Región del Libertador General Bernardo O’Higgins",
+      "Fiscalias": [
+        {
+          "Nombre": "Fiscalía Local de Rancagua",
+          "Comuna": "Rancagua"
+        },
+        {
+          "Nombre": "Fiscalía Local de San Fernando",
+          "Comuna": "San Fernando"
+        },
+        {
+          "Nombre": "Fiscalía Local de Santa Cruz",
+          "Comuna": "Santa Cruz"
+        }
+      ]
+    }
+  ]
+}

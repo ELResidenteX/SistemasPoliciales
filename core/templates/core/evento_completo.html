@@ -1,0 +1,123 @@
+{% load humanize %}
+<div class="container-fluid" style="font-family: 'Segoe UI', sans-serif; font-size: 14px;">
+  <div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+      <strong>Antecedentes de la Denuncia</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>N° Evento:</strong> {{ evento.numero_evento }}</p>
+      <p><strong>Lugar del procedimiento:</strong> {{ evento.lugar_procedimiento }}</p>
+      <p><strong>Fecha Denuncia:</strong> {{ evento.fecha_denuncia }}</p>
+      <p><strong>Hora Denuncia:</strong> {{ evento.hora_denuncia }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <strong>Funcionaria Responsable</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>Código:</strong> {{ evento.funcionaria_codigo }}</p>
+      <p><strong>RUT:</strong> {{ evento.funcionaria_rut }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      <strong>Antecedentes del Delito</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>Delito Tipificado:</strong> {{ evento.delito_tipificado }}</p>
+      <p><strong>Fecha Ocurrencia:</strong> {{ evento.fecha_ocurrencia }}</p>
+      <p><strong>Hora Ocurrencia:</strong> {{ evento.hora_ocurrencia }}</p>
+      <p><strong>Tipo Lugar:</strong> {{ evento.tipo_lugar }}</p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">
+      <strong>Ubicación del Hecho</strong>
+    </div>
+    <div class="card-body">
+      <p><strong>Región:</strong> {{ evento.region }} — <strong>Provincia:</strong> {{ evento.provincia }} — <strong>Comuna:</strong> {{ evento.comuna }}</p>
+      <p><strong>Dirección:</strong> {{ evento.direccion }}, N° {{ evento.numero }}, Block {{ evento.block }}, Villa {{ evento.villa }}, Depto {{ evento.depto }}</p>
+      {% if evento.km %}<p><strong>KM:</strong> {{ evento.km }}</p>{% endif %}
+      {% if evento.interseccion %}<p><strong>Intersección:</strong> {{ evento.interseccion }}</p>{% endif %}
+    </div>
+  </div>
+
+  {% if evento.participantes.exists %}
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">
+      <strong>Participantes</strong>
+    </div>
+    <div class="card-body">
+      {% for p in evento.participantes.all %}
+        <div class="border-bottom pb-2 mb-3">
+          <p><strong>Nombre:</strong> {{ p.nombres }} {{ p.apellidos }} — <strong>Edad:</strong> {{ p.edad }}</p>
+          <p><strong>RUT:</strong> {{ p.rut }} — <strong>Sexo:</strong> {{ p.sexo }} — <strong>Calidad:</strong> {{ p.get_calidad_display }}</p>
+          <p><strong>Nacionalidad:</strong> {{ p.nacionalidad }} — <strong>Teléfono:</strong> {{ p.telefono }}</p>
+          <p><strong>Domicilio:</strong> {{ p.region }}, {{ p.provincia }}, {{ p.comuna }}, {{ p.direccion }} Nº {{ p.numero_calle }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if evento.especies.exists %}
+  <div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+      <strong>Especies Involucradas</strong>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Avalúo Estimado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in evento.especies.all %}
+            <tr>
+              <td>{{ e.tipo }}</td>
+              <td>{{ e.descripcion }}</td>
+              <td>{{ e.cantidad }}</td>
+              <td>${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card mb-4">
+    <div class="card-header bg-light">
+      <strong>Narración de los Hechos</strong>
+    </div>
+    <div class="card-body">
+      <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a href="{% url 'enviar_a_validacion' evento.id %}" class="btn btn-success">
+      ✅ Enviar a eventos en validación
+    </a>
+  </div>
+</div>
+
+
+    
+
+  
+  
+    
+  
+  
+
+
+

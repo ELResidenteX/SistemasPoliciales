@@ -1,0 +1,170 @@
+[
+    {
+        "id": 1,
+        "nombre": "Robo con violencia"
+    },
+    {
+        "id": 2,
+        "nombre": "Robo con intimidación"
+    },
+    {
+        "id": 3,
+        "nombre": "Robo por sorpresa"
+    },
+    {
+        "id": 4,
+        "nombre": "Hurto"
+    },
+    {
+        "id": 5,
+        "nombre": "Homicidio simple"
+    },
+    {
+        "id": 6,
+        "nombre": "Homicidio calificado"
+    },
+    {
+        "id": 7,
+        "nombre": "Lesiones graves"
+    },
+    {
+        "id": 8,
+        "nombre": "Lesiones menos graves"
+    },
+    {
+        "id": 9,
+        "nombre": "Violación"
+    },
+    {
+        "id": 10,
+        "nombre": "Abuso sexual"
+    },
+    {
+        "id": 11,
+        "nombre": "Amenazas"
+    },
+    {
+        "id": 12,
+        "nombre": "Tráfico ilícito de estupefacientes"
+    },
+    {
+        "id": 13,
+        "nombre": "Microtráfico de drogas"
+    },
+    {
+        "id": 14,
+        "nombre": "Violencia intrafamiliar"
+    },
+    {
+        "id": 15,
+        "nombre": "Usurpación"
+    },
+    {
+        "id": 16,
+        "nombre": "Receptación"
+    },
+    {
+        "id": 17,
+        "nombre": "Incendio"
+    },
+    {
+        "id": 18,
+        "nombre": "Porte ilegal de arma de fuego"
+    },
+    {
+        "id": 19,
+        "nombre": "Tenencia ilegal de arma de fuego"
+    },
+    {
+        "id": 20,
+        "nombre": "Conducción en estado de ebriedad"
+    },
+    {
+        "id": 21,
+        "nombre": "Conducción bajo efectos de drogas"
+    },
+    {
+        "id": 22,
+        "nombre": "Daño"
+    },
+    {
+        "id": 23,
+        "nombre": "Falsificación de instrumento público"
+    },
+    {
+        "id": 24,
+        "nombre": "Falsificación de instrumento privado"
+    },
+    {
+        "id": 25,
+        "nombre": "Cohecho"
+    },
+    {
+        "id": 26,
+        "nombre": "Prevaricación"
+    },
+    {
+        "id": 27,
+        "nombre": "Corrupción entre particulares"
+    },
+    {
+        "id": 28,
+        "nombre": "Estafa"
+    },
+    {
+        "id": 29,
+        "nombre": "Apropiación indebida"
+    },
+    {
+        "id": 30,
+        "nombre": "Abandono de destino"
+    },
+    {
+        "id": 31,
+        "nombre": "Negligencia inexcusable"
+    },
+    {
+        "id": 32,
+        "nombre": "Desacato"
+    },
+    {
+        "id": 33,
+        "nombre": "Desórdenes públicos"
+    },
+    {
+        "id": 34,
+        "nombre": "Omisión de socorro"
+    },
+    {
+        "id": 35,
+        "nombre": "Explotación sexual comercial infantil"
+    },
+    {
+        "id": 36,
+        "nombre": "Producción de pornografía infantil"
+    },
+    {
+        "id": 37,
+        "nombre": "Delitos informáticos"
+    },
+    {
+        "id": 38,
+        "nombre": "Blanqueo de capitales"
+    },
+    {
+        "id": 39,
+        "nombre": "Lavado de activos"
+    },
+    {
+        "id": 40,
+        "nombre": "Delitos medioambientales"
+    },
+    {
+        "id": 41,
+        "nombre": "Contrabando"
+    },
+    {
+        "id": 42,
+        "nombre": "Otros"
+    }
+]

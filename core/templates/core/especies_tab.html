@@ -1,0 +1,70 @@
+{% load humanize %}
+{% load static %}
+
+<form method="post" action="{% url 'agregar_especie' evento.id %}">
+  {% csrf_token %}
+  {% if form_especie %}
+    <!-- Campo oculto para edición -->
+    {% if especie_editando %}
+      <input type="hidden" name="especie_id" value="{{ especie_editando.id }}">
+    {% endif %}
+
+    {% for field in form_especie %}
+      <div class="mb-3">
+        {{ field.label_tag }}{{ field }}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">
+      {% if especie_editando %}Actualizar{% else %}Guardar{% endif %} Especie
+    </button>
+  {% endif %}
+</form>
+
+<!-- Tabla de especies registradas -->
+{% if evento.especies.exists %}
+  <div class="mt-4">
+    <h5>Especies Registradas</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Cantidad</th>
+          <th>Avalúo estimado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in evento.especies.all %}
+          <tr>
+            <td>{{ e.tipo }}</td>
+            <td>{{ e.descripcion }}</td>
+            <td>{{ e.cantidad }}</td>
+            <td>
+              {% if e.avaluo_estimado %}
+                ${{ e.avaluo_estimado|floatformat:0|intcomma }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'nuevo_evento' %}?evento={{ evento.numero_evento }}&especie_id={{ e.id }}&tab=especie" class="btn btn-sm btn-warning">✏️</a>
+              <a href="{% url 'eliminar_especie' e.id %}?evento={{ evento.numero_evento }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta especie?');">🗑️</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<script src="{% static 'core/js/especie.js' %}"></script>
+
+
+
+
+
+  

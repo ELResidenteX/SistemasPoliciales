@@ -1,0 +1,144 @@
+{% load static %}
+<form method="post" action="{% url 'agregar_participante_infraccion' infraccion.id %}">
+  {% csrf_token %}
+
+  <!-- Selector calidad: Vehículo o Conductor -->
+  <div class="mb-3">
+    <label class="form-label">Calidad</label>
+    <select name="calidad" id="calidad" class="form-select" required>
+      <option value="">Seleccione...</option>
+      <option value="vehiculo">Vehículo</option>
+      <option value="conductor">Conductor</option>
+    </select>
+  </div>
+
+  <!-- Checkbox empadronado -->
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="empadronado" name="empadronado">
+    <label class="form-check-label" for="empadronado">
+      ¿Empadronado?
+    </label>
+  </div>
+
+  <h5 class="mt-4">DATOS DEL VEHÍCULO</h5>
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Tipo de Vehículo</label>
+      <select name="tipo_vehiculo" id="tipo_vehiculo" class="form-select" required>
+        <option value="">Seleccione...</option>
+        <option>Station Wagon</option>
+        <option>Hatchback</option>
+        <option>Sedán</option>
+        <option>Coupé</option>
+        <option>Camioneta</option>
+        <option>SUV</option>
+        <option>Van</option>
+        <option>Minivan</option>
+        <option>City Car</option>
+        <option>Eléctrico/Híbrido</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Marca</label>
+      <select name="marca" id="marca" class="form-select" required disabled>
+        <option value="">Seleccione marca...</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Modelo</label>
+      <select name="modelo" id="modelo" class="form-select" required disabled>
+        <option value="">Seleccione modelo...</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-3">
+      <label class="form-label">Color</label>
+      <select name="color" class="form-select" required>
+        <option value="">Seleccione...</option>
+        <option>Rojo</option><option>Azul</option><option>Negro</option><option>Blanco</option><option>Gris</option>
+        <option>Plateado</option><option>Verde</option><option>Amarillo</option><option>Naranja</option><option>Café</option>
+        <option>Burdeo</option><option>Beige</option><option>Celeste</option><option>Dorado</option><option>Morado</option>
+        <option>Rosado</option><option>Lila</option><option>Turquesa</option><option>Bronce</option><option>Multicolor</option>
+        <option>Otro</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Placa Patente Única</label>
+      <input type="text" name="placa_patente" class="form-control" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Chasis</label>
+      <input type="text" name="chasis" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Año</label>
+      <input type="number" name="anio" class="form-control" min="1900" max="2100">
+    </div>
+  </div>
+
+  <div id="campos-infractor">
+    <h5 class="mt-4">DATOS DEL INFRACTOR</h5>
+    <div class="row mb-3 campo-infractor">
+      <div class="col-md-6">
+        <label class="form-label">Nombres</label>
+        <input type="text" name="nombres" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Apellidos</label>
+        <input type="text" name="apellidos" class="form-control">
+      </div>
+    </div>
+
+    <div class="row mb-3 campo-infractor">
+      <div class="col-md-4">
+        <label class="form-label">RUT</label>
+        <input type="text" name="rut" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Fecha de Nacimiento</label>
+        <input type="date" name="fecha_nacimiento" class="form-control">
+      </div>
+    </div>
+
+    <div class="row mb-3 campo-infractor">
+      <div class="col-md-4">
+        <label class="form-label">Región</label>
+        <select name="region" class="form-select" id="region_part" required>
+          <option value="">Seleccione región</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Provincia</label>
+        <select name="provincia" class="form-select" id="provincia_part" required disabled>
+          <option value="">Seleccione provincia</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Comuna</label>
+        <select name="comuna" class="form-select" id="comuna_part" required disabled>
+          <option value="">Seleccione comuna</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-3 campo-infractor">
+      <div class="col-md-8">
+        <label class="form-label">Dirección</label>
+        <input type="text" name="direccion" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Número</label>
+        <input type="text" name="numero_direccion" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <div class="text-end">
+    <button type="submit" class="btn btn-primary">Guardar Participante</button>
+  </div>
+</form>
+
+<script src="{% static 'infracciones/js/participantesInfraccion.js' %}"></script>
+<script src="{% static 'infracciones/js/marcasModelos.js' %}"></script>

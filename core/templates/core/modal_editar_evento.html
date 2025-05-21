@@ -1,0 +1,122 @@
+{% load static %}
+<form method="POST" action="{% url 'guardar_edicion_evento' evento.id %}">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">Editar Evento Policial</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    </div>
+
+    <div class="modal-body">
+        <!-- Datos del Evento -->
+        <h6 class="mb-3">Datos del Evento</h6>
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <label class="form-label">Lugar del procedimiento</label>
+                <input type="text" class="form-control" name="lugar" value="{{ evento.lugar }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Fecha ocurrencia</label>
+                <input type="date" class="form-control" name="fecha_ocurrencia" value="{{ evento.fecha_ocurrencia|date:'Y-m-d' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Hora ocurrencia</label>
+                <input type="time" class="form-control" name="hora_ocurrencia" value="{{ evento.hora_ocurrencia|time:'H:i' }}">
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-control" name="direccion" value="{{ evento.direccion }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Número</label>
+                <input type="text" class="form-control" name="numero" value="{{ evento.numero }}">
+            </div>
+        </div>
+
+
+        <!-- Región / Provincia / Comuna dinámicos -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label class="form-label">Región</label>
+                <select class="form-select region-select" name="region" data-tipo="evento" data-id="{{ evento.id }}" data-selected="{{ evento.region }}">
+                    <option value="">Seleccione Región</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Provincia</label>
+                <select class="form-select provincia-select" name="provincia" data-tipo="evento" data-id="{{ evento.id }}" data-selected="{{ evento.provincia }}">
+                    <option value="">Seleccione Provincia</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Comuna</label>
+                <select class="form-select comuna-select" name="comuna" data-tipo="evento" data-id="{{ evento.id }}" data-selected="{{ evento.comuna }}">
+                    <option value="">Seleccione Comuna</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Participantes -->
+        {% if participantes %}
+        <hr>
+        <h6 class="mb-2">Participantes Registrados</h6>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>RUT</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in participantes %}
+                <tr>
+                    <td>{{ p.nombres }} {{ p.apellidos }}</td>
+                    <td>{{ p.rut }}</td>
+                    <td>{{ p.telefono }}</td>
+                    <td>
+                        <a href="{% url 'editar_participante_desde_modal' p.id evento.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        <!-- Especies -->
+        {% if especies %}
+        <hr>
+        <h6 class="mb-2">Especies Registradas</h6>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in especies %}
+                <tr>
+                    <td>{{ e.descripcion }}</td>
+                    <td>{{ e.cantidad }}</td>
+                    <td>
+                        <a href="{% url 'editar_especie_desde_modal' e.id evento.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+    </div>
+</form>
+
+<script src="{% static 'core/js/editarEvento.js' %}"></script>

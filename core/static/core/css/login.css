@@ -1,0 +1,40 @@
+/* Fondo general de la página */
+body {
+    background: url("../img/fondo_login.png") no-repeat center center;
+    background-size: contain; /* 🔄 clave para que la imagen sea completa */
+    background-color: #e9ecef; /* respaldo si la imagen no cubre toda la pantalla */
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Estilo de la tarjeta (formulario) */
+.login-card {
+    background: rgba(255, 255, 255, 0.2); /* blanco con transparencia */
+    backdrop-filter: blur(10px);          /* efecto difuminado */
+    -webkit-backdrop-filter: blur(10px);  /* para compatibilidad Safari */
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    color: #000;
+}
+
+/* Capa semitransparente encima del fondo */
+.overlay::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* Blanco semitransparente */
+    z-index: 0;
+}
+.login-card {
+    position: relative;
+    z-index: 1; /* Para que la tarjeta esté sobre la capa */
+}
+
+
+

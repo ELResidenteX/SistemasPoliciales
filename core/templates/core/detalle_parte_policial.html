@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle del Parte Policial{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">Detalle del Parte Policial</h3>
+
+  <div class="mb-3">
+    <strong>N° Parte:</strong> {{ parte.numero_parte }}<br>
+    <strong>N° Evento:</strong> {{ evento.numero_evento }}
+  </div>
+
+  <div class="mb-4 d-flex gap-2">
+    <a href="{% url 'evento_en_validacion' %}" class="btn btn-secondary">← Volver</a>
+
+    <!-- Botón para abrir el modal -->
+    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalVistaParte{{ parte.id }}">
+      Ver Parte Policial
+    </button>
+  </div>
+
+  {% if not parte.fiscalia %}
+  <form method="POST" action="{% url 'asignar_fiscalia_parte' parte.id %}">
+    {% csrf_token %}
+    <div class="row mb-3">
+      <div class="col-md-8">
+        <label class="form-label">Seleccione Fiscalía de destino</label>
+        <select name="fiscalia" class="form-select" id="fiscalia-select" required>
+          <option value="">Seleccione una Fiscalía...</option>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-success w-100">Enviar a Fiscalía</button>
+      </div>
+    </div>
+  </form>
+  {% else %}
+  <div class="alert alert-success">
+    Este parte fue enviado a la Fiscalía: <strong>{{ parte.fiscalia }}</strong>
+  </div>
+  {% endif %}
+
+  <hr>
+  <h5>Resumen del Evento</h5>
+  <p><strong>Fecha ocurrencia:</strong> {{ evento.fecha_ocurrencia }}</p>
+  <p><strong>Dirección:</strong> {{ evento.direccion }} #{{ evento.numero }}, {{ evento.comuna }}, {{ evento.provincia }}, {{ evento.region }}</p>
+
+  <h6 class="mt-4">Participantes:</h6>
+  <ul>
+    {% for p in participantes %}
+      <li>{{ p.nombres }} {{ p.apellidos }} - {{ p.rut }}</li>
+    {% empty %}
+      <li>No hay participantes registrados.</li>
+    {% endfor %}
+  </ul>
+
+  <h6 class="mt-4">Especies:</h6>
+  <ul>
+    {% for e in especies %}
+      <li>{{ e.descripcion }} ({{ e.cantidad }})</li>
+    {% empty %}
+      <li>No hay especies registradas.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- MODAL VISTA PREVIA -->
+<div class="modal fade" id="modalVistaParte{{ parte.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content" id="modalVistaParteContent{{ parte.id }}">
+      <div class="modal-body text-center py-5">Cargando vista previa...</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'core/js/fiscalias.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modalVistaParte{{ parte.id }}');
+  modal.addEventListener('show.bs.modal', function () {
+    fetch("{% url 'vista_previa_parte_modal' parte.id %}")
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("modalVistaParteContent{{ parte.id }}").innerHTML = html;
+      });
+  });
+});
+</script>
+
+<script src="{% static 'core/js/fiscalias.js' %}"></script>
+{% endblock %}

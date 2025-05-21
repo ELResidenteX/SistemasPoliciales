@@ -1,0 +1,66 @@
+<div style="font-family: 'Courier New', Courier, monospace;">
+  <h5 class="text-center mb-3">PARTE INFRACTOR Nº {{ parte.numero_parte|default:"(Sin generar aún)" }}</h5>
+
+  <div class="mb-2"><strong>Funcionario a Cargo:</strong> {{ infraccion.funcionario_codigo }}</div>
+  <div class="mb-2"><strong>Fecha Denuncia:</strong> {{ infraccion.fecha_denuncia }} &nbsp;&nbsp; <strong>Hora:</strong> {{ infraccion.hora_denuncia }}</div>
+  <div class="mb-2"><strong>Nº Boleta de Citación:</strong> {{ infraccion.boleta }}</div>
+  <div class="mb-2"><strong>Fecha Ocurrencia:</strong> {{ infraccion.fecha }} &nbsp;&nbsp; <strong>Hora:</strong> {{ infraccion.hora }}</div>
+
+  <div class="mb-2">
+    <strong>Tipos de Infracción:</strong>
+    <ul>
+      {% for tipo in tipos_infraccion_list %}
+        <li>{{ tipo }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="mb-2">
+    <strong>Dirección del Hecho:</strong><br>
+    Región: {{ infraccion.region }}<br>
+    Provincia: {{ infraccion.provincia }}<br>
+    Comuna: {{ infraccion.comuna }}<br>
+    Dirección: {{ infraccion.direccion }} {{ infraccion.numero }}
+  </div>
+
+  <div class="mb-2">
+    <strong>Participantes:</strong>
+    {% for p in infraccion.participantes.all %}
+      <div>
+        Nombre: {{ p.nombres }} {{ p.apellidos }}<br>
+        RUT: {{ p.rut }}<br>
+        Tipo Vehículo: {{ p.tipo_vehiculo }}<br>
+        Marca: {{ p.marca }} - Modelo: {{ p.modelo }}<br>
+        Patente: {{ p.placa_patente }}<br>
+        Color: {{ p.color }}<br>
+      </div>
+      <hr>
+    {% endfor %}
+  </div>
+
+  <div class="mb-3">
+    <strong>Narración de los Hechos:</strong>
+    <p>{{ infraccion.observaciones }}</p>
+  </div>
+
+  {% if not parte or not parte.juzgado %}
+    <div class="mb-3">
+      <label class="form-label">Seleccione Juzgado de Policía Local</label>
+      <select id="juzgado-select" class="form-select">
+        <option value="">Seleccione...</option>
+      </select>
+    </div>
+
+    <div class="text-end">
+      <button id="btn-generar-parte" class="btn btn-success" data-infraccion-id="{{ infraccion.id }}" disabled>
+        Generar Parte
+      </button>
+    </div>
+
+    <div id="respuesta-generar-parte" class="mt-2 text-success" style="display:none;"></div>
+  {% else %}
+    <div class="mb-3">
+      <strong>Juzgado de Policía Local:</strong> {{ parte.juzgado }}
+    </div>
+  {% endif %}
+</div>

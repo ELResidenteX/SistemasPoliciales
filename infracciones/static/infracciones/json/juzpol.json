@@ -1,0 +1,157 @@
+{
+  "Región de Arica y Parinacota": [
+    {
+      "comuna": "Arica",
+      "nombre": "Primer Juzgado de Policía Local de Arica",
+      "direccion": "Chacabuco 314, Arica"
+    },
+    {
+      "comuna": "Arica",
+      "nombre": "Segundo Juzgado de Policía Local de Arica",
+      "direccion": "Chacabuco 314, Arica"
+    }
+  ],
+  "Región de Tarapacá": [
+    {
+      "comuna": "Iquique",
+      "nombre": "Primer Juzgado de Policía Local de Iquique",
+      "direccion": "Sotomayor 657, Iquique"
+    },
+    {
+      "comuna": "Alto Hospicio",
+      "nombre": "Juzgado de Policía Local de Alto Hospicio",
+      "direccion": "Chaca 3034, Alto Hospicio"
+    }
+  ],
+  "Región de Antofagasta": [
+    {
+      "comuna": "Antofagasta",
+      "nombre": "Juzgado de Policía Local de Antofagasta",
+      "direccion": "14 de Febrero 2040, Antofagasta"
+    },
+    {
+      "comuna": "Calama",
+      "nombre": "Juzgado de Policía Local de Calama",
+      "direccion": "Vicuña Mackenna 1857, Calama"
+    }
+  ],
+  "Región de Valparaíso": [
+    {
+      "comuna": "Valparaíso",
+      "nombre": "Juzgado de Policía Local de Valparaíso",
+      "direccion": "Av. Argentina 864, Valparaíso"
+    },
+    {
+      "comuna": "Viña del Mar",
+      "nombre": "Juzgado de Policía Local de Viña del Mar",
+      "direccion": "5 Norte 555, Viña del Mar"
+    }
+  ],
+  "Región Metropolitana": [
+    {
+      "comuna": "Buin",
+      "nombre": "Juzgado de Policía Local Buin",
+      "direccion": "Florín Román s/n"
+    },
+    {
+      "comuna": "Colina",
+      "nombre": "Juzgado de Policía Local Colina",
+      "direccion": "Chacabuco Nº 70"
+    },
+    {
+      "comuna": "Conchalí",
+      "nombre": "Juzgado de Policía Local Conchalí",
+      "direccion": "Avenida Dorsal 1904"
+    },
+    {
+      "comuna": "Curacaví",
+      "nombre": "Juzgado de Policía Local Curacaví",
+      "direccion": "Avenida Bernardo O'Higgins 1305"
+    },
+    {
+      "comuna": "Maipú",
+      "nombre": "Juzgado de Policía Local Maipú",
+      "direccion": "1ª Transversal 1970"
+    },
+    {
+      "comuna": "El Bosque",
+      "nombre": "Juzgado de Policía Local El Bosque",
+      "direccion": "Domingo Gómez Nº0342"
+    },
+    {
+      "comuna": "Estación Central",
+      "nombre": "Juzgado de Policía Local Estación Central",
+      "direccion": "Avenida Ecuador 3412, segundo piso"
+    },
+    {
+      "comuna": "Huechuraba",
+      "nombre": "Juzgado de Policía Local Huechuraba",
+      "direccion": "República de Noruega Nº5596"
+    },
+    {
+      "comuna": "Independencia",
+      "nombre": "Juzgado de Policía Local Independencia",
+      "direccion": "Sevilla 1434"
+    },
+    {
+      "comuna": "La Cisterna",
+      "nombre": "Juzgado de Policía Local La Cisterna",
+      "direccion": "Pedro Aguirre Cerda Nº0245"
+    },
+    {
+      "comuna": "La Granja",
+      "nombre": "Juzgado de Policía Local La Granja",
+      "direccion": "Canto General Nº050"
+    },
+    {
+      "comuna": "La Pintana",
+      "nombre": "Juzgado de Policía Local La Pintana",
+      "direccion": "Baldomero Lillo Nº1966"
+    },
+    {
+      "comuna": "La Reina",
+      "nombre": "Juzgado de Policía Local La Reina",
+      "direccion": "Avenida Larraín Nº8580"
+    },
+    {
+      "comuna": "Lo Barnechea",
+      "nombre": "Juzgado de Policía Local Lo Barnechea",
+      "direccion": "Cuatro Vientos Nº13660"
+    },
+    {
+      "comuna": "Lo Espejo",
+      "nombre": "Juzgado de Policía Local Lo Espejo",
+      "direccion": "Avenida Lo Ovalle Nº3710"
+    },
+    {
+      "comuna": "Lo Prado",
+      "nombre": "Juzgado de Policía Local Lo Prado",
+      "direccion": "San Pablo 5959"
+    },
+    {
+      "comuna": "Macul",
+      "nombre": "Juzgado de Policía Local Macul",
+      "direccion": "Gregorio de la Fuente Rojas Nº3214"
+    },
+    {
+      "comuna": "Paine",
+      "nombre": "Juzgado de Policía Local Paine",
+      "direccion": "Maipo Nº552"
+    },
+    {
+      "comuna": "Pedro Aguirre Cerda",
+      "nombre": "Juzgado de Policía Local Pedro Aguirre Cerda",
+      "direccion": "Ángel Guarello Nº1720"
+    },
+    {
+      "comuna": "Peñalolén",
+      "nombre": "Juzgado de Policía Local Peñalolén",
+      "direccion": "Avenida Oriental Nº6958"
+    },
+    {
+      "comuna": "Pirque",
+      "nombre": "Juzgado de Policía Local Pirque",
+      "direccion": "Pasaje Ramón Subercaseaux Nº90"
+    }
+  ]
+}

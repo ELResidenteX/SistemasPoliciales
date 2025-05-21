@@ -1,0 +1,34 @@
+<!-- Modal: Generar Parte Policial -->
+<div class="modal fade" id="modalGenerarParte{{ evento.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">   
+        <h5 class="modal-title">Parte Policial generado - Nro. Parte: <strong>{{ evento.parte_policial.numero_parte }}</strong></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Vista previa del parte policial -->
+        <div class="border rounded p-3 mb-4" style="background-color: #f8f9fa;">
+          {% include "core/vista_previa_parte_policial.html" with parte=evento.parte_policial evento=evento participantes=evento.participantes.all especies=evento.especies.all %}
+        </div>
+
+        <!-- Selección de Fiscalía -->
+        <form method="POST" action="{% url 'asignar_fiscalia_parte' evento.parte_policial.id %}" id="formFiscalia">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="fiscaliaSelect" class="form-label">Seleccionar Fiscalía</label>
+            <select id="fiscaliaSelect" name="fiscalia" class="form-select" required>
+              <option value="">Seleccione una fiscalía</option>
+              <!-- Se cargan dinámicamente con fiscalias.js -->
+            </select>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-success">📤 Enviar a Fiscalía</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

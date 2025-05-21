@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Eventos en Validación{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Eventos en Validación</h2>
+
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <input type="text" name="query" class="form-control" placeholder="Buscar por número de evento" value="{{ query }}">
+    </div>
+    <div class="col-md-4">
+      <input type="date" name="fecha" class="form-control" value="{{ fecha }}">
+    </div>
+    <div class="col-md-4 d-flex">
+      <button type="submit" class="btn btn-primary me-2">Buscar</button>
+      <a href="{% url 'evento_en_validacion' %}?limpiar=1" class="btn btn-secondary">Restablecer</a>
+    </div>
+  </form>
+
+  {% if eventos %}
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th># Evento</th>
+          <th>Fecha Ocurrencia</th>
+          <th>Hora</th>
+          <th>Fecha Denuncia</th>
+          <th>Func. Responsable</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for evento in eventos %}
+        <tr>
+          <td><strong>{{ evento.numero_evento }}</strong></td>
+          <td>{{ evento.fecha_ocurrencia|date:"d/m/Y" }}</td>
+          <td>{{ evento.hora_ocurrencia|time:"H:i" }}</td>
+          <td>{{ evento.fecha_denuncia|date:"d/m/Y" }}</td>
+          <td>{{ evento.funcionaria_codigo }}</td>
+          <td class="d-flex gap-1 flex-wrap">
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalVistaPrevia{{ evento.id }}">Vista Previa</button>
+            <a href="{% url 'editar_evento' evento.id %}" class="btn btn-sm btn-warning">Editar</a>
+
+            {% if not evento.partepolicial %}
+              {% if request.user.perfilusuario.rol == 'funcionario' %}
+                <button type="button" class="btn btn-danger" onclick="mostrarToastAcceso()">📄 Generar Parte</button>
+              {% else %}
+                <form method="post" action="{% url 'generar_parte_policial' evento.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">📄 Generar Parte</button>
+                </form>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'ver_parte_policial' evento.partepolicial.id %}" class="btn btn-sm btn-outline-secondary">Ver Parte</a>
+            {% endif %}
+          </td>
+        </tr>
+
+        <!-- Modal Vista Previa -->
+        <div class="modal fade" id="modalVistaPrevia{{ evento.id }}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" id="modalVistaPreviaContent{{ evento.id }}">
+              <div class="modal-body text-center py-5">Cargando vista previa...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Editar Evento -->
+        <div class="modal fade" id="modalEditarEvento{{ evento.id }}" tabindex="-1" aria-labelledby="modalEditarLabel{{ evento.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-xxl modal-dialog-scrollable">
+            <div class="modal-content">
+              <form method="POST" action="{% url 'guardar_edicion_evento' evento.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                  <h5 class="modal-title">Editar Evento {{ evento.numero_evento }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                  {% include 'core/modal_editar_evento.html' with evento=evento %}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info">No hay eventos en validación que coincidan con tu búsqueda.</div>
+  {% endif %}
+</div>
+
+<!-- TOAST DE ACCESO RESTRINGIDO -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+  <div id="toastAccesoRestringido" class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        🔒 <strong>Opción válida solo para el Oficial de Guardia.</strong><br>
+        Comuníquese con su superior para continuar.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'core/js/editarEvento.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[id^="modalVistaPrevia"]').forEach(modal => {
+      modal.addEventListener('show.bs.modal', function () {
+        const eventoId = this.id.replace("modalVistaPrevia", "");
+        fetch(`/evento/${eventoId}/vista-previa/`)
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById("modalVistaPreviaContent" + eventoId).innerHTML = html;
+          });
+      });
+    });
+  });
+
+  function mostrarToastAcceso() {
+    const toast = new bootstrap.Toast(document.getElementById('toastAccesoRestringido'));
+    toast.show();
+  }
+</script>
+{% endblock %}
+

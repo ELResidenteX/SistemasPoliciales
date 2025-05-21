@@ -1,0 +1,80 @@
+/* General */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    background-color: #f0f2f5;
+    padding: 10px;
+}
+
+/* Sidebar redondeada y con sombra */
+.sidebar {
+    width: 270px;
+    background: linear-gradient(to bottom, #4a9644, #2c6e2c);
+    color: white;
+    height: 95vh;
+    margin: 10px 0 10px 10px;
+    padding: 20px;
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Título del menú */
+.sidebar h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #8fc98f;
+    padding-bottom: 5px;
+}
+
+/* Acordeón sin bordes marcados */
+.accordion-button {
+    border-radius: 0 !important;
+    box-shadow: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Fondo y texto del botón del acordeón */
+.accordion-button.bg-success {
+    background-color: #4a9644 !important;
+    color: white;
+}
+
+/* Cuerpo del acordeón */
+.accordion-body {
+    padding: 0.5rem 0.5rem;
+}
+
+/* Enlaces del submenú */
+.accordion-body a {
+    font-size: 14px;
+    padding-left: 10px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+/* Hover de enlaces */
+.accordion-body a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #c4ffc4;
+    padding-left: 8px;
+}
+
+/* Panel principal */
+.main {
+    padding: 40px;
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    margin: 10px;
+}
+
+
+
+  
+  

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Buscar Evento{% endblock %}
+
+{% block content %}
+<style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    .container, .container * {
+      visibility: visible;
+    }
+
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .input-group,
+    .btn,
+    form,
+    nav,
+    .sidebar,
+    header,
+    .no-print {
+      display: none !important;
+    }
+  }
+</style>
+
+<div class="container">
+  <h2 class="mb-4">Buscar Evento Policial</h2>
+
+  <!-- Formulario de búsqueda -->
+  <form method="get" class="mb-4 row g-3 align-items-end">
+    <div class="col-md-5">
+      <label for="numero_evento" class="form-label">Número de Evento</label>
+      <input type="text" name="numero_evento" value="{{ query_num|default_if_none:'' }}" class="form-control" placeholder="e.g. EVT-000001">
+    </div>
+    <div class="col-md-4">
+      <label for="fecha_creacion" class="form-label">Fecha de creación</label>
+      <input type="date" name="fecha_creacion" value="{{ query_fecha|default_if_none:'' }}" class="form-control">
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary w-50">Buscar</button>
+      <a href="{% url 'buscar_evento' %}" class="btn btn-secondary w-50">🧹 Vaciar</a>
+    </div>
+  </form>
+
+  <!-- Resultado único: Acta detallada -->
+  {% if eventos|length == 1 %}
+    {% with evento=eventos.0 %}
+      <div class="card shadow-sm p-4 bg-white rounded" id="evento-card">
+        <div class="text-center mb-4">
+          <img src="{% static 'core/img/logo_carabineros.png' %}" alt="Carabineros de Chile" style="height: 100px;">
+          <h5 class="mt-2 mb-1">Carabineros de Chile</h5>
+          <h6 class="mb-3">Ficha de Evento Policial Nº {{ evento.numero_evento }}</h6>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Fecha de ocurrencia:</strong> {{ evento.fecha_ocurrencia }}</li>
+          <li class="list-group-item"><strong>Hora de ocurrencia:</strong> {{ evento.hora_ocurrencia }}</li>
+          <li class="list-group-item"><strong>Lugar del procedimiento:</strong> {{ evento.get_lugar_procedimiento_display }}</li>
+          <li class="list-group-item"><strong>Delito tipificado:</strong> {{ evento.delito_tipificado }}</li>
+          <li class="list-group-item"><strong>Dirección:</strong> {{ evento.direccion }}, {{ evento.numero }}, {{ evento.villa }}</li>
+          <li class="list-group-item"><strong>Comuna:</strong> {{ evento.comuna }}, {{ evento.provincia }}, {{ evento.region }}</li>
+          <li class="list-group-item"><strong>Narración de los hechos:</strong><br>{{ evento.narracion_hechos|linebreaks }}</li>
+          <li class="list-group-item"><strong>Creado en:</strong> {{ evento.creado_en|date:"d/m/Y H:i" }}</li>
+        </ul>
+        <div class="mt-3 text-end no-print">
+          <button class="btn btn-outline-secondary" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    {% endwith %}
+
+  <!-- Varios resultados: tabla resumida -->
+  {% elif eventos %}
+    <div class="card shadow-sm p-4 bg-white rounded">
+      <h5 class="mb-3">Eventos encontrados: {{ eventos|length }}</h5>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Número de Evento</th>
+            <th>Fecha de Creación</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ev in eventos %}
+          <tr>
+            <td>{{ ev.numero_evento }}</td>
+            <td>{{ ev.creado_en|date:"d/m/Y H:i" }}</td>
+            <td>
+              <a href="{% url 'buscar_evento' %}?numero_evento={{ ev.numero_evento }}&fecha_creacion={{ ev.creado_en|date:'Y-m-d' }}" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  <!-- No encontrado -->
+  {% elif no_encontrado %}
+    <div class="alert alert-warning">
+      No se encontró ningún evento con los criterios proporcionados.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

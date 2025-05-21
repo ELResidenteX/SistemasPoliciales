@@ -1,0 +1,104 @@
+{% load static %}
+{% load humanize %}
+
+<form method="post" action="{% url 'agregar_participante' evento.id %}">
+  {% csrf_token %}
+  {% if form_participante %}
+    {% if participante_editando %}
+      <input type="hidden" name="participante_id" value="{{ participante_editando.id }}">
+    {% endif %}
+
+    <!-- Alerta si está editando -->
+    {% if participante_editando %}
+      <div class="alert alert-warning">
+        ⚠️ Para garantizar el correcto apercibimiento de los participantes, confirme nuevamente la <strong>Región, Provincia y Comuna</strong> del participante antes de actualizar.
+      </div>
+    {% endif %}
+
+    <!-- Campos de Participante -->
+    <div class="mb-3">{{ form_participante.nombres.label_tag }}{{ form_participante.nombres }}</div>
+    <div class="mb-3">{{ form_participante.apellidos.label_tag }}{{ form_participante.apellidos }}</div>
+    <div class="mb-3">{{ form_participante.rut.label_tag }}{{ form_participante.rut }}</div>
+    <div class="mb-3">{{ form_participante.edad.label_tag }}{{ form_participante.edad }}</div>
+    <div class="mb-3">{{ form_participante.sexo.label_tag }}{{ form_participante.sexo }}</div>
+    <div class="mb-3">{{ form_participante.nacionalidad.label_tag }}{{ form_participante.nacionalidad }}</div>
+    <div class="mb-3">{{ form_participante.calidad.label_tag }}{{ form_participante.calidad }}</div>
+
+    <!-- Región, Provincia, Comuna -->
+    <!-- Región, Provincia, Comuna -->
+<div class="mb-3">
+  <label for="region_part" class="form-label">Región</label>
+  <select id="region_part" name="region" class="form-select region-select"
+          data-tipo="participante" data-id="form"
+          data-selected="{{ form_participante.initial.region|default_if_none:'' }}" required>
+    <option value="">Seleccione región</option>
+  </select>
+</div>
+
+<div class="mb-3">
+  <label for="provincia_part" class="form-label">Provincia</label>
+  <select id="provincia_part" name="provincia" class="form-select provincia-select"
+          data-tipo="participante" data-id="form"
+          data-selected="{{ form_participante.initial.provincia|default_if_none:'' }}" required>
+    <option value="">Seleccione provincia</option>
+  </select>
+</div>
+
+<div class="mb-3">
+  <label for="comuna_part" class="form-label">Comuna</label>
+  <select id="comuna_part" name="comuna" class="form-select comuna-select"
+          data-tipo="participante" data-id="form"
+          data-selected="{{ form_participante.initial.comuna|default_if_none:'' }}" required>
+    <option value="">Seleccione comuna</option>
+  </select>
+</div>
+
+
+    <!-- Dirección y otros -->
+    <div class="mb-3">{{ form_participante.direccion.label_tag }}{{ form_participante.direccion }}</div>
+    <div class="mb-3">{{ form_participante.numero_calle.label_tag }}{{ form_participante.numero_calle }}</div>
+    <div class="mb-3">{{ form_participante.telefono.label_tag }}{{ form_participante.telefono }}</div>
+    <div class="mb-3">{{ form_participante.observaciones.label_tag }}{{ form_participante.observaciones }}</div>
+
+    <button type="submit" class="btn btn-primary">
+      {% if participante_editando %}Actualizar{% else %}Guardar{% endif %} Participante
+    </button>
+  {% endif %}
+</form>
+
+<!-- Tabla de participantes -->
+{% if evento.participantes.exists %}
+  <div class="mt-4">
+    <h5>Participantes Registrados</h5>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>RUT</th>
+          <th>Edad</th>
+          <th>Sexo</th>
+          <th>Calidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in evento.participantes.all %}
+          <tr>
+            <td>{{ p.nombres }} {{ p.apellidos }}</td>
+            <td>{{ p.rut }}</td>
+            <td>{{ p.edad }}</td>
+            <td>{{ p.sexo }}</td>
+            <td>{{ p.get_calidad_display }}</td>
+            <td>
+              <a href="{% url 'editar_participante' p.id %}?evento={{ evento.numero_evento }}" class="btn btn-sm btn-warning">✏️</a>
+              <a href="{% url 'eliminar_participante' p.id %}?evento={{ evento.numero_evento }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este participante?');">🗑️</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+<!-- Script que maneja los selects dinámicos -->
+<script src="{% static 'core/js/participantes.js' %}"></script>

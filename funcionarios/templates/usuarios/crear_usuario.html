@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Crear Usuario{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Crear Nuevo Usuario</h2>
+
+{% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<form method="post" class="card p-4 shadow-sm" style="max-width: 500px;">
+    {% csrf_token %}
+
+    <!-- RUT -->
+    <div class="mb-3">
+        <label for="rut" class="form-label">RUT</label>
+        <input type="text" class="form-control" name="rut" id="rut" required placeholder="Ej: 12345678-9">
+    </div>
+
+    <!-- Nombres -->
+    <div class="mb-3">
+        <label for="first_name" class="form-label">Nombres</label>
+        <input type="text" class="form-control" name="first_name" id="first_name" required>
+    </div>
+
+    <!-- Apellidos -->
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Apellidos</label>
+        <input type="text" class="form-control" name="last_name" id="last_name" required>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" name="password" id="password" required>
+    </div>
+
+    <!-- Rol -->
+    <div class="mb-3">
+        <label for="rol" class="form-label">Rol</label>
+        <select class="form-select" name="rol" id="rol" required>
+            <option value="" disabled selected>Seleccione un rol</option>
+            <option value="administrador">Administrador</option>
+            <option value="oficial_guardia">Oficial de Guardia</option>
+            <option value="funcionario">Funcionario</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Crear Usuario</button>
+</form>
+{% endblock %}

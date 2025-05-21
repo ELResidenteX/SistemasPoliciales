@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Búsqueda de Partes Enviados a Fiscalía{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">Partes Enviados a Fiscalía</h3>
+
+  <form method="GET" class="row g-3 mb-4">
+    <div class="col-md-3">
+      <label for="fecha" class="form-label">Fecha de Creación del Parte</label>
+      <input type="date" id="fecha" name="fecha" class="form-control" value="{{ query_fecha }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="numero_parte" class="form-label">Número de Parte</label>
+      <input type="text" id="numero_parte" name="numero_parte" class="form-control" placeholder="Ej: PAR-000001" value="{{ numero_parte }}">
+    </div>
+
+    <div class="col-md-4 position-relative">
+      <label for="inputFiscalia" class="form-label">Fiscalía</label>
+      <input type="text" id="inputFiscalia" name="fiscalia" class="form-control" placeholder="Escriba fiscalía..." autocomplete="off" value="{{ fiscalia }}">
+      <div id="sugerencias" class="list-group position-absolute w-100 z-3" style="top: 100%;"></div>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end gap-2">
+      <button type="submit" class="btn btn-primary w-100">Buscar</button>
+      <a href="{% url 'vista_busqueda_partes' %}?limpiar=1" class="btn btn-secondary w-100">Limpiar</a>
+    </div>
+  </form>
+
+  {% if partes %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>N° Parte</th>
+            <th>N° Evento</th>
+            <th>Fiscalía</th>
+            <th>Fecha Evento</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for parte in partes %}
+          <tr>
+            <td>{{ parte.numero_parte }}</td>
+            <td>{{ parte.evento.numero_evento }}</td>
+            <td>{{ parte.fiscalia }}</td>
+            <td>{{ parte.evento.fecha_ocurrencia }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                      data-bs-target="#modalParte{{ parte.id }}">Ver Parte</button>
+            </td>
+          </tr>
+
+          <!-- Modal -->
+          <div class="modal fade" id="modalParte{{ parte.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+              <div class="modal-content" id="modalParteContent{{ parte.id }}">
+                <div class="modal-body text-center py-5">Cargando vista previa...</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">No se encontraron partes con los criterios de búsqueda.</div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'core/js/autocompletarFiscalia.js' %}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[id^="modalParte"]').forEach(modal => {
+        modal.addEventListener('show.bs.modal', function () {
+          const parteId = this.id.replace("modalParte", "");
+          fetch(`/parte/${parteId}/vista-previa-modal/`)
+            .then(response => response.text())
+            .then(html => {
+              document.getElementById("modalParteContent" + parteId).innerHTML = html;
+            });
+        });
+      });
+    });
+  </script>
+{% endblock %}
+

@@ -1,0 +1,1132 @@
+{
+  "marcas": [
+    {
+      "id": 1,
+      "nombre": "Audi",
+      "modelos": [
+        {
+          "nombre": "A5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "A3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "A4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "A6",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "S3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "S4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "TT",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "A1",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "TTS",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "A1 1.4 T",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Q7",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Q5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Q3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Q2",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "BMW",
+      "modelos": [
+        {
+          "nombre": "Serie 6",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 7",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Z4",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "M6",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 1",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 8",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "1800",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "M",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Serie 2",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "M235",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "428i",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "i",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "1M",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "M4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "M3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "M2",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "X6",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "X1",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "X3",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "X5",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "X4",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "X2",
+          "tipo": "SUV"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "Chevrolet",
+      "modelos": [
+        {
+          "nombre": "Alto",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Astra",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Bel Air",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Camaro",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Aveo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Cavalier",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Celebrity",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Citation",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Corsa",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Chevy",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Epica",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Esteem",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Impala",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Malibu",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Monza",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "Optra",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Spark",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Sprint",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Style",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Line",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Swift",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Wagon R+",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "Sail",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Buick",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Cruze",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "39",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Cobalt",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Sonic",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Onix",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Beat",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Vivant",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "Blazer 4x2",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Captiva",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Tahoe",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "HHR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Courier",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Zafira",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Blazer",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "4x4",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Grand",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Vitara",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Grand Blazer",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "Rodeo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Suburban",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Trail",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Traverse",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Orlando",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Tracker",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Equinox",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Jimny",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Samurai",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Trooper",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "FSR",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "FVR",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "FTR",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "NNR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Cheyenne",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C30",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "3100",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Brigadier",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C70",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Carry",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "NHR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "NPR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "NKR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Super",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Kodiak",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "NQR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "FRR",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "FVZ",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "N300",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "DMAX",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "SSR",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv Dmax",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Apache",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C10",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv 1.6",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv 2.2",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv 2.3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv 2.5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Colorado",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Luv 2.8",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Silverado",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Taxi",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Chevette",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "Chevytaxi",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "ChevyVan",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "ChevyWagon",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "N200",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "Citroen",
+      "modelos": [
+        {
+          "nombre": "Xsara",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Picasso",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Saxo",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Xantia",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "ZX",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "C4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C2",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "DS3",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "DS4",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "DS5",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "C-Elysee",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Aircross",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Berlingo",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "Jumper",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Jumpy",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "Daihatsu",
+      "modelos": [
+        {
+          "nombre": "Charade",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Charmant",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Sirion",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Materia",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Terios",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "F20",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Feroza",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Rocky",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Delta",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "V126",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "Dodge",
+      "modelos": [
+        {
+          "nombre": "Coronet",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Dart",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Demon",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "D100",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Royal",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Journey",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Caliber",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Fargo",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Durango",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "300",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "600",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "900",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "500",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Ram",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Dakota",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Caravan",
+          "tipo": "Van"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "nombre": "Fiat",
+      "modelos": [
+        {
+          "nombre": "Zastava",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "Idea",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "124",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Punto",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "147",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Palio",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Polsky",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Premio",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Siena",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Stilo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Topolino",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Uno",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "500",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Nuevo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Argo",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Cronos",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Adventure",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "500X",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Fiorino",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Furgon",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Strada",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "nombre": "Ford",
+      "modelos": [
+        {
+          "nombre": "Fusion",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Crown",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Victoria",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Falcon",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Festiva",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Fiesta",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Focus",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Granada",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Laser",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Mustang",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Taurus",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Hot",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Rod",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Escort",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Ltd",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "555E",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Chiva",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Ecosport",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Panel",
+          "tipo": "Van"
+        },
+        {
+          "nombre": "Edge",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Flex",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Courier",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Escape",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Expedition",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Explorer",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Llanero",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Bronco",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Piragua",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Aeromax",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Cargo",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "815",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "F350",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "600",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "F8000",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "F 600",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "F 350",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "F9000",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "F-150",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Cargo 1019",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Cargo 816",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "F250",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Nueva",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Ranger",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "F100",
+          "tipo": "Camioneta"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "nombre": "Hyundai",
+      "modelos": [
+        {
+          "nombre": "Accent",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Elantra",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Tucson",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Santa Fe",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Sonata",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Kona",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Creta",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Venue",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "HB20",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "i10",
+          "tipo": "Hatchback"
+        },
+        {
+          "nombre": "i20",
+          "tipo": "Hatchback"
+        },
+        {
+          "nombre": "i30",
+          "tipo": "Sedán"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "nombre": "Nissan",
+      "modelos": [
+        {
+          "nombre": "Versa",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Sentra",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Altima",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Maxima",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "370Z",
+          "tipo": "Coupé"
+        },
+        {
+          "nombre": "Pathfinder",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Murano",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "X-Trail",
+          "tipo": "SUV"
+        },
+        {
+          "nombre": "Qashqai",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "March",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Navara",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "NP300",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Frontier",
+          "tipo": "Camioneta"
+        },
+        {
+          "nombre": "Titan",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Rogue",
+          "tipo": "Sedán"
+        },
+        {
+          "nombre": "Leaf",
+          "tipo": "Camioneta"
+        }
+      ]
+    }
+  ]
+}
