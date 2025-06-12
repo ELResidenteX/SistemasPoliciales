@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-#d
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
@@ -68,8 +68,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'SistemasPoliciales.wsgi.application'
 
 # Database
-# Usa DATABASE_URL (PostgreSQL en Railway, SQLite local si no hay variable)
-
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL', 'sqlite:///db.sqlite3'),
@@ -104,9 +102,12 @@ USE_TZ = True
 # Static files
 
 STATIC_URL = '/static/'
+
+# SOLO referencia a tus archivos fuente (no a la carpeta generada por collectstatic)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'core/static')
 ]
+# collectstatic los copiará aquí para Railway y prod
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
@@ -117,11 +118,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
 
-# REST Framework config (ajústalo si usas JWT)
+# REST Framework config
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
 
