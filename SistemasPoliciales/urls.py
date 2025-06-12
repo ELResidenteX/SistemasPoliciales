@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),  # Ruta principal
     path('infracciones/', include('infracciones.urls')),
-    path('', include('funcionarios.urls')),
+    path('funcionarios/', include('funcionarios.urls')),
 
 
 ]

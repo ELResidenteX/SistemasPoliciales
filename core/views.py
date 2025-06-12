@@ -9,6 +9,11 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django.utils.timezone import make_aware, localtime
 from django.contrib import messages
+from core.serializers import EventoPolicialAppSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 
 # ✅ Home
 def home(request):
@@ -457,7 +462,22 @@ def editar_evento(request, evento_id):
 
 
 
+#Aca comienzan las vistas relacionadas a la creacion de la app movil
 
+class CrearEventoDesdeAppAPIView(APIView):
+    def post(self, request):
+        data = request.data.copy()
+        serializer = EventoPolicialAppSerializer(data=data)
+
+        if serializer.is_valid():
+            evento = serializer.save()
+            return Response({
+                "message": "Evento creado correctamente",
+                "evento_id": evento.id,
+                "numero_evento": evento.numero_evento
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

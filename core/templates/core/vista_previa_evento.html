@@ -76,6 +76,32 @@
     <h4>NARRACIÓN DE LOS HECHOS</h4>
     <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
 
+<hr>
+<h4>Firmas</h4>
+
+{% if evento.firma_funcionario %}
+    <div>
+        <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
+        <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    </div>
+{% else %}
+    <div><em>No hay firma del funcionario</em></div>
+{% endif %}
+
+{% if evento.firma_denunciante %}
+    <div>
+        <strong>Firma Denunciante o Víctima:</strong><br>
+        <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    </div>
+{% else %}
+    <div><em>No hay firma de denunciante</em></div>
+{% endif %}
+
+
+
+
+
+
     <br><br>
     <div style="display: flex; justify-content: space-between;">
       <div>

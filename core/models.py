@@ -6,6 +6,35 @@ class Delito(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+#modelo select regiones para app movil
+
+class Region(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+class Provincia(models.Model):
+    nombre = models.CharField(max_length=100)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='provincias')
+
+    class Meta:
+        unique_together = ('nombre', 'region')
+
+    def __str__(self):
+        return f"{self.nombre} ({self.region.nombre})"
+
+class Comuna(models.Model):
+    nombre = models.CharField(max_length=100)
+    provincia = models.ForeignKey(Provincia, on_delete=models.CASCADE, related_name='comunas')
+
+    class Meta:
+        unique_together = ('nombre', 'provincia')
+
+    def __str__(self):
+        return f"{self.nombre} ({self.provincia.nombre})"
+
 
 # 🔹 Modelo de EventoPolicial
 class EventoPolicial(models.Model):
@@ -49,6 +78,16 @@ class EventoPolicial(models.Model):
     interseccion = models.CharField(max_length=255, blank=True)
 
     narracion_hechos = models.TextField()
+
+    # 🔹 NUEVOS CAMPOS PARA INTEGRAR APP MÓVIL
+    firma_funcionario = models.ImageField(upload_to="firmas/", null=True, blank=True)
+    firma_denunciante = models.ImageField(upload_to="firmas/", null=True, blank=True)
+
+    origen = models.CharField(
+        max_length=10,
+        choices=[('web', 'Web'), ('app', 'App')],
+        default='web'
+    )
 
     creado_en = models.DateTimeField(auto_now_add=True)
 
@@ -131,6 +170,26 @@ class PartePolicial(models.Model):
         super().save(*args, **kwargs)
 
 
+
+# Modelo para la app movil
+
+#Lugar de procedimiento
+
+class LugarProcedimiento(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
+    
+#tipo Lugar delito o suceso
+
+class TipoLugar(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
 
 
 

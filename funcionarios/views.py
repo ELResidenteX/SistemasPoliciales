@@ -72,7 +72,7 @@ def logout_view(request):
 # ✅ Página de inicio (protegida)
 @login_required
 def vista_inicio(request):
-    return render(request, 'core/base.html')
+    return render(request, 'base.html')
 
 
 # ✅ Crear usuario desde panel admin

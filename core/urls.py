@@ -1,5 +1,17 @@
 from django.urls import path
 from . import views
+from core.api_views import CrearEventoDesdeAppAPIView, CrearParticipanteDesdeAppAPIView
+from django.http import JsonResponse
+from . import selectors_api 
+from .selectors_api import api_delitos, listar_lugares_procedimiento, listar_tipos_lugar  # 👈 asegúrate de que api_delitos esté definida ahí
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     # ✅ Home
@@ -60,6 +72,44 @@ path('parte/<int:parte_id>/vista-previa-modal/', views.vista_previa_parte_modal,
    path('autocompletar-fiscalia/', views.autocompletar_fiscalia, name='autocompletar_fiscalia'),
    
    path('evento/<int:evento_id>/editar/', views.editar_evento, name='editar_evento'),
+  
+
+  #URLS RELACIONADAS A LA APP MOVOL DEL PROYECTO
+
+  #Recibe los datos JSON (o multipart/form-data si hay imágenes) desde la app móvil. Los valida
+
+  
+path('api/eventos/crear/', CrearEventoDesdeAppAPIView.as_view(), name='crear_evento_api'),  
+path('api/participantes/crear/', CrearParticipanteDesdeAppAPIView.as_view(), name='crear_participante_api'),
+
+#URLS ENDPOINTS RESPECTO AL MODELO Y LINKEAR SELECT COMUNAS, REGIONES Y PROVINCIAS EN APP MOVIL PARA CREAR EVENTO
+
+ path('api/regiones/', selectors_api.api_regiones, name='api_regiones'),
+    path('api/provincias/', selectors_api.api_provincias, name='api_provincias'),
+    path('api/comunas/', selectors_api.api_comunas, name='api_comunas'),
+
+#urls endpoint delito
+
+path('api/delitos/', api_delitos, name='api_delitos'),
+
+#urls endpoint Lugar Procedimiento
+
+path('api/lugares-procedimiento/', listar_lugares_procedimiento),
+
+#Urls endpoint tipo lugar
+
+path('api/tipos-lugar/', listar_tipos_lugar),
+
+#Login desde app y endpoint
+
+path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+
+
+
+
+
 
 ]
 
