@@ -122,3 +122,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-6ee8.up.railway.app',  # tu URL de Railway, ¡ajusta según tu proyecto!
+]
+
