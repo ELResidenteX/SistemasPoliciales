@@ -20,3 +20,22 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# En tu archivo manage.py agrega al final, temporalmente:
+# Agrega este bloque al final de wsgi.py SOLO TEMPORALMENTE
+
+
+
+if os.environ.get('CREATESUPERUSER_ON_STARTUP', 'False') == 'True':
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        if not User.objects.filter(username="admin").exists():
+            User.objects.create_superuser("admin_principal", "admin@email.com", "123456")
+            print("Superusuario admin creado automáticamente.")
+        else:
+            print("Superusuario admin ya existe.")
+    except Exception as e:
+        print(f"Error creando superusuario: {e}")
+
+
