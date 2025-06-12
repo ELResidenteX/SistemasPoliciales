@@ -101,14 +101,15 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = '/static/'
+
 
 # SOLO referencia a tus archivos fuente (no a la carpeta generada por collectstatic)
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core/static')
+    os.path.join(BASE_DIR, 'core/static'),
 ]
-# collectstatic los copiará aquí para Railway y prod
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 # Default primary key field type
 
