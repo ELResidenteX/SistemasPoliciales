@@ -128,3 +128,6 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web-production-6ee8.up.railway.app',  # tu URL de Railway, ¡ajusta según tu proyecto!
 ]
 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
