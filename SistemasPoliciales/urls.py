@@ -25,7 +25,7 @@ urlpatterns = [
     path('', include('core.urls')),  # Ruta principal
     path('infracciones/', include('infracciones.urls')),
     path('funcionarios/', include('funcionarios.urls')),
-   # path('login/', auth_views.LoginView.as_view(template_name='usuarios/login.html'), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='usuarios/login.html'), name='login'),
     path('login/', funcionarios_views.login_view, name='login'),
 
 ]
