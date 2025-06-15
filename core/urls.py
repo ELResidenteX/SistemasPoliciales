@@ -106,7 +106,7 @@ path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
 path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 
-
+path('cargar-delitos/', views.cargar_delitos_desde_json, name='cargar_delitos_json'),
 
 
 

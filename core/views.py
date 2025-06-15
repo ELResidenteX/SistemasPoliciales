@@ -14,6 +14,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+import json
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import render, redirect
+from core.models import Delito 
+
 
 # ✅ Home
 def home(request):
@@ -478,6 +483,25 @@ class CrearEventoDesdeAppAPIView(APIView):
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+# Vista delitos en hosting temporal para cargar
+
+
+
+
+@staff_member_required  # Solo admin/staff
+def cargar_delitos_desde_json(request):
+    if request.method == 'POST':
+        archivo = request.FILES.get('delitos_json')
+        if archivo:
+            data = json.load(archivo)
+            for item in data:
+                Delito.objects.get_or_create(nombre=item['nombre'])
+            return render(request, 'core/cargar_delitos_ok.html', {'ok': True})
+        else:
+            return render(request, 'core/cargar_delitos.html', {'error': 'Archivo no seleccionado'})
+    return render(request, 'core/cargar_delitos.html')
 
 
 
