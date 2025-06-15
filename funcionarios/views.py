@@ -19,6 +19,9 @@ def vista_crear_evento(request):
 
 # ✅ Login general (por RUT)
 def login_view(request):
+    print("Método:", request.method)
+    print("POST data:", request.POST)
+    print("CSRF token:", request.META.get("CSRF_COOKIE"))
     if request.method == 'POST':
         rut = request.POST.get('rut')  # Este es el campo del formulario
         password = request.POST.get('password')
