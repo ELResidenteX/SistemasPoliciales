@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 #vista crear evento app
 class CrearEventoDesdeAppAPIView(APIView):
     renderer_classes = [JSONRenderer]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         print("✅ API activa: método POST recibido")  # Verifica entrada en consola
