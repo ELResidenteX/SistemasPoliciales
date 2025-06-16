@@ -19,6 +19,8 @@ import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 from core.models import Delito 
+from django.http import HttpResponse
+from django.core.management import call_command
 
 
 # ✅ Home
