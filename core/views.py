@@ -13,6 +13,7 @@ from core.serializers import EventoPolicialAppSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.management import call_command
 
 import json
 from django.contrib.admin.views.decorators import staff_member_required
@@ -504,7 +505,14 @@ def cargar_delitos_desde_json(request):
     return render(request, 'core/cargar_delitos.html')
 
 
+#vista momentanea cargar regiones en app 
 
+def ejecutar_cargar_regiones(request):
+    # Opcional: puedes limitar esto SOLO a superusuarios si quieres seguridad
+    if not request.user.is_superuser:
+        return HttpResponse("No autorizado", status=403)
+    call_command('cargar_regiones')
+    return HttpResponse("✅ Regiones cargadas correctamente")
 
 
 
