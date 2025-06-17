@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',     # <--- WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',     # WhiteNoise para estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +77,7 @@ DATABASES = {
     )
 }
 
-# #Password validation
+# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -124,27 +124,24 @@ REST_FRAMEWORK = {
     ),
 }
 
-
+# CSRF y cookies seguras
 CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-6ee8.up.railway.app',  # tu URL de Railway, ¡ajusta según tu proyecto!
+    'https://web-production-6ee8.up.railway.app',
 ]
-
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
+# ========== AWS S3 (Firmas y otros media) ==========
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')  # ejemplo: 'firmassistemapolicial'
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'sa-east-1')  # o sa-east-1 según tu bucket real
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
 
-if not DEBUG:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('firmassistemapolicial')
-    AWS_S3_REGION_NAME = "sa-east-1"  # Cambia si tu bucket es de otra región
-    AWS_S3_SIGNATURE_VERSION = "s3v4"
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
-    AWS_QUERYSTRING_AUTH = False  # Opcional: permite URLs sin token temporal
-
-    # Opcional, archivos públicos
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
-    }
