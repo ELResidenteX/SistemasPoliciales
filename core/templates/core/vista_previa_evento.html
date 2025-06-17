@@ -82,7 +82,7 @@
 {% if evento.firma_funcionario %}
   <div>
     <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
-    <img src="data:image/png;base64,{{ evento.firma_funcionario }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
   </div>
 {% else %}
   <div><em>No hay firma del funcionario</em></div>
@@ -91,7 +91,7 @@
 {% if evento.firma_denunciante %}
   <div>
     <strong>Firma Denunciante o Víctima:</strong><br>
-    <img src="data:image/png;base64,{{ evento.firma_denunciante }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
   </div>
 {% else %}
   <div><em>No hay firma de denunciante</em></div>
