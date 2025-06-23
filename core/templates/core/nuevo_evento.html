@@ -101,7 +101,6 @@
           <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
           <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
 
-          <!-- CAMPO NARRACIÓN DE HECHOS CON CKEDITOR -->
           <div class="mb-3">
             <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
             <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
@@ -148,14 +147,11 @@
 <script src="{% static 'core/js/evento.js' %}"></script>
 <script src="{% static 'core/js/general.js' %}"></script>
 <script src="{% static 'core/js/especie.js' %}"></script>
+<!-- Scripts separados -->
+<script src="{% static 'core/js/evento.js' %}"></script>
+<script src="{% static 'core/js/general.js' %}"></script>
+<script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
 
-<!-- CKEditor desde CDN SOLO PARA LA NARRACIÓN -->
-<script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
-<script>
-  CKEDITOR.replace('id_narracion_hechos', {
-      height: 250,
-  });
-</script>
 
 {% endblock %}
