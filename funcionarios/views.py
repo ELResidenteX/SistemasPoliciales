@@ -39,8 +39,15 @@ def login_view(request):
 
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
+                request.session['usuario_cambio_password'] = user.username
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
+
+            # 🛡️ Evita que otro usuario arrastre la obligación
+            if request.session.get('forzar_cambio_password') and request.session.get('usuario_cambio_password') != user.username:
+                request.session.pop('forzar_cambio_password', None)
+                request.session.pop('usuario_cambio_password', None)
+                request.session.pop('inicio_temporal', None)
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -68,8 +75,14 @@ def admin_login_view(request):
 
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
+                request.session['usuario_cambio_password'] = user.username
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
+
+            if request.session.get('forzar_cambio_password') and request.session.get('usuario_cambio_password') != user.username:
+                request.session.pop('forzar_cambio_password', None)
+                request.session.pop('usuario_cambio_password', None)
+                request.session.pop('inicio_temporal', None)
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -90,12 +103,17 @@ def forzar_cambio_password(request):
     if not request.session.get('forzar_cambio_password'):
         return redirect('inicio')
 
+    if request.session.get('usuario_cambio_password') != request.user.username:
+        # Evita que otro usuario vea esto
+        return redirect('inicio')
+
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
             request.session.pop('forzar_cambio_password', None)
+            request.session.pop('usuario_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
             messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
@@ -168,6 +186,7 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
 
 
