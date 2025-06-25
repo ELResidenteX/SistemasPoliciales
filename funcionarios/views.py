@@ -9,7 +9,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
-
 from funcionarios.models import PerfilUsuario
 
 
@@ -29,16 +28,15 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
-            primer_login = user.last_login is None
             login(request, user)
             rotate_token(request)
             request.user = user
             request.user.refresh_from_db()
 
-            if primer_login and user.perfilusuario.rol != 'super_admin':
+            # ⚠️ Si no ha cambiado su contraseña aún (primer login), forzar cambio
+            if request.user.last_login is None and request.user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
-                return redirect('forzar_cambio_password')
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -58,15 +56,14 @@ def admin_login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and hasattr(user, 'perfilusuario'):
-            primer_login = user.last_login is None
             login(request, user)
+            rotate_token(request)
             request.user = user
             request.user.refresh_from_db()
 
-            if primer_login and user.perfilusuario.rol != 'super_admin':
+            if request.user.last_login is None and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
-                return redirect('forzar_cambio_password')
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -91,19 +88,18 @@ def forzar_cambio_password(request):
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
+
+            # ✅ Se borra la obligación de cambio
             request.session.pop('forzar_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
-            request.session['mensaje_password_actualizada'] = True
-            return redirect('forzar_cambio_password')  # Evitar reenvío del formulario
+
+            messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
+            return redirect('inicio')
         else:
             messages.error(request, '❌ La contraseña no cumple con los requisitos. Intente nuevamente.')
     else:
         form = PasswordChangeForm(user=request.user)
-
-    # ✅ Mostrar mensaje solo una vez
-    if request.session.pop('mensaje_password_actualizada', False):
-        messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
 
     return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
 
@@ -153,7 +149,6 @@ def crear_usuario(request):
             rol=rol
         )
 
-        request.user.refresh_from_db()
         return redirect('crear_usuario')
 
     return render(request, 'usuarios/crear_usuario.html')
@@ -164,6 +159,7 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
 
 
