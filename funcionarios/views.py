@@ -1,12 +1,16 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from funcionarios.models import PerfilUsuario
 from django.urls import reverse
-from django.http import HttpResponseRedirect
 from django.middleware.csrf import rotate_token
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+from django.utils import timezone
+
+from funcionarios.models import PerfilUsuario
 
 # ✅ Crear evento con control de rol
 @login_required
@@ -19,24 +23,48 @@ def vista_crear_evento(request):
 
 # ✅ Login general (por RUT)
 def login_view(request):
-    print("Método:", request.method)
-    print("POST data:", request.POST)
-    print("CSRF token:", request.META.get("CSRF_COOKIE"))
     if request.method == 'POST':
-        rut = request.POST.get('rut')  # Este es el campo del formulario
+        rut = request.POST.get('rut')
         password = request.POST.get('password')
 
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
             login(request, user)
-            rotate_token(request)  # 🔒 Esto renueva el token CSRF para prevenir errores al recargar
+            rotate_token(request)
+
+            if user.last_login is None:  # 🔐 Primer login detectado
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
             return redirect('inicio')
         else:
             return render(request, 'usuarios/login.html', {'error': 'Credenciales inválidas'})
 
     return render(request, 'usuarios/login.html')
 
+
+# ✅ Vista para cambio obligatorio de contraseña
+@login_required
+def forzar_cambio_password(request):
+    if not request.session.get('forzar_cambio_password'):
+        return redirect('inicio')
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            request.session.pop('forzar_cambio_password', None)
+            request.session.pop('inicio_temporal', None)
+            request.session['ultima_password_cambio'] = timezone.now().isoformat()
+            messages.success(request, 'Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
+            return redirect('inicio')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
 
 
 # ✅ Login para administrador
@@ -49,12 +77,8 @@ def admin_login_view(request):
 
         if user is not None and hasattr(user, 'perfilusuario') and user.perfilusuario.rol in ['super_admin', 'administrador']:
             login(request, user)
-
-            # ✅ Forzar recarga del perfil luego del login
             request.user = user
             request.user.refresh_from_db()
-
-            # ✅ Redirigir con recarga forzada (opcional)
             return HttpResponseRedirect(reverse('inicio'))
 
         else:
@@ -63,7 +87,6 @@ def admin_login_view(request):
             })
 
     return render(request, 'usuarios/admin_login.html')
-
 
 
 # ✅ Logout
@@ -114,7 +137,7 @@ def crear_usuario(request):
             rol=rol
         )
 
-        request.user.refresh_from_db()  # Actualiza perfil
+        request.user.refresh_from_db()
         return redirect('crear_usuario')
 
     return render(request, 'usuarios/crear_usuario.html')
@@ -123,9 +146,7 @@ def crear_usuario(request):
 # ✅ Vista intermedia para asegurar que el perfil se cargue
 @login_required
 def post_login(request):
-    request.user.refresh_from_db()  # 🔁 Asegura que request.user.perfilusuario esté disponible
+    request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
 
-
-# (No es necesaria post_login_redirect en este flujo)
