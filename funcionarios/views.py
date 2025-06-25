@@ -31,7 +31,7 @@ def login_view(request):
             login(request, user)
             rotate_token(request)
 
-            # ⚠️ Si es primer login o no ha cambiado la contraseña
+            # ⚠️ Verificar si el usuario debe cambiar su contraseña
             if request.session.get(f'cambio_pendiente_{user.username}', True) and user.perfilusuario.rol != 'super_admin':
                 request.session[f'cambio_pendiente_{user.username}'] = True
                 request.session['forzar_cambio_password'] = True
@@ -83,11 +83,12 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
 
-            # ✅ Limpiamos todo
+            # ✅ Limpiamos todos los flags de sesión relacionados
             username = request.user.username
-            request.session.pop(f'cambio_pendiente_{username}', None)
-            request.session.pop('forzar_cambio_password', None)
-            request.session.pop('inicio_temporal', None)
+            for key in list(request.session.keys()):
+                if key == f'cambio_pendiente_{username}' or key in ['forzar_cambio_password', 'inicio_temporal']:
+                    del request.session[key]
+
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
 
             messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
@@ -145,7 +146,7 @@ def crear_usuario(request):
             rol=rol
         )
 
-        # ⚠️ Inicializa flag para forzar cambio
+        # ✅ Marcamos que el usuario debe cambiar su contraseña
         request.session[f'cambio_pendiente_{rut}'] = True
 
         return redirect('crear_usuario')
@@ -158,9 +159,6 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
-
-
-
 
 
 
