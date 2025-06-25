@@ -9,7 +9,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
-
 from funcionarios.models import PerfilUsuario
 
 
@@ -29,18 +28,14 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
-            primer_login = user.last_login is None  # ✅ capturamos antes de login()
-
             login(request, user)
             rotate_token(request)
-            request.user = user
-            request.user.refresh_from_db()
 
-            if primer_login and user.perfilusuario.rol != 'super_admin':
+            # ⚠️ Si es primer login o no ha cambiado la contraseña
+            if request.session.get(f'cambio_pendiente_{user.username}', True) and user.perfilusuario.rol != 'super_admin':
+                request.session[f'cambio_pendiente_{user.username}'] = True
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
-
-            if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
 
             return redirect('inicio')
@@ -58,18 +53,13 @@ def admin_login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and hasattr(user, 'perfilusuario'):
-            primer_login = user.last_login is None  # ✅ antes del login()
-
             login(request, user)
             rotate_token(request)
-            request.user = user
-            request.user.refresh_from_db()
 
-            if primer_login and user.perfilusuario.rol != 'super_admin':
+            if request.session.get(f'cambio_pendiente_{user.username}', True) and user.perfilusuario.rol != 'super_admin':
+                request.session[f'cambio_pendiente_{user.username}'] = True
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
-
-            if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
 
             return HttpResponseRedirect(reverse('inicio'))
@@ -93,6 +83,9 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
 
+            # ✅ Limpiamos todo
+            username = request.user.username
+            request.session.pop(f'cambio_pendiente_{username}', None)
             request.session.pop('forzar_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
@@ -152,6 +145,9 @@ def crear_usuario(request):
             rol=rol
         )
 
+        # ⚠️ Inicializa flag para forzar cambio
+        request.session[f'cambio_pendiente_{rut}'] = True
+
         return redirect('crear_usuario')
 
     return render(request, 'usuarios/crear_usuario.html')
@@ -162,6 +158,7 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
 
 
