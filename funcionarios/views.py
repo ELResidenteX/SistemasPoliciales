@@ -30,17 +30,14 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
-            # ⚠️ Verificamos si se marcó que debe cambiar la contraseña
-            if user.username in request.session.get('usuarios_con_cambio_pendiente', []):
-                request.session['forzar_cambio_password'] = True
-                request.session['inicio_temporal'] = timezone.now().isoformat()
-                # 🧼 Limpiamos la lista
-                request.session['usuarios_con_cambio_pendiente'].remove(user.username)
+            primer_login = user.last_login is None
 
             login(request, user)
             rotate_token(request)
 
-            if request.session.get('forzar_cambio_password'):
+            if primer_login and user.perfilusuario.rol != 'super_admin':
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
 
             return redirect('inicio')
@@ -48,6 +45,36 @@ def login_view(request):
             return render(request, 'usuarios/login.html', {'error': 'Credenciales inválidas'})
 
     return render(request, 'usuarios/login.html')
+
+
+# ✅ Login para administrador
+def admin_login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and hasattr(user, 'perfilusuario'):
+            primer_login = user.last_login is None
+
+            login(request, user)
+            request.user = user
+            request.user.refresh_from_db()
+
+            if primer_login and user.perfilusuario.rol != 'super_admin':
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
+            return HttpResponseRedirect(reverse('inicio'))
+
+        else:
+            return render(request, 'usuarios/admin_login.html', {
+                'error': 'Credenciales inválidas o acceso no autorizado.'
+            })
+
+    return render(request, 'usuarios/admin_login.html')
 
 
 # ✅ Vista para cambio obligatorio de contraseña
@@ -70,38 +97,6 @@ def forzar_cambio_password(request):
         form = PasswordChangeForm(user=request.user)
 
     return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
-
-
-# ✅ Login para administrador
-def admin_login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None and hasattr(user, 'perfilusuario'):
-            # ⚠️ Verificamos si se marcó que debe cambiar la contraseña
-            if user.username in request.session.get('usuarios_con_cambio_pendiente', []):
-                request.session['forzar_cambio_password'] = True
-                request.session['inicio_temporal'] = timezone.now().isoformat()
-                request.session['usuarios_con_cambio_pendiente'].remove(user.username)
-
-            login(request, user)
-            request.user = user
-            request.user.refresh_from_db()
-
-            if request.session.get('forzar_cambio_password') and user.perfilusuario.rol != 'super_admin':
-                return redirect('forzar_cambio_password')
-
-            return HttpResponseRedirect(reverse('inicio'))
-
-        else:
-            return render(request, 'usuarios/admin_login.html', {
-                'error': 'Credenciales inválidas o acceso no autorizado.'
-            })
-
-    return render(request, 'usuarios/admin_login.html')
 
 
 # ✅ Logout
@@ -152,12 +147,6 @@ def crear_usuario(request):
             rol=rol
         )
 
-        # ✅ Marcamos que el nuevo usuario debe cambiar su contraseña
-        if 'usuarios_con_cambio_pendiente' not in request.session:
-            request.session['usuarios_con_cambio_pendiente'] = []
-
-        request.session['usuarios_con_cambio_pendiente'].append(rut)
-
         request.user.refresh_from_db()
         return redirect('crear_usuario')
 
@@ -170,4 +159,5 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
