@@ -9,6 +9,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
+
 from funcionarios.models import PerfilUsuario
 
 
@@ -28,13 +29,14 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
+            primer_login = user.last_login is None  # ✅ capturamos antes de login()
+
             login(request, user)
             rotate_token(request)
             request.user = user
             request.user.refresh_from_db()
 
-            # ⚠️ Si no ha cambiado su contraseña aún (primer login), forzar cambio
-            if request.user.last_login is None and request.user.perfilusuario.rol != 'super_admin':
+            if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
 
@@ -56,12 +58,14 @@ def admin_login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and hasattr(user, 'perfilusuario'):
+            primer_login = user.last_login is None  # ✅ antes del login()
+
             login(request, user)
             rotate_token(request)
             request.user = user
             request.user.refresh_from_db()
 
-            if request.user.last_login is None and user.perfilusuario.rol != 'super_admin':
+            if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
 
@@ -89,7 +93,6 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
 
-            # ✅ Se borra la obligación de cambio
             request.session.pop('forzar_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
@@ -159,6 +162,7 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
 
 
