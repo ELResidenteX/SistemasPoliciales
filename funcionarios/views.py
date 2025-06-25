@@ -75,10 +75,19 @@ def admin_login_view(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user is not None and hasattr(user, 'perfilusuario') and user.perfilusuario.rol in ['super_admin', 'administrador']:
+        if user is not None and hasattr(user, 'perfilusuario'):
             login(request, user)
             request.user = user
             request.user.refresh_from_db()
+
+            rol = user.perfilusuario.rol
+
+            # ✅ Detectar primer login para todos, excepto super_admin
+            if user.last_login is None and rol != 'super_admin':
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
             return HttpResponseRedirect(reverse('inicio'))
 
         else:
@@ -87,6 +96,7 @@ def admin_login_view(request):
             })
 
     return render(request, 'usuarios/admin_login.html')
+
 
 
 # ✅ Logout
