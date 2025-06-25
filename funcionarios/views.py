@@ -9,6 +9,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
+
 from funcionarios.models import PerfilUsuario
 
 
@@ -30,11 +31,9 @@ def login_view(request):
         if user is not None:
             login(request, user)
             rotate_token(request)
+            perfil = user.perfilusuario
 
-            # ⚠️ Verificar si el usuario debe cambiar su contraseña
-            if request.session.get(f'cambio_pendiente_{user.username}', True) and user.perfilusuario.rol != 'super_admin':
-                request.session[f'cambio_pendiente_{user.username}'] = True
-                request.session['forzar_cambio_password'] = True
+            if perfil.cambio_password_obligado and perfil.rol != 'super_admin':
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
 
@@ -55,10 +54,9 @@ def admin_login_view(request):
         if user is not None and hasattr(user, 'perfilusuario'):
             login(request, user)
             rotate_token(request)
+            perfil = user.perfilusuario
 
-            if request.session.get(f'cambio_pendiente_{user.username}', True) and user.perfilusuario.rol != 'super_admin':
-                request.session[f'cambio_pendiente_{user.username}'] = True
-                request.session['forzar_cambio_password'] = True
+            if perfil.cambio_password_obligado and perfil.rol != 'super_admin':
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
 
@@ -74,7 +72,9 @@ def admin_login_view(request):
 
 @login_required
 def forzar_cambio_password(request):
-    if not request.session.get('forzar_cambio_password'):
+    perfil = request.user.perfilusuario
+
+    if not perfil.cambio_password_obligado:
         return redirect('inicio')
 
     if request.method == 'POST':
@@ -83,12 +83,11 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
 
-            # ✅ Limpiamos todos los flags de sesión relacionados
-            username = request.user.username
-            for key in list(request.session.keys()):
-                if key == f'cambio_pendiente_{username}' or key in ['forzar_cambio_password', 'inicio_temporal']:
-                    del request.session[key]
+            # ✅ Se actualiza el perfil
+            perfil.cambio_password_obligado = False
+            perfil.save()
 
+            request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
 
             messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
@@ -143,11 +142,9 @@ def crear_usuario(request):
         PerfilUsuario.objects.create(
             user=nuevo_usuario,
             rut=rut,
-            rol=rol
+            rol=rol,
+            cambio_password_obligado=True  # 🔐 Forzamos cambio al inicio
         )
-
-        # ✅ Marcamos que el usuario debe cambiar su contraseña
-        request.session[f'cambio_pendiente_{rut}'] = True
 
         return redirect('crear_usuario')
 
