@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from funcionarios.models import PerfilUsuario
 
+
 # ✅ Crear evento con control de rol
 @login_required
 def vista_crear_evento(request):
@@ -31,13 +32,17 @@ def login_view(request):
 
         if user is not None:
             primer_login = user.last_login is None
-
             login(request, user)
             rotate_token(request)
+            request.user = user
+            request.user.refresh_from_db()
 
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
+            if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
 
             return redirect('inicio')
@@ -57,7 +62,6 @@ def admin_login_view(request):
 
         if user is not None and hasattr(user, 'perfilusuario'):
             primer_login = user.last_login is None
-
             login(request, user)
             request.user = user
             request.user.refresh_from_db()
@@ -65,6 +69,9 @@ def admin_login_view(request):
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
+            if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
 
             return HttpResponseRedirect(reverse('inicio'))
