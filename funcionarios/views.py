@@ -13,7 +13,6 @@ from django.utils import timezone
 from funcionarios.models import PerfilUsuario
 
 
-# ✅ Crear evento con control de rol
 @login_required
 def vista_crear_evento(request):
     perfil = request.user.perfilusuario
@@ -22,7 +21,6 @@ def vista_crear_evento(request):
     return render(request, 'core/nuevo_evento.html')
 
 
-# ✅ Login general (por RUT)
 def login_view(request):
     if request.method == 'POST':
         rut = request.POST.get('rut')
@@ -39,15 +37,8 @@ def login_view(request):
 
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
-                request.session['usuario_cambio_password'] = user.username
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
-
-            # 🛡️ Evita que otro usuario arrastre la obligación
-            if request.session.get('forzar_cambio_password') and request.session.get('usuario_cambio_password') != user.username:
-                request.session.pop('forzar_cambio_password', None)
-                request.session.pop('usuario_cambio_password', None)
-                request.session.pop('inicio_temporal', None)
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -59,7 +50,6 @@ def login_view(request):
     return render(request, 'usuarios/login.html')
 
 
-# ✅ Login para administrador
 def admin_login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -75,14 +65,8 @@ def admin_login_view(request):
 
             if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
-                request.session['usuario_cambio_password'] = user.username
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
-
-            if request.session.get('forzar_cambio_password') and request.session.get('usuario_cambio_password') != user.username:
-                request.session.pop('forzar_cambio_password', None)
-                request.session.pop('usuario_cambio_password', None)
-                request.session.pop('inicio_temporal', None)
 
             if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
@@ -97,14 +81,9 @@ def admin_login_view(request):
     return render(request, 'usuarios/admin_login.html')
 
 
-# ✅ Vista para cambio obligatorio de contraseña
 @login_required
 def forzar_cambio_password(request):
     if not request.session.get('forzar_cambio_password'):
-        return redirect('inicio')
-
-    if request.session.get('usuario_cambio_password') != request.user.username:
-        # Evita que otro usuario vea esto
         return redirect('inicio')
 
     if request.method == 'POST':
@@ -113,32 +92,32 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
             request.session.pop('forzar_cambio_password', None)
-            request.session.pop('usuario_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
             messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
-            return redirect('inicio')
+            return redirect('forzar_cambio_password')  # Redirige para evitar repost
         else:
             messages.error(request, '❌ La contraseña no cumple con los requisitos. Intente nuevamente.')
     else:
+        # Borra mensajes si entra sin haber cambiado
+        from django.contrib import messages
+        storage = messages.get_messages(request)
+        storage.used = True
         form = PasswordChangeForm(user=request.user)
 
     return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
 
 
-# ✅ Logout
 def logout_view(request):
     logout(request)
     return redirect('login')
 
 
-# ✅ Página de inicio (protegida)
 @login_required
 def vista_inicio(request):
     return render(request, 'base.html')
 
 
-# ✅ Crear usuario desde panel admin
 @login_required
 def crear_usuario(request):
     if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
@@ -180,13 +159,11 @@ def crear_usuario(request):
     return render(request, 'usuarios/crear_usuario.html')
 
 
-# ✅ Vista intermedia para asegurar que el perfil se cargue
 @login_required
 def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
-
 
 
 
