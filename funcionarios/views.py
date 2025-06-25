@@ -94,16 +94,16 @@ def forzar_cambio_password(request):
             request.session.pop('forzar_cambio_password', None)
             request.session.pop('inicio_temporal', None)
             request.session['ultima_password_cambio'] = timezone.now().isoformat()
-            messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
-            return redirect('forzar_cambio_password')  # Redirige para evitar repost
+            request.session['mensaje_password_actualizada'] = True
+            return redirect('forzar_cambio_password')  # Evitar reenvío del formulario
         else:
             messages.error(request, '❌ La contraseña no cumple con los requisitos. Intente nuevamente.')
     else:
-        # Borra mensajes si entra sin haber cambiado
-        from django.contrib import messages
-        storage = messages.get_messages(request)
-        storage.used = True
         form = PasswordChangeForm(user=request.user)
+
+    # ✅ Mostrar mensaje solo una vez
+    if request.session.pop('mensaje_password_actualizada', False):
+        messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
 
     return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
 
@@ -164,6 +164,7 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
 
 
 
