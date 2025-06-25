@@ -30,10 +30,12 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
+            primer_login = user.last_login is None
+
             login(request, user)
             rotate_token(request)
 
-            if user.last_login is None:  # 🔐 Primer login detectado
+            if primer_login and user.perfilusuario.rol != 'super_admin':
                 request.session['forzar_cambio_password'] = True
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
@@ -43,6 +45,36 @@ def login_view(request):
             return render(request, 'usuarios/login.html', {'error': 'Credenciales inválidas'})
 
     return render(request, 'usuarios/login.html')
+
+
+# ✅ Login para administrador
+def admin_login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and hasattr(user, 'perfilusuario'):
+            primer_login = user.last_login is None
+
+            login(request, user)
+            request.user = user
+            request.user.refresh_from_db()
+
+            if primer_login and user.perfilusuario.rol != 'super_admin':
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                return redirect('forzar_cambio_password')
+
+            return HttpResponseRedirect(reverse('inicio'))
+
+        else:
+            return render(request, 'usuarios/admin_login.html', {
+                'error': 'Credenciales inválidas o acceso no autorizado.'
+            })
+
+    return render(request, 'usuarios/admin_login.html')
 
 
 # ✅ Vista para cambio obligatorio de contraseña
@@ -65,38 +97,6 @@ def forzar_cambio_password(request):
         form = PasswordChangeForm(user=request.user)
 
     return render(request, 'usuarios/cambiar_password_obligado.html', {'form': form})
-
-
-# ✅ Login para administrador
-def admin_login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None and hasattr(user, 'perfilusuario'):
-            login(request, user)
-            request.user = user
-            request.user.refresh_from_db()
-
-            rol = user.perfilusuario.rol
-
-            # ✅ Detectar primer login para todos, excepto super_admin
-            if user.last_login is None and rol != 'super_admin':
-                request.session['forzar_cambio_password'] = True
-                request.session['inicio_temporal'] = timezone.now().isoformat()
-                return redirect('forzar_cambio_password')
-
-            return HttpResponseRedirect(reverse('inicio'))
-
-        else:
-            return render(request, 'usuarios/admin_login.html', {
-                'error': 'Credenciales inválidas o acceso no autorizado.'
-            })
-
-    return render(request, 'usuarios/admin_login.html')
-
 
 
 # ✅ Logout
