@@ -30,12 +30,17 @@ def login_view(request):
         user = authenticate(request, username=rut, password=password)
 
         if user is not None:
+            # ⚠️ Verificamos si se marcó que debe cambiar la contraseña
+            if user.username in request.session.get('usuarios_con_cambio_pendiente', []):
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                # 🧼 Limpiamos la lista
+                request.session['usuarios_con_cambio_pendiente'].remove(user.username)
+
             login(request, user)
             rotate_token(request)
 
-            if user.last_login is None:  # 🔐 Primer login detectado
-                request.session['forzar_cambio_password'] = True
-                request.session['inicio_temporal'] = timezone.now().isoformat()
+            if request.session.get('forzar_cambio_password'):
                 return redirect('forzar_cambio_password')
 
             return redirect('inicio')
@@ -76,16 +81,17 @@ def admin_login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and hasattr(user, 'perfilusuario'):
+            # ⚠️ Verificamos si se marcó que debe cambiar la contraseña
+            if user.username in request.session.get('usuarios_con_cambio_pendiente', []):
+                request.session['forzar_cambio_password'] = True
+                request.session['inicio_temporal'] = timezone.now().isoformat()
+                request.session['usuarios_con_cambio_pendiente'].remove(user.username)
+
             login(request, user)
             request.user = user
             request.user.refresh_from_db()
 
-            rol = user.perfilusuario.rol
-
-            # ✅ Detectar primer login para todos, excepto super_admin
-            if user.last_login is None and rol != 'super_admin':
-                request.session['forzar_cambio_password'] = True
-                request.session['inicio_temporal'] = timezone.now().isoformat()
+            if request.session.get('forzar_cambio_password') and user.perfilusuario.rol != 'super_admin':
                 return redirect('forzar_cambio_password')
 
             return HttpResponseRedirect(reverse('inicio'))
@@ -96,7 +102,6 @@ def admin_login_view(request):
             })
 
     return render(request, 'usuarios/admin_login.html')
-
 
 
 # ✅ Logout
@@ -146,6 +151,12 @@ def crear_usuario(request):
             rut=rut,
             rol=rol
         )
+
+        # ✅ Marcamos que el nuevo usuario debe cambiar su contraseña
+        if 'usuarios_con_cambio_pendiente' not in request.session:
+            request.session['usuarios_con_cambio_pendiente'] = []
+
+        request.session['usuarios_con_cambio_pendiente'].append(rut)
 
         request.user.refresh_from_db()
         return redirect('crear_usuario')
