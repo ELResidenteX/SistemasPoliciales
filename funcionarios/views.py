@@ -33,6 +33,7 @@ def login_view(request):
             rotate_token(request)
             perfil = user.perfilusuario
 
+            # 🔐 Si nunca cambió su contraseña
             if perfil.cambio_password_obligado and perfil.rol != 'super_admin':
                 request.session['inicio_temporal'] = timezone.now().isoformat()
                 return redirect('forzar_cambio_password')
@@ -83,12 +84,12 @@ def forzar_cambio_password(request):
             form.save()
             update_session_auth_hash(request, form.user)
 
-            # ✅ Se actualiza el perfil
+            # ✅ Marcamos que ya no está obligado (hasta el próximo ciclo)
             perfil.cambio_password_obligado = False
+            perfil.fecha_ultimo_cambio = timezone.now()  # 🕒 Registramos el cambio real
             perfil.save()
 
             request.session.pop('inicio_temporal', None)
-            request.session['ultima_password_cambio'] = timezone.now().isoformat()
 
             messages.success(request, '✅ Contraseña actualizada correctamente. Recuerde que deberá cambiarla nuevamente en 30 días.')
             return redirect('inicio')
@@ -156,7 +157,3 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
-
-
-
-
