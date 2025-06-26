@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 #modelo usuarios
 
@@ -20,6 +21,7 @@ class PerfilUsuario(models.Model):
 
     # ✅ Campo nuevo para controlar si debe cambiar su contraseña
     cambio_password_obligado = models.BooleanField(default=True)
+    fecha_ultimo_cambio = models.DateTimeField(default=timezone.now)  # 🕒 Se inicializa con la fecha de creación
 
     def __str__(self):
         return f"{self.user.username} - {self.get_rol_display()}"
