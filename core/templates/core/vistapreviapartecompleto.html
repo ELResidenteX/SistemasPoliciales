@@ -38,7 +38,7 @@
     {% if evento.participantes.all %}
       <h4>IDENTIFICACIÓN DE PARTICIPANTES</h4>
       {% for p in evento.participantes.all %}
-        <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Edad:</strong> {{ p.edad }}</p>
+        <p><strong>Nombres:</strong> {{ p.nombres }} —  <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} - <strong>Edad:</strong> {{ p.edad }}</p>
         <p><strong>Apellidos:</strong> {{ p.apellidos }} — <strong>Sexo:</strong> {{ p.sexo }}</p>
         <p><strong>RUT:</strong> {{ p.rut }} — <strong>Nacionalidad:</strong> {{ p.nacionalidad }}</p>
         <p><strong>Teléfono:</strong> {{ p.telefono }}</p>

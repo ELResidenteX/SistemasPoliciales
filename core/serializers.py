@@ -63,6 +63,7 @@ class ParticipanteAppSerializer(serializers.ModelSerializer):
             'nombres',
             'apellidos',
             'rut',
+            'fecha_nacimiento', 
             'edad',
             'sexo',
             'nacionalidad',

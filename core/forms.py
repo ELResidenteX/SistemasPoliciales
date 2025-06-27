@@ -38,6 +38,7 @@ class ParticipanteForm(forms.ModelForm):
         model = Participante
         exclude = ['evento']  # Se asigna desde la vista
         widgets = {
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
             'observaciones': forms.Textarea(attrs={'rows': 3}),
         }
 
@@ -45,6 +46,7 @@ class ParticipanteForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['direccion'].required = False
         self.fields['observaciones'].required = False
+        self.fields['fecha_nacimiento'].required = False
 
 # ✅ NUEVO FORMULARIO DE ESPECIES
 class EspecieForm(forms.ModelForm):

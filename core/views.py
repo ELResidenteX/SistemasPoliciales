@@ -87,6 +87,8 @@ def agregar_participante(request, evento_id):
         if form.is_valid():
             nuevo_participante = form.save(commit=False)
             nuevo_participante.evento = evento
+            nuevo_participante.fecha_nacimiento = request.POST.get('fecha_nacimiento')
+
 
             # 🔽 Verificamos si los campos vinieron vacíos en el POST y usamos los antiguos
             if not request.POST.get('region') and participante:
@@ -300,6 +302,8 @@ def guardar_edicion_evento(request, evento_id):
                 participante.apellidos = request.POST.get(f"participante_apellidos_{pid}", "")
                 participante.rut = request.POST.get(f"participante_rut_{pid}", "")
                 participante.telefono = request.POST.get(f"participante_telefono_{pid}", "")
+                participante.fecha_nacimiento = request.POST.get(f"participante_fecha_nacimiento_{pid}", "")
+
 
                 # También conservar región/provincia/comuna si no se modifican
                 p_region = request.POST.get(f"participante_region_{pid}", "")

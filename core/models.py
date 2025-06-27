@@ -117,6 +117,7 @@ class Participante(models.Model):
     nombres = models.CharField(max_length=150)
     apellidos = models.CharField(max_length=150)
     rut = models.CharField(max_length=12)
+    fecha_nacimiento = models.DateField(null=True, blank=True)
     edad = models.PositiveIntegerField()
     sexo = models.CharField(max_length=10, choices=[
         ('masculino', 'Masculino'),
