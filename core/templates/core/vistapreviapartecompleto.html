@@ -1,12 +1,42 @@
 {% load humanize %}
 
+<style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    #modal-parte-imprimible, #modal-parte-imprimible * {
+      visibility: visible;
+    }
+
+    #modal-parte-imprimible {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+  }
+</style>
+
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <button type="button" class="btn-close no-print" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
 <div class="modal-body">
-  <div style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+  <div class="text-end mb-2 no-print">
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨️ Imprimir Parte</button>
+  </div>
+
+  <div id="modal-parte-imprimible" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -76,6 +106,26 @@
     <h4>NARRACIÓN DE LOS HECHOS</h4>
     <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
 
+    <h4>Firmas</h4>
+
+{% if evento.firma_funcionario %}
+  <div>
+    <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
+    <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+  </div>
+{% else %}
+  <div><em>No hay firma del funcionario</em></div>
+{% endif %}
+
+{% if evento.firma_denunciante %}
+  <div>
+    <strong>Firma Denunciante o Víctima:</strong><br>
+    <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+  </div>
+{% else %}
+  <div><em>No hay firma de denunciante</em></div>
+{% endif %}
+
     <br><br>
     <div style="display: flex; justify-content: space-between;">
       <div>
@@ -90,10 +140,7 @@
   </div>
 </div>
 
-<div class="mt-3 text-end no-print">
-          <button class="btn btn-outline-secondary" onclick="window.print()">🖨️ Imprimir</button>
-        </div>
-
-<div class="modal-footer">
+<div class="modal-footer no-print">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 </div>
+
