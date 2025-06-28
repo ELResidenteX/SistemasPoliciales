@@ -1,41 +1,12 @@
 {% load humanize %}
 
-<style>
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-
-    #modal-parte-imprimible, #modal-parte-imprimible * {
-      visibility: visible;
-    }
-
-    #modal-parte-imprimible {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 0;
-      margin: 0;
-    }
-
-    .no-print {
-      display: none !important;
-    }
-  }
-</style>
-
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
-  <button type="button" class="btn-close no-print" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
 <div class="modal-body">
-  <div class="text-end mb-2 no-print">
-    <button class="btn btn-outline-secondary btn-sm" onclick="imprimirSoloModal()">🖨️ Imprimir Parte</button>
-  </div>
-
-  <div id="modal-parte-imprimible" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+  <div id="contenido-imprimible" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -67,7 +38,7 @@
     {% if evento.participantes.all %}
       <h4>IDENTIFICACIÓN DE PARTICIPANTES</h4>
       {% for p in evento.participantes.all %}
-        <p><strong>Nombres:</strong> {{ p.nombres }} —  <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} - <strong>Edad:</strong> {{ p.edad }}</p>
+        <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} - <strong>Edad:</strong> {{ p.edad }}</p>
         <p><strong>Apellidos:</strong> {{ p.apellidos }} — <strong>Sexo:</strong> {{ p.sexo }}</p>
         <p><strong>RUT:</strong> {{ p.rut }} — <strong>Nacionalidad:</strong> {{ p.nacionalidad }}</p>
         <p><strong>Teléfono:</strong> {{ p.telefono }}</p>
@@ -105,25 +76,6 @@
     <h4>NARRACIÓN DE LOS HECHOS</h4>
     <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
 
-    <h4>Firmas</h4>
-    {% if evento.firma_funcionario %}
-      <div>
-        <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
-        <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-      </div>
-    {% else %}
-      <div><em>No hay firma del funcionario</em></div>
-    {% endif %}
-
-    {% if evento.firma_denunciante %}
-      <div>
-        <strong>Firma Denunciante o Víctima:</strong><br>
-        <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-      </div>
-    {% else %}
-      <div><em>No hay firma de denunciante</em></div>
-    {% endif %}
-
     <br><br>
     <div style="display: flex; justify-content: space-between;">
       <div>
@@ -138,14 +90,16 @@
   </div>
 </div>
 
-<div class="modal-footer no-print">
+<div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+  <button type="button" class="btn btn-primary" onclick="printModalContent(this)">🖨️ Imprimir</button>
 </div>
 
 <script>
-  function imprimirSoloModal() {
-    const contenido = document.getElementById('modal-parte-imprimible').innerHTML;
+  function printModalContent(button) {
+    const contenido = button.closest('.modal-content').querySelector('.modal-body').innerHTML;
     const ventana = window.open('', '', 'width=800,height=600');
+
     ventana.document.write(`
       <html>
         <head>
@@ -160,11 +114,13 @@
         <body>${contenido}</body>
       </html>
     `);
+
     ventana.document.close();
     ventana.focus();
     ventana.print();
     ventana.close();
   }
 </script>
+
 
 
