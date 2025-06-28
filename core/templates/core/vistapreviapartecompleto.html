@@ -1,133 +1,147 @@
 {% load humanize %}
 
+<style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    .modal-body, .modal-body * {
+      visibility: visible;
+    }
+
+    .modal-body {
+      position: static !important;
+      overflow: visible !important;
+      max-height: none !important;
+      padding: 0;
+      margin: 0;
+    }
+
+    .modal-header,
+    .modal-footer,
+    .btn,
+    .modal-backdrop {
+      display: none !important;
+    }
+
+    html, body {
+      background: white !important;
+    }
+  }
+</style>
+
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
-<div class="modal-body">
-  <div class="text-end mb-2">
-    <button class="btn btn-outline-secondary btn-sm" onclick="imprimirModalParte()">🖨️ Imprimir Parte</button>
-  </div>
+<div class="modal-body" id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+  <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
-  <div id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
-    <!-- Tu contenido completo -->
-    <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
+  <h4>ANTECEDENTES DE LA DENUNCIA</h4>
+  <p><strong>Nro Parte:</strong> {{ evento.parte_policial.numero_parte }}</p>
+  <p><strong>Lugar procedimiento:</strong> {{ evento.lugar_procedimiento }}</p>
+  <p><strong>Fecha Denuncia:</strong> {{ evento.fecha_denuncia }}</p>
+  <p><strong>Hora Denuncia:</strong> {{ evento.hora_denuncia }}</p>
 
-    <h4>ANTECEDENTES DE LA DENUNCIA</h4>
-    <p><strong>Nro Parte:</strong> {{ evento.parte_policial.numero_parte }}</p>
-    <p><strong>Lugar procedimiento:</strong> {{ evento.lugar_procedimiento }}</p>
-    <p><strong>Fecha Denuncia:</strong> {{ evento.fecha_denuncia }}</p>
-    <p><strong>Hora Denuncia:</strong> {{ evento.hora_denuncia }}</p>
+  <h4>FUNCIONARIO RESPONSABLE</h4>
+  <p><strong>Funcionario Código:</strong> {{ evento.funcionaria_codigo }}</p>
+  <p><strong>Rut:</strong> {{ evento.funcionaria_rut }}</p>
 
-    <h4>FUNCIONARIO RESPONSABLE</h4>
-    <p><strong>Funcionario Código:</strong> {{ evento.funcionaria_codigo }}</p>
-    <p><strong>Rut:</strong> {{ evento.funcionaria_rut }}</p>
+  <h4>ANTECEDENTES DEL DELITO</h4>
+  <p><strong>Delito tipificado:</strong> {{ evento.delito_tipificado }}</p>
+  <p><strong>Fecha delito:</strong> {{ evento.fecha_ocurrencia }}</p>
+  <p><strong>Hora delito:</strong> {{ evento.hora_ocurrencia }}</p>
+  <p><strong>Tipo lugar:</strong> {{ evento.tipo_lugar }}</p>
 
-    <h4>ANTECEDENTES DEL DELITO</h4>
-    <p><strong>Delito tipificado:</strong> {{ evento.delito_tipificado }}</p>
-    <p><strong>Fecha delito:</strong> {{ evento.fecha_ocurrencia }}</p>
-    <p><strong>Hora delito:</strong> {{ evento.hora_ocurrencia }}</p>
-    <p><strong>Tipo lugar:</strong> {{ evento.tipo_lugar }}</p>
+  <h4>UBICACIÓN</h4>
+  <p><strong>Región:</strong> {{ evento.region }}</p>
+  <p><strong>Provincia:</strong> {{ evento.provincia }}</p>
+  <p><strong>Comuna:</strong> {{ evento.comuna }}</p>
+  <p><strong>Dirección:</strong> {{ evento.direccion }}</p>
+  <p><strong>Número:</strong> {{ evento.numero }}</p>
+  <p><strong>Block:</strong> {{ evento.block }}</p>
+  <p><strong>Villa:</strong> {{ evento.villa }}</p>
+  <p><strong>Depto:</strong> {{ evento.depto }}</p>
 
-    <h4>UBICACIÓN</h4>
-    <p><strong>Región:</strong> {{ evento.region }}</p>
-    <p><strong>Provincia:</strong> {{ evento.provincia }}</p>
-    <p><strong>Comuna:</strong> {{ evento.comuna }}</p>
-    <p><strong>Dirección:</strong> {{ evento.direccion }}</p>
-    <p><strong>Número:</strong> {{ evento.numero }}</p>
-    <p><strong>Block:</strong> {{ evento.block }}</p>
-    <p><strong>Villa:</strong> {{ evento.villa }}</p>
-    <p><strong>Depto:</strong> {{ evento.depto }}</p>
+  {% if evento.participantes.all %}
+    <h4>IDENTIFICACIÓN DE PARTICIPANTES</h4>
+    {% for p in evento.participantes.all %}
+      <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} - <strong>Edad:</strong> {{ p.edad }}</p>
+      <p><strong>Apellidos:</strong> {{ p.apellidos }} — <strong>Sexo:</strong> {{ p.sexo }}</p>
+      <p><strong>RUT:</strong> {{ p.rut }} — <strong>Nacionalidad:</strong> {{ p.nacionalidad }}</p>
+      <p><strong>Teléfono:</strong> {{ p.telefono }}</p>
+      <p><strong>Calidad:</strong> {{ p.get_calidad_display }}</p>
+      <p><strong>Dirección Completa:</strong> {{ p.region }}, {{ p.provincia }}, {{ p.comuna }},
+        {{ p.direccion }} Nº {{ p.numero_calle }}, Block {{ p.block }}, Villa {{ p.villa }}, Depto {{ p.depto }}</p>
+      <hr>
+    {% endfor %}
+  {% endif %}
 
-    {% if evento.participantes.all %}
-      <h4>IDENTIFICACIÓN DE PARTICIPANTES</h4>
-      {% for p in evento.participantes.all %}
-        <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} — <strong>Edad:</strong> {{ p.edad }}</p>
-        <p><strong>Apellidos:</strong> {{ p.apellidos }} — <strong>Sexo:</strong> {{ p.sexo }}</p>
-        <p><strong>RUT:</strong> {{ p.rut }} — <strong>Nacionalidad:</strong> {{ p.nacionalidad }}</p>
-        <p><strong>Teléfono:</strong> {{ p.telefono }}</p>
-        <p><strong>Calidad:</strong> {{ p.get_calidad_display }}</p>
-        <p><strong>Dirección Completa:</strong> {{ p.region }}, {{ p.provincia }}, {{ p.comuna }},
-          {{ p.direccion }} Nº {{ p.numero_calle }}, Block {{ p.block }}, Villa {{ p.villa }}, Depto {{ p.depto }}</p>
-        <hr>
-      {% endfor %}
-    {% endif %}
-
-    {% if evento.especies.all %}
-      <h4>ESPECIES INVOLUCRADAS</h4>
-      <table style="width: 100%; border-collapse: collapse;" border="1">
-        <thead>
+  {% if evento.especies.all %}
+    <h4>ESPECIES INVOLUCRADAS</h4>
+    <table style="width: 100%; border-collapse: collapse;" border="1">
+      <thead>
+        <tr>
+          <th style="padding: 4px;">Tipo</th>
+          <th style="padding: 4px;">Descripción</th>
+          <th style="padding: 4px;">Cantidad</th>
+          <th style="padding: 4px;">Avalúo estimado</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in evento.especies.all %}
           <tr>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>Avalúo estimado</th>
+            <td style="padding: 4px;">{{ e.tipo }}</td>
+            <td style="padding: 4px;">{{ e.descripcion }}</td>
+            <td style="padding: 4px;">{{ e.cantidad }}</td>
+            <td style="padding: 4px;">${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
           </tr>
-        </thead>
-        <tbody>
-          {% for e in evento.especies.all %}
-            <tr>
-              <td>{{ e.tipo }}</td>
-              <td>{{ e.descripcion }}</td>
-              <td>{{ e.cantidad }}</td>
-              <td>${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
 
-    <h4>NARRACIÓN DE LOS HECHOS</h4>
-    <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
+  <h4>NARRACIÓN DE LOS HECHOS</h4>
+  <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
 
-    <h4>Firmas</h4>
-    {% if evento.firma_funcionario %}
-      <div>
-        <strong>Firma Funcionario:</strong><br>
-        <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-      </div>
-    {% else %}
-      <div><em>No hay firma del funcionario</em></div>
-    {% endif %}
+  <h4>Firmas</h4>
+  {% if evento.firma_funcionario %}
+    <div>
+      <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
+      <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    </div>
+  {% else %}
+    <div><em>No hay firma del funcionario</em></div>
+  {% endif %}
 
-    {% if evento.firma_denunciante %}
-      <div>
-        <strong>Firma Denunciante o Víctima:</strong><br>
-        <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-      </div>
-    {% else %}
-      <div><em>No hay firma de denunciante</em></div>
-    {% endif %}
+  {% if evento.firma_denunciante %}
+    <div>
+      <strong>Firma Denunciante o Víctima:</strong><br>
+      <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+    </div>
+  {% else %}
+    <div><em>No hay firma de denunciante</em></div>
+  {% endif %}
+
+  <br><br>
+  <div style="display: flex; justify-content: space-between;">
+    <div>
+      <p>______________________________</p>
+      <p>Funcionario Redactor</p>
+    </div>
+    <div>
+      <p>______________________________</p>
+      <p>Oficial de Guardia</p>
+    </div>
   </div>
 </div>
 
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+  <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Imprimir Parte</button>
 </div>
-
-<script>
-  function imprimirModalParte() {
-    const contenido = document.getElementById('contenido-para-imprimir').innerHTML;
-    const ventana = window.open('', '_blank');
-    ventana.document.write(`
-      <html>
-        <head>
-          <title>Imprimir Parte Policial</title>
-          <style>
-            body { font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid black; padding: 4px; }
-          </style>
-        </head>
-        <body>${contenido}</body>
-      </html>
-    `);
-    ventana.document.close();
-    ventana.focus();
-    ventana.print();
-  }
-</script>
 
 
 
