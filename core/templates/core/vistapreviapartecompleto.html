@@ -10,19 +10,18 @@
       visibility: visible;
     }
 
-    .modal {
-      position: static !important;
-    }
-
+    .modal,
     .modal-dialog,
     .modal-content,
     .modal-body {
+      position: static !important;
       overflow: visible !important;
       height: auto !important;
       max-height: none !important;
       box-shadow: none !important;
       padding: 0;
       margin: 0;
+      background: white !important;
     }
 
     .modal-header,
@@ -34,10 +33,25 @@
 
     html, body {
       background: white !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     h2, h4 {
       page-break-after: avoid;
+    }
+
+    table {
+      page-break-inside: auto;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
     }
 
     p, table, img {
@@ -51,7 +65,7 @@
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
-<div class="modal-body" id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+<div class="modal-body" id="contenido-para-imprimir" style="font-family: 'Courier New', monospace;">
   <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
   <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -96,22 +110,22 @@
 
   {% if evento.especies.all %}
     <h4>ESPECIES INVOLUCRADAS</h4>
-    <table style="width: 100%; border-collapse: collapse;" border="1">
+    <table border="1">
       <thead>
         <tr>
-          <th style="padding: 4px;">Tipo</th>
-          <th style="padding: 4px;">Descripción</th>
-          <th style="padding: 4px;">Cantidad</th>
-          <th style="padding: 4px;">Avalúo estimado</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Cantidad</th>
+          <th>Avalúo estimado</th>
         </tr>
       </thead>
       <tbody>
         {% for e in evento.especies.all %}
           <tr>
-            <td style="padding: 4px;">{{ e.tipo }}</td>
-            <td style="padding: 4px;">{{ e.descripcion }}</td>
-            <td style="padding: 4px;">{{ e.cantidad }}</td>
-            <td style="padding: 4px;">${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
+            <td>{{ e.tipo }}</td>
+            <td>{{ e.descripcion }}</td>
+            <td>{{ e.cantidad }}</td>
+            <td>${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
           </tr>
         {% endfor %}
       </tbody>
