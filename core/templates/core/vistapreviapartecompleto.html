@@ -2,37 +2,24 @@
 
 <style>
   @media print {
-    body * {
-      visibility: hidden;
-    }
-
-    #contenido-para-imprimir, #contenido-para-imprimir * {
-      visibility: visible;
-    }
-
-    #contenido-para-imprimir {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      background: white;
-    }
-
+    /* Ocultar solo lo que no queremos en la impresión */
     .modal-header,
     .modal-footer,
+    .no-print,
     .btn,
-    .no-print {
+    .btn-close {
       display: none !important;
     }
 
     html, body {
-      background: white !important;
+      background: white;
+      margin: 0;
+      padding: 0;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
 
+    /* Evitar cortes feos */
     h2, h4 {
       page-break-after: avoid;
     }
@@ -165,3 +152,10 @@
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
   <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Imprimir Parte</button>
 </div>
+
+
+
+
+
+
+
