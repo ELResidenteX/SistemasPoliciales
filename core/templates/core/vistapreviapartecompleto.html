@@ -1,46 +1,17 @@
 {% load humanize %}
 
-<style>
-  @media print {
-    body * {
-      visibility: hidden !important;
-    }
-
-    #contenido-para-imprimir, #contenido-para-imprimir * {
-      visibility: visible !important;
-    }
-
-    #contenido-para-imprimir {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: white;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .modal-header,
-    .modal-footer,
-    .no-print {
-      display: none !important;
-    }
-  }
-</style>
-
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
 <div class="modal-body">
-  <div class="text-end mb-2 no-print">
-    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨️ Imprimir Parte</button>
+  <div class="text-end mb-2">
+    <button class="btn btn-outline-secondary btn-sm" onclick="imprimirModalParte()">🖨️ Imprimir Parte</button>
   </div>
 
-  <div id="contenido-para-imprimir">
+  <div id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+    <!-- Tu contenido completo -->
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -88,19 +59,19 @@
       <table style="width: 100%; border-collapse: collapse;" border="1">
         <thead>
           <tr>
-            <th style="padding: 4px;">Tipo</th>
-            <th style="padding: 4px;">Descripción</th>
-            <th style="padding: 4px;">Cantidad</th>
-            <th style="padding: 4px;">Avalúo estimado</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Avalúo estimado</th>
           </tr>
         </thead>
         <tbody>
           {% for e in evento.especies.all %}
             <tr>
-              <td style="padding: 4px;">{{ e.tipo }}</td>
-              <td style="padding: 4px;">{{ e.descripcion }}</td>
-              <td style="padding: 4px;">{{ e.cantidad }}</td>
-              <td style="padding: 4px;">${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
+              <td>{{ e.tipo }}</td>
+              <td>{{ e.descripcion }}</td>
+              <td>{{ e.cantidad }}</td>
+              <td>${{ e.avaluo_estimado|floatformat:0|intcomma }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -113,7 +84,7 @@
     <h4>Firmas</h4>
     {% if evento.firma_funcionario %}
       <div>
-        <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
+        <strong>Firma Funcionario:</strong><br>
         <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
       </div>
     {% else %}
@@ -128,25 +99,35 @@
     {% else %}
       <div><em>No hay firma de denunciante</em></div>
     {% endif %}
-
-    <br><br>
-    <div style="display: flex; justify-content: space-between;">
-      <div>
-        <p>______________________________</p>
-        <p>Funcionario Redactor</p>
-      </div>
-      <div>
-        <p>______________________________</p>
-        <p>Oficial de Guardia</p>
-      </div>
-    </div>
   </div>
 </div>
 
-<div class="modal-footer no-print">
+<div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-  <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Imprimir Parte</button>
 </div>
+
+<script>
+  function imprimirModalParte() {
+    const contenido = document.getElementById('contenido-para-imprimir').innerHTML;
+    const ventana = window.open('', '_blank');
+    ventana.document.write(`
+      <html>
+        <head>
+          <title>Imprimir Parte Policial</title>
+          <style>
+            body { font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid black; padding: 4px; }
+          </style>
+        </head>
+        <body>${contenido}</body>
+      </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+  }
+</script>
 
 
 
