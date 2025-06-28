@@ -1,5 +1,6 @@
 {% load humanize %}
-<div style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+
+<div id="vista-previa-parte" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
   <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
   <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -31,7 +32,7 @@
   {% if evento.participantes.all %}
     <h4>IDENTIFICACIÓN DE PARTICIPANTES</h4>
     {% for p in evento.participantes.all %}
-      <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Edad:</strong> {{ p.edad }}</p>
+      <p><strong>Nombres:</strong> {{ p.nombres }} — <strong>Fecha de Nacimiento:</strong> {{ p.fecha_nacimiento|date:"d/m/Y" }} - <strong>Edad:</strong> {{ p.edad }}</p>
       <p><strong>Apellidos:</strong> {{ p.apellidos }} — <strong>Sexo:</strong> {{ p.sexo }}</p>
       <p><strong>RUT:</strong> {{ p.rut }} — <strong>Nacionalidad:</strong> {{ p.nacionalidad }}</p>
       <p><strong>Teléfono:</strong> {{ p.telefono }}</p>
@@ -81,3 +82,24 @@
     </div>
   </div>
 </div>
+
+<!-- Botón de Imprimir -->
+<div class="text-center mt-4">
+  <button class="btn btn-outline-success" onclick="imprimirParte()">🖨️ Imprimir</button>
+</div>
+
+<script>
+  function imprimirParte() {
+    const contenido = document.getElementById('vista-previa-parte').innerHTML;
+    const ventana = window.open('', '', 'height=800,width=800');
+    ventana.document.write('<html><head><title>Imprimir Parte Policial</title>');
+    ventana.document.write('</head><body>');
+    ventana.document.write(contenido);
+    ventana.document.write('</body></html>');
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+    ventana.close();
+  }
+</script>
+
