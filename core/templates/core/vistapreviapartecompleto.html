@@ -2,15 +2,11 @@
 
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
-  <button type="button" class="btn-close no-print" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
 <div class="modal-body">
-  <div class="text-end mb-2 no-print">
-    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨️ Imprimir Parte</button>
-  </div>
-
-  <div id="contenido-imprimible" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+  <div id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -114,10 +110,34 @@
   </div>
 </div>
 
-<div class="modal-footer no-print">
+<div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-  <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+  <button type="button" class="btn btn-outline-primary" onclick="imprimirContenido()">🖨️ Imprimir Parte</button>
 </div>
+
+<script>
+  function imprimirContenido() {
+    const contenido = document.getElementById('contenido-para-imprimir').innerHTML;
+    const ventana = window.open('', '', 'width=800,height=600');
+    ventana.document.write(`
+      <html>
+        <head>
+          <title>Imprimir Parte Policial</title>
+          <style>
+            body { font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            table, th, td { border: 1px solid black; }
+            th, td { padding: 4px; }
+          </style>
+        </head>
+        <body>${contenido}</body>
+      </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+  }
+</script>
 
 
 
