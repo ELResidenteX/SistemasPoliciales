@@ -32,11 +32,10 @@
 
 <div class="modal-body">
   <div class="text-end mb-2 no-print">
-    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨️ Imprimir Parte</button>
+    <button class="btn btn-outline-secondary btn-sm" onclick="imprimirSoloModal()">🖨️ Imprimir Parte</button>
   </div>
 
   <div id="modal-parte-imprimible" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
-
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -107,24 +106,23 @@
     <p style="white-space: pre-line;">{{ evento.narracion_hechos }}</p>
 
     <h4>Firmas</h4>
+    {% if evento.firma_funcionario %}
+      <div>
+        <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
+        <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+      </div>
+    {% else %}
+      <div><em>No hay firma del funcionario</em></div>
+    {% endif %}
 
-{% if evento.firma_funcionario %}
-  <div>
-    <strong>Firma Funcionario Encargado del Procedimiento:</strong><br>
-    <img src="{{ evento.firma_funcionario.url }}" alt="Firma Funcionario" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-  </div>
-{% else %}
-  <div><em>No hay firma del funcionario</em></div>
-{% endif %}
-
-{% if evento.firma_denunciante %}
-  <div>
-    <strong>Firma Denunciante o Víctima:</strong><br>
-    <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
-  </div>
-{% else %}
-  <div><em>No hay firma de denunciante</em></div>
-{% endif %}
+    {% if evento.firma_denunciante %}
+      <div>
+        <strong>Firma Denunciante o Víctima:</strong><br>
+        <img src="{{ evento.firma_denunciante.url }}" alt="Firma Denunciante" style="max-width:250px; max-height:120px; border:1px solid #ccc;"/>
+      </div>
+    {% else %}
+      <div><em>No hay firma de denunciante</em></div>
+    {% endif %}
 
     <br><br>
     <div style="display: flex; justify-content: space-between;">
@@ -143,4 +141,30 @@
 <div class="modal-footer no-print">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
 </div>
+
+<script>
+  function imprimirSoloModal() {
+    const contenido = document.getElementById('modal-parte-imprimible').innerHTML;
+    const ventana = window.open('', '', 'width=800,height=600');
+    ventana.document.write(`
+      <html>
+        <head>
+          <title>Imprimir Parte Policial</title>
+          <style>
+            body { font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            table, th, td { border: 1px solid black; }
+            th, td { padding: 4px; }
+          </style>
+        </head>
+        <body>${contenido}</body>
+      </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+    ventana.close();
+  }
+</script>
+
 
