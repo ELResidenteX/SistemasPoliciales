@@ -1,12 +1,46 @@
 {% load humanize %}
 
+<style>
+  @media print {
+    body * {
+      visibility: hidden !important;
+    }
+
+    #contenido-para-imprimir, #contenido-para-imprimir * {
+      visibility: visible !important;
+    }
+
+    #contenido-para-imprimir {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal-header,
+    .modal-footer,
+    .no-print {
+      display: none !important;
+    }
+  }
+</style>
+
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 </div>
 
 <div class="modal-body">
-  <div id="contenido-para-imprimir" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
+  <div class="text-end mb-2 no-print">
+    <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">🖨️ Imprimir Parte</button>
+  </div>
+
+  <div id="contenido-para-imprimir">
     <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
 
     <h4>ANTECEDENTES DE LA DENUNCIA</h4>
@@ -109,41 +143,11 @@
   </div>
 </div>
 
-<div class="modal-footer">
+<div class="modal-footer no-print">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-  <button type="button" class="btn btn-outline-primary" onclick="imprimirModal()">🖨️ Imprimir Parte</button>
+  <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Imprimir Parte</button>
 </div>
 
-<script>
-  function imprimirModal() {
-    const contenido = document.getElementById('contenido-para-imprimir').innerHTML;
-    const ventana = window.open('', '_blank', 'width=800,height=600');
-    ventana.document.open();
-    ventana.document.write(`
-      <html>
-        <head>
-          <title>Parte Policial</title>
-          <style>
-            body { font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            table, th, td { border: 1px solid black; }
-            th, td { padding: 4px; }
-          </style>
-        </head>
-        <body>
-          ${contenido}
-          <script>
-            window.onload = function() {
-              window.print();
-              window.close();
-            }
-          <\/script>
-        </body>
-      </html>
-    `);
-    ventana.document.close();
-  }
-</script>
 
 
 
