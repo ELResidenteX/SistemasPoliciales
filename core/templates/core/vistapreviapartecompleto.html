@@ -10,10 +10,17 @@
       visibility: visible;
     }
 
-    .modal-body {
+    .modal {
       position: static !important;
+    }
+
+    .modal-dialog,
+    .modal-content,
+    .modal-body {
       overflow: visible !important;
+      height: auto !important;
       max-height: none !important;
+      box-shadow: none !important;
       padding: 0;
       margin: 0;
     }
@@ -27,6 +34,14 @@
 
     html, body {
       background: white !important;
+    }
+
+    h2, h4 {
+      page-break-after: avoid;
+    }
+
+    p, table, img {
+      page-break-inside: avoid;
     }
   }
 </style>
@@ -142,6 +157,7 @@
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
   <button type="button" class="btn btn-outline-primary" onclick="window.print()">🖨️ Imprimir Parte</button>
 </div>
+
 
 
 
