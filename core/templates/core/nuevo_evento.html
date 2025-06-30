@@ -53,6 +53,7 @@
       <form method="post" action="{% if editando %}{% url 'guardar_edicion_evento' evento.id %}{% else %}{% url 'nuevo_evento' %}{% endif %}">
         {% csrf_token %}
         <div class="card shadow-sm p-4 bg-white rounded">
+
           {% if form.errors %}
             <div class="alert alert-danger">
               <strong>Corrige los errores en el formulario:</strong>
@@ -66,45 +67,92 @@
             </div>
           {% endif %}
 
-          {% for field in form %}
-            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
-              <div class="mb-3">
-                {{ field.label_tag }}{{ field }}
+          <!-- DATOS GENERALES -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              📌 Datos Generales del Evento
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">Información básica para identificar el procedimiento policial.</p>
+              <div class="mb-3">{{ form.lugar_procedimiento.label_tag }}{{ form.lugar_procedimiento }}</div>
+              <div class="row">
+                <div class="col-md-6 mb-3">{{ form.fecha_ocurrencia.label_tag }}{{ form.fecha_ocurrencia }}</div>
+                <div class="col-md-6 mb-3">{{ form.hora_ocurrencia.label_tag }}{{ form.hora_ocurrencia }}</div>
               </div>
-            {% endif %}
-          {% endfor %}
-
-          <div class="mb-3">
-            <label for="region" class="form-label">Región</label>
-            <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
-              <option value="">Seleccione región</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="provincia" class="form-label">Provincia</label>
-            <select id="provincia" name="provincia" class="form-select provincia-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.provincia|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.region %}disabled{% endif %}>
-              <option value="">Seleccione provincia</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label for="comuna" class="form-label">Comuna</label>
-            <select id="comuna" name="comuna" class="form-select comuna-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.comuna|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.provincia %}disabled{% endif %}>
-              <option value="">Seleccione comuna</option>
-            </select>
+              <div class="row">
+                <div class="col-md-6 mb-3">{{ form.fecha_denuncia.label_tag }}{{ form.fecha_denuncia }}</div>
+                <div class="col-md-6 mb-3">{{ form.hora_denuncia.label_tag }}{{ form.hora_denuncia }}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">{{ form.codigo_funcionario.label_tag }}{{ form.codigo_funcionario }}</div>
+                <div class="col-md-6 mb-3">{{ form.rut_funcionario.label_tag }}{{ form.rut_funcionario }}</div>
+              </div>
+            </div>
           </div>
 
-          <div class="mb-3">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
-          <div class="mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
-          <div class="mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
-          <div class="mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
-          <div class="mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
-          <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
-          <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
+          <!-- DELITOS ASOCIADOS -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              📌 Delitos Asociados
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">Registra la tipificación penal y otras observaciones del hecho.</p>
+              <div class="mb-3">{{ form.delito_tipificado.label_tag }}{{ form.delito_tipificado }}</div>
+              <div class="mb-3">{{ form.modo_operandi.label_tag }}{{ form.modo_operandi }}</div>
+              <div class="mb-3">{{ form.otros_delitos_observados.label_tag }}{{ form.otros_delitos_observados }}</div>
+              <div class="form-check mb-2">{{ form.es_violencia_intrafamiliar }} {{ form.es_violencia_intrafamiliar.label_tag }}</div>
+              <div class="form-check mb-2">{{ form.es_accidente_transito }} {{ form.es_accidente_transito.label_tag }}</div>
+              <div class="form-check mb-2">{{ form.victima_mujer_presente_guardia }} {{ form.victima_mujer_presente_guardia.label_tag }}</div>
+            </div>
+          </div>
 
-          <!-- CAMPO NARRACIÓN DE HECHOS CON CKEDITOR -->
-          <div class="mb-3">
-            <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
-            <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
+          <!-- DIRECCIÓN DE OCURRENCIA -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              📌 Dirección de Ocurrencia
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">Completa la ubicación detallada del hecho para georreferenciación.</p>
+              <div class="mb-3">{{ form.tipo_lugar.label_tag }}{{ form.tipo_lugar }}</div>
+              <div class="mb-3">
+                <label for="region" class="form-label">Región</label>
+                <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
+                  <option value="">Seleccione región</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="provincia" class="form-label">Provincia</label>
+                <select id="provincia" name="provincia" class="form-select provincia-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.provincia|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.region %}disabled{% endif %}>
+                  <option value="">Seleccione provincia</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="comuna" class="form-label">Comuna</label>
+                <select id="comuna" name="comuna" class="form-select comuna-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.comuna|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.provincia %}disabled{% endif %}>
+                  <option value="">Seleccione comuna</option>
+                </select>
+              </div>
+              <div class="mb-3">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
+              <div class="mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
+              <div class="mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
+              <div class="mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
+              <div class="mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
+              <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
+              <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
+            </div>
+          </div>
+
+          <!-- NARRACIÓN DE LOS HECHOS -->
+          <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+              📌 Narración de los Hechos
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
+                <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
+              </div>
+            </div>
           </div>
 
           <div class="d-flex justify-content-between">
@@ -119,7 +167,6 @@
     <div class="tab-pane fade" id="contenido-participante">
       {% include "core/participantes_tab.html" %}
     </div>
-
     <div class="tab-pane fade" id="contenido-especie">
       {% include "core/especies_tab.html" %}
     </div>
@@ -127,7 +174,7 @@
   </div>
 </div>
 
-<!-- ✅ Modal con toda la información del evento -->
+<!-- ✅ Modal -->
 {% if evento and evento.participantes.exists %}
 <div class="modal fade" id="modalEventoCompleto" tabindex="-1" aria-labelledby="modalEventoCompletoLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -144,20 +191,17 @@
 </div>
 {% endif %}
 
-<!-- Scripts separados -->
+<!-- Scripts -->
 <script src="{% static 'core/js/evento.js' %}"></script>
 <script src="{% static 'core/js/general.js' %}"></script>
 <script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
-
-<!-- CKEditor desde CDN SOLO PARA LA NARRACIÓN -->
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>
   CKEDITOR.replace('id_narracion_hechos', {
       height: 250,
   });
 </script>
-
 {% endblock %}
 
 
