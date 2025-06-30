@@ -77,7 +77,7 @@
             </p>
             <div class="row g-3">
               {% for field in form %}
-                {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
+                {% if field.name in "lugar_procedimiento hora_ocurrencia hora_denuncia fecha_ocurrencia fecha_denuncia codigo_funcionario rut_funcionario" %}
                   <div class="col-md-4">
                     {{ field.label_tag }}{{ field }}
                   </div>
@@ -87,16 +87,45 @@
           </div>
         </div>
 
-        <!-- ✅ Card: Dirección -->
+        <!-- ✅ Card: Delitos -->
+        <div class="card shadow-sm rounded mb-4">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">⚖️ Delitos Asociados</h5>
+          </div>
+          <div class="card-body">
+            <p class="text-muted mb-3 small">
+              Registra la tipificación penal y otras observaciones del hecho.
+            </p>
+            <div class="row g-3">
+              {% for field in form %}
+                {% if field.name in "delito_tipificado modo_operandi otros_delitos_observados victima_mujer_presente_guardia es_accidente_transito es_violencia_intrafamiliar" %}
+                  <div class="col-md-6">
+                    {{ field.label_tag }}{{ field }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Card: Dirección de Ocurrencia -->
         <div class="card shadow-sm rounded mb-4">
           <div class="card-header bg-success text-white">
             <h5 class="mb-0">📍 Dirección de Ocurrencia</h5>
           </div>
           <div class="card-body">
             <p class="text-muted mb-3 small">
-              Completa la ubicación detallada para georreferenciación del hecho.
+              Completa la ubicación detallada del hecho para georreferenciación.
             </p>
             <div class="row g-3">
+              {% for field in form %}
+                {% if field.name == "tipo_lugar" %}
+                  <div class="col-md-4">
+                    {{ field.label_tag }}{{ field }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+
               <div class="col-md-4">
                 <label for="region" class="form-label">Región</label>
                 <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
@@ -115,6 +144,7 @@
                   <option value="">Seleccione comuna</option>
                 </select>
               </div>
+
               <div class="col-md-4">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
               <div class="col-md-2">{{ form.numero.label_tag }}{{ form.numero }}</div>
               <div class="col-md-2">{{ form.villa.label_tag }}{{ form.villa }}</div>
@@ -175,13 +205,13 @@
 </div>
 {% endif %}
 
-<!-- Scripts separados -->
+<!-- Scripts -->
 <script src="{% static 'core/js/evento.js' %}"></script>
 <script src="{% static 'core/js/general.js' %}"></script>
 <script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
 
-<!-- CKEditor desde CDN SOLO PARA LA NARRACIÓN -->
+<!-- CKEditor -->
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>
   CKEDITOR.replace('id_narracion_hechos', {
@@ -190,4 +220,5 @@
 </script>
 
 {% endblock %}
+
 
