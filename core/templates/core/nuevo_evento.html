@@ -86,7 +86,7 @@
             </div>
           </div>
 
-          <!-- ✅ FUNCIONARIO RESPONSABLE -->
+                              <!-- ✅ FUNCIONARIO RESPONSABLE -->
           <div class="card mb-4">
             <div class="card-header bg-secondary text-white">
               👮 Datos del Funcionario Responsable
@@ -94,11 +94,19 @@
             <div class="card-body">
               <p class="text-muted mb-3">Identificación del funcionario que recepciona o registra el evento policial.</p>
               <div class="row">
-                <div class="col-md-6 mb-3">{{ form.codigo_funcionario.label_tag }}{{ form.codigo_funcionario }}</div>
-                <div class="col-md-6 mb-3">{{ form.rut_funcionario.label_tag }}{{ form.rut_funcionario }}</div>
+                <div class="col-md-6 mb-3">
+                  {{ form.codigo_funcionario.label_tag }}
+                  {{ form.codigo_funcionario }}
+                </div>
+                <div class="col-md-6 mb-3">
+                  {{ form.rut_funcionario.label_tag }}
+                  {{ form.rut_funcionario }}
+                </div>
               </div>
             </div>
           </div>
+
+
 
 
           <!-- DELITOS ASOCIADOS -->
