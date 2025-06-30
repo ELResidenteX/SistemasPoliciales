@@ -66,68 +66,45 @@
             </div>
           {% endif %}
 
-          <!-- ============ DATOS GENERALES ============ -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              📌 Datos Generales del Evento
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Información básica para identificar el procedimiento policial.</p>
-              {% for field in form %}
-                {% if field.name in "lugar_procedimiento fecha_ocurrencia hora_ocurrencia fecha_denuncia hora_denuncia codigo_funcionario rut_funcionario" %}
-                  <div class="mb-3">
-                    {{ field.label_tag }}{{ field }}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- ============ DELITOS ASOCIADOS ============ -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              📌 Delitos Asociados
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Registra la tipificación penal y otras observaciones del hecho.</p>
-              {% for field in form %}
-                {% if field.name in "delito_tipificado modo_operandi otros_delitos_observados es_violencia_intrafamiliar es_accidente_transito victima_mujer_presente_guardia" %}
-                  <div class="mb-3">
-                    {{ field.label_tag }}{{ field }}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- ============ DIRECCIÓN DE OCURRENCIA ============ -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              📌 Dirección de Ocurrencia
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Completa la ubicación detallada del hecho para georreferenciación.</p>
-              {% for field in form %}
-                {% if field.name in "tipo_lugar region provincia comuna direccion numero block villa depto km interseccion" %}
-                  <div class="mb-3">
-                    {{ field.label_tag }}{{ field }}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- ============ NARRACIÓN DE LOS HECHOS ============ -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              📌 Narración de los Hechos
-            </div>
-            <div class="card-body">
+          {% for field in form %}
+            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
               <div class="mb-3">
-                <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
-                <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
+                {{ field.label_tag }}{{ field }}
               </div>
-            </div>
+            {% endif %}
+          {% endfor %}
+
+          <div class="mb-3">
+            <label for="region" class="form-label">Región</label>
+            <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
+              <option value="">Seleccione región</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="provincia" class="form-label">Provincia</label>
+            <select id="provincia" name="provincia" class="form-select provincia-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.provincia|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.region %}disabled{% endif %}>
+              <option value="">Seleccione provincia</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="comuna" class="form-label">Comuna</label>
+            <select id="comuna" name="comuna" class="form-select comuna-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.comuna|default_if_none:'' }}" {% if not editando %}required{% endif %} {% if not evento.provincia %}disabled{% endif %}>
+              <option value="">Seleccione comuna</option>
+            </select>
+          </div>
+
+          <div class="mb-3">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
+          <div class="mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
+          <div class="mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
+          <div class="mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
+          <div class="mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
+          <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
+          <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
+
+          <!-- CAMPO NARRACIÓN DE HECHOS CON CKEDITOR -->
+          <div class="mb-3">
+            <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
+            <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
           </div>
 
           <div class="d-flex justify-content-between">
@@ -142,6 +119,7 @@
     <div class="tab-pane fade" id="contenido-participante">
       {% include "core/participantes_tab.html" %}
     </div>
+
     <div class="tab-pane fade" id="contenido-especie">
       {% include "core/especies_tab.html" %}
     </div>
@@ -166,19 +144,20 @@
 </div>
 {% endif %}
 
-<!-- Scripts -->
+<!-- Scripts separados -->
 <script src="{% static 'core/js/evento.js' %}"></script>
 <script src="{% static 'core/js/general.js' %}"></script>
 <script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
 
-<!-- CKEditor -->
+<!-- CKEditor desde CDN SOLO PARA LA NARRACIÓN -->
 <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 <script>
   CKEDITOR.replace('id_narracion_hechos', {
       height: 250,
   });
 </script>
+
 {% endblock %}
 
 
