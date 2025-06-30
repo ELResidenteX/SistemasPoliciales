@@ -67,7 +67,15 @@
             </div>
           {% endif %}
 
-                    <!-- DATOS GENERALES -->
+          {% for field in form %}
+            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos codigo_funcionario rut_funcionario" %}
+              <div class="mb-3">
+                {{ field.label_tag }}{{ field }}
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          <!-- DATOS GENERALES -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Datos Generales del Evento
@@ -86,7 +94,7 @@
             </div>
           </div>
 
-                              <!-- ✅ FUNCIONARIO RESPONSABLE -->
+          <!-- FUNCIONARIO RESPONSABLE -->
           <div class="card mb-4">
             <div class="card-header bg-secondary text-white">
               👮 Datos del Funcionario Responsable
@@ -105,16 +113,6 @@
               </div>
             </div>
           </div>
-          {% for field in form %}
-            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
-              <div class="mb-3">
-                {{ field.label_tag }}{{ field }}
-              </div>
-            {% endif %}
-          {% endfor %}
-
-
-
 
           <!-- DELITOS ASOCIADOS -->
           <div class="card mb-4">
@@ -229,6 +227,8 @@
   });
 </script>
 {% endblock %}
+
+
 
 
 
