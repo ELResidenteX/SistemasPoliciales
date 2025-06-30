@@ -50,10 +50,9 @@
         </div>
       {% endif %}
 
-      <form method="post" enctype="multipart/form-data" action="{% if editando %}{% url 'guardar_edicion_evento' evento.id %}{% else %}{% url 'nuevo_evento' %}{% endif %}">
+      <form method="post" action="{% if editando %}{% url 'guardar_edicion_evento' evento.id %}{% else %}{% url 'nuevo_evento' %}{% endif %}">
         {% csrf_token %}
         <div class="card shadow-sm p-4 bg-white rounded">
-
           {% if form.errors %}
             <div class="alert alert-danger">
               <strong>Corrige los errores en el formulario:</strong>
@@ -67,49 +66,15 @@
             </div>
           {% endif %}
 
-          <!-- EXCLUYE CAMPOS QUE SE REPITEN ABAJO -->
           {% for field in form %}
-            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos codigo_funcionario rut_funcionario firma_funcionario firma_denunciante origen estado_validacion" %}
+            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos delito_tipificado modo_operandi otros_delitos_observados es_violencia_intrafamiliar es_accidente_transito victima_mujer_presente_guardia tipo_lugar" %}
               <div class="mb-3">
                 {{ field.label_tag }}{{ field }}
               </div>
             {% endif %}
           {% endfor %}
 
-          <!-- DATOS GENERALES -->
-          <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-              📌 Datos Generales del Evento
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Información básica para identificar el procedimiento policial.</p>
-              <div class="mb-3">{{ form.lugar_procedimiento.label_tag }}{{ form.lugar_procedimiento }}</div>
-              <div class="row">
-                <div class="col-md-6 mb-3">{{ form.fecha_ocurrencia.label_tag }}{{ form.fecha_ocurrencia }}</div>
-                <div class="col-md-6 mb-3">{{ form.hora_ocurrencia.label_tag }}{{ form.hora_ocurrencia }}</div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">{{ form.fecha_denuncia.label_tag }}{{ form.fecha_denuncia }}</div>
-                <div class="col-md-6 mb-3">{{ form.hora_denuncia.label_tag }}{{ form.hora_denuncia }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- FUNCIONARIO RESPONSABLE -->
-          <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-              👮 Datos del Funcionario Responsable
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Identificación del funcionario que recepciona o registra el evento policial.</p>
-              <div class="row">
-                <div class="col-md-6 mb-3">{{ form.codigo_funcionario.label_tag }}{{ form.codigo_funcionario }}</div>
-                <div class="col-md-6 mb-3">{{ form.rut_funcionario.label_tag }}{{ form.rut_funcionario }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- DELITOS ASOCIADOS -->
+          <!-- SECCIÓN DELITOS ASOCIADOS -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Delitos Asociados
@@ -125,7 +90,7 @@
             </div>
           </div>
 
-          <!-- DIRECCIÓN DE OCURRENCIA -->
+          <!-- SECCIÓN DIRECCIÓN DE OCURRENCIA -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Dirección de Ocurrencia
@@ -133,6 +98,7 @@
             <div class="card-body">
               <p class="text-muted mb-3">Completa la ubicación detallada del hecho para georreferenciación.</p>
               <div class="mb-3">{{ form.tipo_lugar.label_tag }}{{ form.tipo_lugar }}</div>
+
               <div class="mb-3">
                 <label for="region" class="form-label">Región</label>
                 <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
@@ -161,7 +127,7 @@
             </div>
           </div>
 
-          <!-- NARRACIÓN DE LOS HECHOS -->
+          <!-- SECCIÓN NARRACIÓN DE LOS HECHOS -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Narración de los Hechos
@@ -171,30 +137,6 @@
                 <label for="id_narracion_hechos" class="form-label">Narración de los hechos</label>
                 <textarea name="narracion_hechos" id="id_narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
               </div>
-            </div>
-          </div>
-
-          <!-- FIRMAS -->
-          <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-              ✍️ Firmas
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Adjunta las firmas digitalizadas para validación del procedimiento.</p>
-              <div class="mb-3">{{ form.firma_funcionario.label_tag }}{{ form.firma_funcionario }}</div>
-              <div class="mb-3">{{ form.firma_denunciante.label_tag }}{{ form.firma_denunciante }}</div>
-            </div>
-          </div>
-
-          <!-- ADMINISTRACIÓN -->
-          <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-              ⚙️ Datos Administrativos
-            </div>
-            <div class="card-body">
-              <p class="text-muted mb-3">Información interna para clasificación y flujo del evento.</p>
-              <div class="mb-3">{{ form.origen.label_tag }}{{ form.origen }}</div>
-              <div class="mb-3">{{ form.estado_validacion.label_tag }}{{ form.estado_validacion }}</div>
             </div>
           </div>
 
@@ -217,7 +159,7 @@
   </div>
 </div>
 
-<!-- ✅ Modal -->
+<!-- ✅ Modal con toda la información del evento -->
 {% if evento and evento.participantes.exists %}
 <div class="modal fade" id="modalEventoCompleto" tabindex="-1" aria-labelledby="modalEventoCompletoLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -246,6 +188,7 @@
   });
 </script>
 {% endblock %}
+
 
 
 
