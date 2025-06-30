@@ -105,6 +105,13 @@
               </div>
             </div>
           </div>
+          {% for field in form %}
+            {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos" %}
+              <div class="mb-3">
+                {{ field.label_tag }}{{ field }}
+              </div>
+            {% endif %}
+          {% endfor %}
 
 
 
