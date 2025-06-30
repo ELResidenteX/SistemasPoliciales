@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h3>Nueva Infracción al Tránsito</h3>
+  <h3 class="mb-4">Nueva Infracción al Tránsito</h3>
 
   {% if infraccion and infraccion.participantes.exists %}
     <div class="d-flex justify-content-end mb-3">
@@ -30,100 +30,116 @@
 
   <div class="tab-content">
     <div class="tab-pane fade show active" id="contenido-infraccion">
-      <form method="post" action="{% url 'nueva_infraccion' %}">
-        {% csrf_token %}
-
-        <!-- Funcionario y fechas -->
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <label class="form-label">Funcionario a Cargo</label>
-            <input type="text" name="funcionario_codigo" class="form-control" required>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Fecha Denuncia</label>
-            <input type="date" name="fecha_denuncia" class="form-control" required>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Hora Denuncia</label>
-            <input type="time" name="hora_denuncia" class="form-control" required>
-          </div>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          🚓 Datos de la Infracción de Tránsito
         </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'nueva_infraccion' %}">
+            {% csrf_token %}
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Fecha Ocurrencia</label>
-            <input type="date" name="fecha_ocurrencia" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Hora Ocurrencia</label>
-            <input type="time" name="hora_ocurrencia" class="form-control" required>
-          </div>
-        </div>
+            <!-- FUNCIONARIO Y FECHAS -->
+            <div class="mb-4 border-bottom pb-3">
+              <h5 class="text-muted mb-3">👮 Funcionario y Fechas</h5>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Funcionario a Cargo</label>
+                  <input type="text" name="funcionario_codigo" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Fecha Denuncia</label>
+                  <input type="date" name="fecha_denuncia" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Hora Denuncia</label>
+                  <input type="time" name="hora_denuncia" class="form-control" required>
+                </div>
+              </div>
 
-        <!-- N° Boleta -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">N° Boleta de Citación</label>
-            <input type="text" name="boleta" class="form-control" required>
-          </div>
-        </div>
-
-        <!-- Tipo de infracción -->
-        <div class="mb-3">
-          <label class="form-label">Tipos de Infracción</label>
-          <div id="contenedor-infracciones">
-            <div class="d-flex mb-2">
-              <select name="tipos_infraccion[]" class="form-select me-2 tipo-infraccion-select" required>
-                <option value="">Seleccione una infracción...</option>
-              </select>
-              <button type="button" class="btn btn-success" onclick="agregarCampoInfraccion()">+</button>
+              <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                  <label class="form-label">Fecha Ocurrencia</label>
+                  <input type="date" name="fecha_ocurrencia" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Hora Ocurrencia</label>
+                  <input type="time" name="hora_ocurrencia" class="form-control" required>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Dirección -->
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <label class="form-label">Región</label>
-            <select name="region" class="form-select" id="region-select" required>
-              <option value="">Seleccione una región...</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Provincia</label>
-            <select name="provincia" class="form-select" id="provincia-select" required>
-              <option value="">Seleccione una provincia...</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Comuna</label>
-            <select name="comuna" class="form-select" id="comuna-select" required>
-              <option value="">Seleccione una comuna...</option>
-            </select>
-          </div>
-        </div>
+            <!-- N° BOLETA -->
+            <div class="mb-4 border-bottom pb-3">
+              <h5 class="text-muted mb-3">🧾 Boleta de Citación</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">N° Boleta de Citación</label>
+                  <input type="text" name="boleta" class="form-control" required>
+                </div>
+              </div>
+            </div>
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Dirección</label>
-            <input type="text" name="direccion" class="form-control" required>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Número</label>
-            <input type="text" name="numero" class="form-control">
-          </div>
-        </div>
+            <!-- TIPO DE INFRACCIÓN -->
+            <div class="mb-4 border-bottom pb-3">
+              <h5 class="text-muted mb-3">⚠️ Tipos de Infracción</h5>
+              <div id="contenedor-infracciones">
+                <div class="d-flex mb-2">
+                  <select name="tipos_infraccion[]" class="form-select me-2 tipo-infraccion-select" required>
+                    <option value="">Seleccione una infracción...</option>
+                  </select>
+                  <button type="button" class="btn btn-success" onclick="agregarCampoInfraccion()">+</button>
+                </div>
+              </div>
+            </div>
 
-        <!-- Narración -->
-        <div class="mb-4">
-          <label class="form-label">Narración de los Hechos</label>
-          <textarea name="narracion" class="form-control" rows="5" required></textarea>
-        </div>
+            <!-- DIRECCIÓN DE INFRACCIÓN -->
+            <div class="mb-4 border-bottom pb-3">
+              <h5 class="text-muted mb-3">📌 Dirección de la Infracción</h5>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Región</label>
+                  <select name="region" class="form-select" id="region-select" required>
+                    <option value="">Seleccione una región...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Provincia</label>
+                  <select name="provincia" class="form-select" id="provincia-select" required>
+                    <option value="">Seleccione una provincia...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Comuna</label>
+                  <select name="comuna" class="form-select" id="comuna-select" required>
+                    <option value="">Seleccione una comuna...</option>
+                  </select>
+                </div>
+              </div>
 
-        <div class="text-end">
-          <button type="submit" class="btn btn-success">Crear Infracción</button>
+              <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                  <label class="form-label">Dirección</label>
+                  <input type="text" name="direccion" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Número</label>
+                  <input type="text" name="numero" class="form-control">
+                </div>
+              </div>
+            </div>
+
+            <!-- NARRACIÓN DE LOS HECHOS -->
+            <div class="mb-4">
+              <h5 class="text-muted mb-3">📝 Narración de los Hechos</h5>
+              <textarea name="narracion" class="form-control" rows="5" required></textarea>
+            </div>
+
+            <div class="text-end">
+              <button type="submit" class="btn btn-success">✅ Crear Infracción</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
 
     {% if infraccion %}
@@ -139,7 +155,7 @@
 <div class="modal fade" id="modalInfraccionCompleta" tabindex="-1" aria-labelledby="modalInfraccionCompletaLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-primary text-white">
         <h5 class="modal-title" id="modalInfraccionCompletaLabel">Vista Previa del Parte Infracción</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
