@@ -1,14 +1,14 @@
 {% load static %}
+
 <form method="post" action="{% url 'agregar_participante_infraccion' infraccion.id %}">
   {% csrf_token %}
 
-  <!-- ✅ DATOS DEL PARTICIPANTE -->
+  <!-- CARD: Datos del Participante -->
   <div class="card mb-4 shadow-sm">
     <div class="card-header bg-success text-white">
       👥 Datos del Participante
     </div>
     <div class="card-body">
-      <p class="text-muted mb-3">Seleccione la calidad del participante y si corresponde a empadronado.</p>
       <div class="mb-3">
         <label class="form-label">Calidad</label>
         <select name="calidad" id="calidad" class="form-select" required>
@@ -27,14 +27,12 @@
     </div>
   </div>
 
-  <!-- ✅ DATOS DEL VEHÍCULO -->
+  <!-- CARD: Datos del Vehículo -->
   <div class="card mb-4 shadow-sm">
     <div class="card-header bg-secondary text-white">
       🚗 Datos del Vehículo
     </div>
     <div class="card-body">
-      <p class="text-muted mb-3">Complete la información del vehículo involucrado en la infracción.</p>
-
       <div class="row g-3 mb-3">
         <div class="col-md-4">
           <label class="form-label">Tipo de Vehículo</label>
@@ -94,14 +92,12 @@
     </div>
   </div>
 
-  <!-- ✅ DATOS DEL INFRACTOR -->
+  <!-- CARD: Datos del Infractor -->
   <div id="campos-infractor" class="card mb-4 shadow-sm">
     <div class="card-header bg-primary text-white">
       🧾 Datos del Infractor (Conductor)
     </div>
     <div class="card-body">
-      <p class="text-muted mb-3">Complete la información personal del infractor si corresponde.</p>
-
       <div class="row g-3 mb-3">
         <div class="col-md-6">
           <label class="form-label">Nombres</label>
@@ -163,5 +159,25 @@
   </div>
 </form>
 
+<!-- Scripts -->
 <script src="{% static 'infracciones/js/participantesinfraccion.js' %}"></script>
 <script src="{% static 'infracciones/js/marcasModelos.js' %}"></script>
+
+<script>
+  // ✅ Script para mostrar/ocultar campos del infractor
+  document.addEventListener('DOMContentLoaded', function () {
+    const empadronadoCheckbox = document.getElementById('empadronado');
+    const camposInfractor = document.getElementById('campos-infractor');
+
+    function toggleCamposInfractor() {
+      if (empadronadoCheckbox.checked) {
+        camposInfractor.style.display = 'none';
+      } else {
+        camposInfractor.style.display = 'block';
+      }
+    }
+
+    empadronadoCheckbox.addEventListener('change', toggleCamposInfractor);
+    toggleCamposInfractor();  // Inicial
+  });
+</script>
