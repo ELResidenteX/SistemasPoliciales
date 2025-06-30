@@ -1,103 +1,91 @@
 {% load static %}
 {% load humanize %}
 
-<!-- ✅ Card de Bootstrap para formulario de Participantes -->
+<!-- ✅ CARD GENERAL DEL PARTICIPANTE -->
 <div class="card mb-4 shadow-sm">
   <div class="card-header bg-success text-white">
     👤 Datos del Participante
   </div>
   <div class="card-body">
-    <p class="text-muted">Complete la información personal y de ubicación del participante.</p>
-    
+    <p class="text-muted">Complete la información personal del participante.</p>
+
     <form method="post" action="{% url 'agregar_participante' evento.id %}">
       {% csrf_token %}
       
       {% if form_participante %}
-      
+
         {% if participante_editando %}
           <input type="hidden" name="participante_id" value="{{ participante_editando.id }}">
-        {% endif %}
-  
-        <!-- Alerta si está editando -->
-        {% if participante_editando %}
           <div class="alert alert-warning">
-            ⚠️ Para garantizar el correcto apercibimiento de los participantes, confirme nuevamente la <strong>Región, Provincia y Comuna</strong> del participante antes de actualizar.
+            ⚠️ Confirme nuevamente la <strong>Región, Provincia y Comuna</strong> antes de actualizar.
           </div>
         {% endif %}
-  
-        <div class="row">
-          <div class="col-md-6 mb-3">{{ form_participante.nombres.label_tag }}{{ form_participante.nombres }}</div>
-          <div class="col-md-6 mb-3">{{ form_participante.apellidos.label_tag }}{{ form_participante.apellidos }}</div>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-6 mb-3">{{ form_participante.rut.label_tag }}{{ form_participante.rut }}</div>
-          <div class="col-md-6 mb-3">{{ form_participante.fecha_nacimiento.label_tag }}{{ form_participante.fecha_nacimiento }}</div>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-4 mb-3">{{ form_participante.edad.label_tag }}{{ form_participante.edad }}</div>
-          <div class="col-md-4 mb-3">{{ form_participante.sexo.label_tag }}{{ form_participante.sexo }}</div>
-          <div class="col-md-4 mb-3">{{ form_participante.nacionalidad.label_tag }}{{ form_participante.nacionalidad }}</div>
-        </div>
-  
+
+        <!-- CAMPOS PERSONALES UNO DEBAJO DEL OTRO -->
+        <div class="mb-3">{{ form_participante.nombres.label_tag }}{{ form_participante.nombres }}</div>
+        <div class="mb-3">{{ form_participante.apellidos.label_tag }}{{ form_participante.apellidos }}</div>
+        <div class="mb-3">{{ form_participante.rut.label_tag }}{{ form_participante.rut }}</div>
+        <div class="mb-3">{{ form_participante.fecha_nacimiento.label_tag }}{{ form_participante.fecha_nacimiento }}</div>
+        <div class="mb-3">{{ form_participante.edad.label_tag }}{{ form_participante.edad }}</div>
+        <div class="mb-3">{{ form_participante.sexo.label_tag }}{{ form_participante.sexo }}</div>
+        <div class="mb-3">{{ form_participante.nacionalidad.label_tag }}{{ form_participante.nacionalidad }}</div>
         <div class="mb-3">{{ form_participante.calidad.label_tag }}{{ form_participante.calidad }}</div>
-  
-        <hr class="my-4">
-        <h6 class="mb-3">📌 Dirección del Participante</h6>
-        <p class="text-muted">Seleccione la región, provincia y comuna correspondientes.</p>
-  
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label for="region_part" class="form-label">Región</label>
-            <select id="region_part" name="region" class="form-select region-select"
-                    data-tipo="participante" data-id="form"
-                    data-selected="{{ form_participante.initial.region|default_if_none:'' }}" required>
-              <option value="">Seleccione región</option>
-            </select>
+
+        <!-- ✅ CARD SEPARADO PARA DIRECCIÓN -->
+        <div class="card mt-4">
+          <div class="card-header bg-secondary text-white">
+            📌 Dirección del Participante
           </div>
-  
-          <div class="col-md-4 mb-3">
-            <label for="provincia_part" class="form-label">Provincia</label>
-            <select id="provincia_part" name="provincia" class="form-select provincia-select"
-                    data-tipo="participante" data-id="form"
-                    data-selected="{{ form_participante.initial.provincia|default_if_none:'' }}" required>
-              <option value="">Seleccione provincia</option>
-            </select>
-          </div>
-  
-          <div class="col-md-4 mb-3">
-            <label for="comuna_part" class="form-label">Comuna</label>
-            <select id="comuna_part" name="comuna" class="form-select comuna-select"
-                    data-tipo="participante" data-id="form"
-                    data-selected="{{ form_participante.initial.comuna|default_if_none:'' }}" required>
-              <option value="">Seleccione comuna</option>
-            </select>
+          <div class="card-body">
+            <p class="text-muted">Seleccione la región, provincia y comuna correspondientes y complete la dirección.</p>
+            
+            <div class="mb-3">
+              <label for="region_part" class="form-label">Región</label>
+              <select id="region_part" name="region" class="form-select region-select"
+                      data-tipo="participante" data-id="form"
+                      data-selected="{{ form_participante.initial.region|default_if_none:'' }}" required>
+                <option value="">Seleccione región</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="provincia_part" class="form-label">Provincia</label>
+              <select id="provincia_part" name="provincia" class="form-select provincia-select"
+                      data-tipo="participante" data-id="form"
+                      data-selected="{{ form_participante.initial.provincia|default_if_none:'' }}" required>
+                <option value="">Seleccione provincia</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="comuna_part" class="form-label">Comuna</label>
+              <select id="comuna_part" name="comuna" class="form-select comuna-select"
+                      data-tipo="participante" data-id="form"
+                      data-selected="{{ form_participante.initial.comuna|default_if_none:'' }}" required>
+                <option value="">Seleccione comuna</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">{{ form_participante.direccion.label_tag }}{{ form_participante.direccion }}</div>
+            <div class="mb-3">{{ form_participante.numero_calle.label_tag }}{{ form_participante.numero_calle }}</div>
+            <div class="mb-3">{{ form_participante.telefono.label_tag }}{{ form_participante.telefono }}</div>
+            <div class="mb-3">{{ form_participante.observaciones.label_tag }}{{ form_participante.observaciones }}</div>
           </div>
         </div>
-  
-        <div class="row">
-          <div class="col-md-6 mb-3">{{ form_participante.direccion.label_tag }}{{ form_participante.direccion }}</div>
-          <div class="col-md-6 mb-3">{{ form_participante.numero_calle.label_tag }}{{ form_participante.numero_calle }}</div>
-        </div>
-  
-        <div class="row">
-          <div class="col-md-6 mb-3">{{ form_participante.telefono.label_tag }}{{ form_participante.telefono }}</div>
-          <div class="col-md-6 mb-3">{{ form_participante.observaciones.label_tag }}{{ form_participante.observaciones }}</div>
-        </div>
-  
-        <div class="d-flex justify-content-end">
+
+        <!-- ✅ BOTÓN -->
+        <div class="mt-4 d-flex justify-content-end">
           <button type="submit" class="btn btn-success">
             {% if participante_editando %}Actualizar{% else %}Guardar{% endif %} Participante
           </button>
         </div>
-  
+
       {% endif %}
     </form>
   </div>
 </div>
-  
-<!-- ✅ Tabla de participantes -->
+
+<!-- ✅ TABLA DE PARTICIPANTES -->
 {% if evento.participantes.exists %}
   <div class="card mb-4 shadow-sm">
     <div class="card-header bg-secondary text-white">
@@ -135,5 +123,6 @@
   </div>
 {% endif %}
 
-<!-- Script dinámico para selects -->
+<!-- Script dinámico -->
 <script src="{% static 'core/js/participantes.js' %}"></script>
+
