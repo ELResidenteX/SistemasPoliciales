@@ -66,20 +66,24 @@
             </div>
           {% endif %}
 
-          <!-- ✅ Panel/Sección bonita SOLO para los campos generales de la foto -->
-<div class="border rounded shadow-sm p-4 mb-4 bg-light">
-  <h5 class="text-primary mb-3">📌 Datos Generales del Evento</h5>
-  <p class="text-muted">Completa la información básica del procedimiento policial y datos del funcionario.</p>
-
-  <div class="row">
-    {% for field in form %}
-      {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos delito_tipificado modo_operandi otros_delitos_observados es_violencia_intrafamiliar es_accidente_transito victima_mujer_presente_guardia tipo_lugar" %}
-        <div class="col-md-6 mb-3">
-          {{ field.label_tag }}
-          {{ field }}
-        </div>
-      {% endif %}
-    {% endfor %}
+<!-- ✅ Card Bootstrap para Datos Generales del Evento -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-primary text-white">
+    📌 Datos Generales del Evento
+  </div>
+  <div class="card-body">
+    <p class="text-muted">Completa la información básica del procedimiento policial y datos del funcionario.</p>
+    
+    <div class="row">
+      {% for field in form %}
+        {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos delito_tipificado modo_operandi otros_delitos_observados es_violencia_intrafamiliar es_accidente_transito victima_mujer_presente_guardia tipo_lugar" %}
+          <div class="col-md-6 mb-3">
+            {{ field.label_tag }}
+            {{ field }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
   </div>
 </div>
 
