@@ -109,6 +109,10 @@ path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 path('cargar-delitos/', views.cargar_delitos_desde_json, name='cargar_delitos_json'),
 path('ejecutar-cargar-regiones/', views.ejecutar_cargar_regiones, name='ejecutar_cargar_regiones'),
 
+#manuales
+
+path('manuales/', views.manuales_usuario, name='manuales_usuario'),
+
 
 ]
 

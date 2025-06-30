@@ -21,7 +21,7 @@ from django.shortcuts import render, redirect
 from core.models import Delito 
 from django.http import HttpResponse
 from django.core.management import call_command
-
+from django.contrib.auth.decorators import login_required
 
 # ✅ Home
 def home(request):
@@ -519,6 +519,15 @@ def ejecutar_cargar_regiones(request):
         return HttpResponse("No autorizado", status=403)
     call_command('cargar_regiones')
     return HttpResponse("✅ Regiones cargadas correctamente")
+
+#manuales
+
+
+
+@login_required
+def manuales_usuario(request):
+    return render(request, 'core/manuales.html')
+
 
 
 

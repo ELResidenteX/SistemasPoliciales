@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Manual de Usuario - Sistema Policial{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📘 Manual de Usuario - Sistema Policial</h2>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 1. Introducción</h4>
+  <p>
+    Bienvenido al <strong>Sistema Policial</strong>, una plataforma web diseñada para la gestión eficiente de partes policiales, infracciones de tránsito, constancias y otras infracciones. Este sistema centraliza la información y facilita su consulta, validación y generación de reportes.
+  </p>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 2. Acceso al Sistema</h4>
+  <ol>
+    <li>Ingresa a la URL oficial del sistema en tu navegador.</li>
+    <li>Introduce tu <strong>RUT</strong> y <strong>clave personal</strong> en el formulario de inicio de sesión.</li>
+    <li>Si la clave está vencida o expirada, el sistema te redirigirá automáticamente al formulario de cambio de clave.</li>
+    <li>Si olvidas tu clave, contacta al administrador del sistema para su restablecimiento.</li>
+  </ol>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 3. Menú Principal y Navegación</h4>
+  <p>
+    El menú lateral izquierdo te permite acceder rápidamente a las diferentes funcionalidades del sistema:
+  </p>
+  <ul>
+    <li><strong>Eventos Policiales:</strong> Crear nuevo evento, buscar evento existente, ver eventos en validación, generar partes policiales.</li>
+    <li><strong>Infracción al Tránsito:</strong> Registrar nueva infracción, consultar partes existentes.</li>
+    <li><strong>Constancias:</strong> Generar y consultar constancias.</li>
+    <li><strong>Otras Infracciones:</strong> Control vehicular, entidades financieras, fiscalización de alcoholes.</li>
+    <li><strong>Otros:</strong> Cambio de clave, acceso a manuales, cierre de sesión.</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 4. Flujo de Creación de Evento Policial</h4>
+  <ol>
+    <li>Selecciona <strong>Nuevo Evento</strong> en el menú lateral.</li>
+    <li>Completa los datos requeridos:
+      <ul>
+        <li>Datos de la denuncia: lugar, fecha, hora, tipo de lugar.</li>
+        <li>Datos del funcionario responsable.</li>
+        <li>Delito tipificado y ubicación geográfica (región, provincia, comuna).</li>
+        <li>Narración de los hechos (editor estilo Word).</li>
+      </ul>
+    </li>
+    <li>Agrega las firmas del denunciante y funcionario (opcional o requerido según configuración).</li>
+    <li>Guarda el evento. El sistema confirmará su registro.</li>
+    <li>Luego se abrirá la pantalla para <strong>Agregar Participantes</strong> vinculados al evento:
+      <ul>
+        <li>Completa nombres, apellidos, RUT, edad, sexo, nacionalidad.</li>
+        <li>Define calidad (víctima, testigo, imputado, etc.).</li>
+        <li>Incluye dirección y datos de contacto.</li>
+        <li>Registra múltiples participantes si es necesario.</li>
+      </ul>
+    </li>
+    <li>Al finalizar, puedes revisar la <strong>Vista Previa del Evento</strong> antes de enviarlo a validación.</li>
+  </ol>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 5. Validación y Generación de Parte Policial</h4>
+  <p>
+    Los eventos enviados a validación aparecen en la lista de <strong>Eventos en Validación</strong>. El funcionario de guardia podrá:
+  </p>
+  <ul>
+    <li>Ver la vista previa completa del evento.</li>
+    <li>Editar datos si se requiere corrección.</li>
+    <li>Generar el parte policial en formato imprimible (PDF).</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 6. Cambiar Contraseña</h4>
+  <p>
+    Desde el menú <strong>Otros &gt; Cambio de clave</strong> puedes actualizar tu contraseña en cualquier momento.
+    El sistema obliga a un cambio periódico según política de seguridad. Si la clave caduca, serás redirigido automáticamente al formulario de cambio.
+  </p>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 7. Seguridad y Buenas Prácticas</h4>
+  <ul>
+    <li>Usa contraseñas seguras y no las compartas.</li>
+    <li>Cierra sesión cuando termines de usar el sistema.</li>
+    <li>Verifica los datos antes de enviar un evento a validación.</li>
+    <li>Reporta errores o sugerencias al administrador del sistema.</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>📌 Contacto y Soporte</h4>
+  <p>
+    Para consultas o problemas técnicos, comunícate con el área de soporte institucional o el administrador del sistema policial.
+  </p>
+</div>
+{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Manual de Usuario - Sistema Policial{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">📘 Manual de Usuario - Sistema Policial</h2>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 1. Introducción</h4>
+  <p>
+    Bienvenido al <strong>Sistema Policial</strong>, una plataforma web diseñada para la gestión eficiente de partes policiales, infracciones de tránsito, constancias y otras infracciones. Este sistema centraliza la información y facilita su consulta, validación y generación de reportes.
+  </p>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 2. Acceso al Sistema</h4>
+  <ol>
+    <li>Ingresa a la URL oficial del sistema en tu navegador.</li>
+    <li>Introduce tu <strong>RUT</strong> y <strong>clave personal</strong> en el formulario de inicio de sesión.</li>
+    <li>Si la clave está vencida o expirada, el sistema te redirigirá automáticamente al formulario de cambio de clave.</li>
+    <li>Si olvidas tu clave, contacta al administrador del sistema para su restablecimiento.</li>
+  </ol>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 3. Menú Principal y Navegación</h4>
+  <p>
+    El menú lateral izquierdo te permite acceder rápidamente a las diferentes funcionalidades del sistema:
+  </p>
+  <ul>
+    <li><strong>Eventos Policiales:</strong> Crear nuevo evento, buscar evento existente, ver eventos en validación, generar partes policiales.</li>
+    <li><strong>Infracción al Tránsito:</strong> Registrar nueva infracción, consultar partes existentes.</li>
+    <li><strong>Constancias:</strong> Generar y consultar constancias.</li>
+    <li><strong>Otras Infracciones:</strong> Control vehicular, entidades financieras, fiscalización de alcoholes.</li>
+    <li><strong>Otros:</strong> Cambio de clave, acceso a manuales, cierre de sesión.</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 4. Flujo de Creación de Evento Policial</h4>
+  <ol>
+    <li>Selecciona <strong>Nuevo Evento</strong> en el menú lateral.</li>
+    <li>Completa los datos requeridos:
+      <ul>
+        <li>Datos de la denuncia: lugar, fecha, hora, tipo de lugar.</li>
+        <li>Datos del funcionario responsable.</li>
+        <li>Delito tipificado y ubicación geográfica (región, provincia, comuna).</li>
+        <li>Narración de los hechos (editor estilo Word).</li>
+      </ul>
+    </li>
+    <li>Agrega las firmas del denunciante y funcionario (opcional o requerido según configuración).</li>
+    <li>Guarda el evento. El sistema confirmará su registro.</li>
+    <li>Luego se abrirá la pantalla para <strong>Agregar Participantes</strong> vinculados al evento:
+      <ul>
+        <li>Completa nombres, apellidos, RUT, edad, sexo, nacionalidad.</li>
+        <li>Define calidad (víctima, testigo, imputado, etc.).</li>
+        <li>Incluye dirección y datos de contacto.</li>
+        <li>Registra múltiples participantes si es necesario.</li>
+      </ul>
+    </li>
+    <li>Al finalizar, puedes revisar la <strong>Vista Previa del Evento</strong> antes de enviarlo a validación.</li>
+  </ol>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 5. Validación y Generación de Parte Policial</h4>
+  <p>
+    Los eventos enviados a validación aparecen en la lista de <strong>Eventos en Validación</strong>. El funcionario de guardia podrá:
+  </p>
+  <ul>
+    <li>Ver la vista previa completa del evento.</li>
+    <li>Editar datos si se requiere corrección.</li>
+    <li>Generar el parte policial en formato imprimible (PDF).</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 6. Cambiar Contraseña</h4>
+  <p>
+    Desde el menú <strong>Otros &gt; Cambio de clave</strong> puedes actualizar tu contraseña en cualquier momento.
+    El sistema obliga a un cambio periódico según política de seguridad. Si la clave caduca, serás redirigido automáticamente al formulario de cambio.
+  </p>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>✅ 7. Seguridad y Buenas Prácticas</h4>
+  <ul>
+    <li>Usa contraseñas seguras y no las compartas.</li>
+    <li>Cierra sesión cuando termines de usar el sistema.</li>
+    <li>Verifica los datos antes de enviar un evento a validación.</li>
+    <li>Reporta errores o sugerencias al administrador del sistema.</li>
+  </ul>
+</div>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h4>📌 Contacto y Soporte</h4>
+  <p>
+    Para consultas o problemas técnicos, comunícate con el área de soporte institucional o el administrador del sistema policial.
+  </p>
+</div>
+{% endblock %}
+
