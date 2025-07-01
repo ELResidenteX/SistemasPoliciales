@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import login_view, logout_view, vista_inicio, admin_login_view
-from .views import crear_usuario,  post_login, forzar_cambio_password
+from .views import crear_usuario,  post_login, forzar_cambio_password, CambioClaveView, CambioClaveHechoView
 
 urlpatterns = [
     path('login/', login_view, name='login'),
@@ -11,5 +11,8 @@ urlpatterns = [
     path('usuarios/post_login/', post_login, name='post_login'),
     path('forzar-cambio-password/', forzar_cambio_password, name='forzar_cambio_password'),
 
+#cambio de clave
 
+    path('cambiar-clave/', CambioClaveView.as_view(), name='cambio_clave'),
+    path('cambiar-clave/hecho/', CambioClaveHechoView.as_view(), name='cambio_clave_hecho'),
 ]

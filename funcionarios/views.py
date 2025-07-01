@@ -9,6 +9,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 from funcionarios.models import PerfilUsuario
 
@@ -157,3 +161,20 @@ def post_login(request):
     request.user.refresh_from_db()
     rol = getattr(request.user.perfilusuario, 'rol', None)
     return render(request, 'usuarios/post_login.html', {'rol': rol})
+
+#cambio de clave
+
+class CambioClaveView(LoginRequiredMixin, PasswordChangeView):
+    template_name = 'funcionarios/cambio_clave.html'
+    success_url = reverse_lazy('cambio_clave_hecho')
+
+    def form_valid(self, form):
+        messages.success(self.request, '¡Contraseña actualizada correctamente!')
+        return super().form_valid(form)
+
+#pantalla de confirmacion
+
+
+class CambioClaveHechoView(LoginRequiredMixin, TemplateView):
+    template_name = 'funcionarios/cambio_clave_hecho.html'
+
