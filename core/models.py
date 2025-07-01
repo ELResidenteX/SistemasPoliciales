@@ -53,8 +53,9 @@ class EventoPolicial(models.Model):
     hora_ocurrencia = models.TimeField()
     fecha_denuncia = models.DateField()
     hora_denuncia = models.TimeField()
-    funcionaria_codigo = models.CharField(max_length=50)
-    funcionaria_rut = models.CharField(max_length=20)
+    funcionaria_codigo = models.CharField("Funcionario código", max_length=50)
+    funcionaria_rut = models.CharField("Funcionario rut", max_length=20)
+
     modo_operandi = models.TextField(blank=True, null=True)
 
     delito_tipificado = models.ForeignKey('Delito', on_delete=models.SET_NULL, null=True, blank=True)
