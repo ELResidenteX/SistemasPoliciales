@@ -26,13 +26,14 @@
         <div class="mb-3">{{ form_participante.apellidos.label_tag }}{{ form_participante.apellidos }}</div>
         <div class="mb-3">{{ form_participante.rut.label_tag }}{{ form_participante.rut }}</div>
         <div class="mb-3">
-          {{ form_participante.fecha_nacimiento.label_tag }}
-          {{ form_participante.fecha_nacimiento|add_class:"form-control" }} 
-        </div>
-        <div class="mb-3">
-          {{ form_participante.edad.label_tag }}
-          {{ form_participante.edad|add_class:"form-control" }} 
-        </div>
+  {{ form_participante.fecha_nacimiento.label_tag }}
+  {{ form_participante.fecha_nacimiento }}
+</div>
+<div class="mb-3">
+  {{ form_participante.edad.label_tag }}
+  {{ form_participante.edad }}
+</div>
+
         <div class="mb-3">{{ form_participante.sexo.label_tag }}{{ form_participante.sexo }}</div>
         <div class="mb-3">{{ form_participante.nacionalidad.label_tag }}{{ form_participante.nacionalidad }}</div>
         <div class="mb-3">{{ form_participante.calidad.label_tag }}{{ form_participante.calidad }}</div>
