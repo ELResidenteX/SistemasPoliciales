@@ -2,12 +2,83 @@
 {% block title %}Cambio de clave{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Cambiar Contraseña</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Cambiar clave</button>
-    </form>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Cambiar Contraseña</h4>
+        </div>
+        <div class="card-body">
+            <p class="mb-3">
+                Para proteger su cuenta, cree una contraseña que cumpla con los requisitos mínimos de seguridad indicados abajo.
+            </p>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <div class="mb-4">
+                    <h5>Requisitos de la contraseña:</h5>
+                    <ul id="password-rules" class="list-unstyled">
+                        <li id="rule-length" class="text-danger">• Al menos 8 caracteres</li>
+                        <li id="rule-similar" class="text-danger">• No puede ser solo números</li>
+                        <li id="rule-uppercase" class="text-danger">• Al menos 1 letra mayúscula</li>
+                        <li id="rule-symbol" class="text-danger">• Al menos 1 símbolo o carácter especial</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="btn btn-success">Cambiar clave</button>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Oculta automáticamente los mensajes después de 3 segundos
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.alert-success, .alert-danger, .alert-error');
+        alerts.forEach(alert => {
+            alert.style.display = 'none';
+        });
+    }, 3000);
+
+    // Validación en tiempo real de contraseña
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordInputs = document.querySelectorAll('input[type="password"]');
+        passwordInputs.forEach(input => {
+            input.addEventListener('input', function () {
+                const value = this.value;
+
+                // Regla: Al menos 8 caracteres
+                const lengthRule = document.getElementById('rule-length');
+                lengthRule.classList.toggle('text-success', value.length >= 8);
+                lengthRule.classList.toggle('text-danger', value.length < 8);
+
+                // Regla: No puede ser solo números
+                const numberRule = document.getElementById('rule-similar');
+                const onlyNumbers = /^\d+$/.test(value);
+                numberRule.classList.toggle('text-success', !onlyNumbers && value.length > 0);
+                numberRule.classList.toggle('text-danger', onlyNumbers || value.length === 0);
+
+                // Regla: Al menos 1 mayúscula
+                const uppercaseRule = document.getElementById('rule-uppercase');
+                const hasUppercase = /[A-Z]/.test(value);
+                uppercaseRule.classList.toggle('text-success', hasUppercase);
+                uppercaseRule.classList.toggle('text-danger', !hasUppercase);
+
+                // Regla: Al menos 1 símbolo o carácter especial
+                const symbolRule = document.getElementById('rule-symbol');
+                const hasSymbol = /[^A-Za-z0-9]/.test(value);
+                symbolRule.classList.toggle('text-success', hasSymbol);
+                symbolRule.classList.toggle('text-danger', !hasSymbol);
+            });
+        });
+    });
+</script>
 {% endblock %}
+
