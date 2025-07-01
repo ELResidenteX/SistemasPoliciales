@@ -25,8 +25,14 @@
         <div class="mb-3">{{ form_participante.nombres.label_tag }}{{ form_participante.nombres }}</div>
         <div class="mb-3">{{ form_participante.apellidos.label_tag }}{{ form_participante.apellidos }}</div>
         <div class="mb-3">{{ form_participante.rut.label_tag }}{{ form_participante.rut }}</div>
-        <div class="mb-3">{{ form_participante.fecha_nacimiento.label_tag }}{{ form_participante.fecha_nacimiento }}</div>
-        <div class="mb-3">{{ form_participante.edad.label_tag }}{{ form_participante.edad }}</div>
+        <div class="mb-3">
+          {{ form_participante.fecha_nacimiento.label_tag }}
+          {{ form_participante.fecha_nacimiento|add_class:"form-control" }} 
+        </div>
+        <div class="mb-3">
+          {{ form_participante.edad.label_tag }}
+          {{ form_participante.edad|add_class:"form-control" }} 
+        </div>
         <div class="mb-3">{{ form_participante.sexo.label_tag }}{{ form_participante.sexo }}</div>
         <div class="mb-3">{{ form_participante.nacionalidad.label_tag }}{{ form_participante.nacionalidad }}</div>
         <div class="mb-3">{{ form_participante.calidad.label_tag }}{{ form_participante.calidad }}</div>
@@ -123,6 +129,32 @@
   </div>
 {% endif %}
 
-<!-- Script dinámico -->
+<!-- Scripts -->
 <script src="{% static 'core/js/participantes.js' %}"></script>
+
+<!-- ✅ SCRIPT PARA CALCULAR EDAD -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const fechaInput = document.getElementById('id_fecha_nacimiento');
+    const edadInput = document.getElementById('id_edad');
+
+    if (fechaInput && edadInput) {
+      fechaInput.addEventListener('change', function () {
+        const fechaNac = new Date(this.value);
+        if (!isNaN(fechaNac.getTime())) {
+          const hoy = new Date();
+          let edad = hoy.getFullYear() - fechaNac.getFullYear();
+          const m = hoy.getMonth() - fechaNac.getMonth();
+          if (m < 0 || (m === 0 && hoy.getDate() < fechaNac.getDate())) {
+            edad--;
+          }
+          edadInput.value = edad;
+        } else {
+          edadInput.value = '';
+        }
+      });
+    }
+  });
+</script>
+
 
