@@ -22,15 +22,7 @@
                 {% csrf_token %}
                 {{ form.as_p }}
 
-                <div class="mb-4">
-                    <h5>Requisitos de la contraseña:</h5>
-                    <ul id="password-rules" class="list-unstyled">
-                        <li id="rule-length" class="text-danger">• Al menos 8 caracteres</li>
-                        <li id="rule-similar" class="text-danger">• No puede ser solo números</li>
-                        <li id="rule-uppercase" class="text-danger">• Al menos 1 letra mayúscula</li>
-                        <li id="rule-symbol" class="text-danger">• Al menos 1 símbolo o carácter especial</li>
-                    </ul>
-                </div>
+            
 
                 <button type="submit" class="btn btn-success">Cambiar clave</button>
             </form>
