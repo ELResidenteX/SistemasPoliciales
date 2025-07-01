@@ -165,7 +165,7 @@ def post_login(request):
 #cambio de clave
 
 class CambioClaveView(LoginRequiredMixin, PasswordChangeView):
-    template_name = 'funcionarios/cambio_clave.html'
+    template_name = 'usuarios/cambio_clave.html'
     success_url = reverse_lazy('cambio_clave_hecho')
 
     def form_valid(self, form):
@@ -176,5 +176,5 @@ class CambioClaveView(LoginRequiredMixin, PasswordChangeView):
 
 
 class CambioClaveHechoView(LoginRequiredMixin, TemplateView):
-    template_name = 'funcionarios/cambio_clave_hecho.html'
+    template_name = 'usuarios/cambio_clave_hecho.html'
 
