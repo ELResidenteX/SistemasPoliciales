@@ -7,13 +7,13 @@ body {
     padding: 10px;
 }
 
-/* Sidebar redondeada con sombra y degradado verde */
+/* Sidebar redondeada y con sombra */
 .sidebar {
     width: 270px;
     background: linear-gradient(to bottom, #4a9644, #2c6e2c);
     color: white;
     height: 95vh;
-    margin: 10px;
+    margin: 10px 0 10px 10px;
     padding: 20px;
     overflow-y: auto;
     border-radius: 20px;
@@ -28,33 +28,18 @@ body {
     padding-bottom: 5px;
 }
 
-/* Acordeón general con bordes suaves */
-.accordion-item {
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 8px;
-    background-color: transparent;
-    border: none;
-}
-
-/* Botones del acordeón */
+/* Acordeón sin bordes marcados */
 .accordion-button {
     border-radius: 0 !important;
     box-shadow: none;
     font-size: 14px;
     font-weight: bold;
-    transition: background-color 0.3s ease;
 }
 
 /* Fondo y texto del botón del acordeón */
 .accordion-button.bg-success {
     background-color: #4a9644 !important;
     color: white;
-}
-
-/* Hover en el botón del acordeón */
-.accordion-button:hover {
-    background-color: #3b7d36 !important;
 }
 
 /* Cuerpo del acordeón */
@@ -65,18 +50,18 @@ body {
 /* Enlaces del submenú */
 .accordion-body a {
     font-size: 14px;
-    padding: 8px 12px;
+    padding-left: 10px;
     text-decoration: none;
     color: white;
     display: block;
-    border-radius: 5px;
-    transition: background-color 0.2s ease, padding-left 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 /* Hover de enlaces */
 .accordion-body a:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    padding-left: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #c4ffc4;
+    padding-left: 8px;
 }
 
 /* Panel principal */
@@ -85,33 +70,8 @@ body {
     flex-grow: 1;
     background-color: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 10px rgba(0,0,0,0.08);
     margin: 10px;
-    min-width: 0;
-}
-
-/* Responsive para pantallas pequeñas */
-@media (max-width: 1200px) {
-    .sidebar {
-        width: 220px;
-        padding: 15px;
-    }
-
-    .sidebar h3 {
-        font-size: 20px;
-    }
-
-    .accordion-button {
-        font-size: 13px;
-    }
-
-    .accordion-body a {
-        font-size: 13px;
-    }
-
-    .main {
-        padding: 20px;
-    }
 }
 
 
