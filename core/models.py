@@ -34,6 +34,19 @@ class Comuna(models.Model):
 
     def __str__(self):
         return f"{self.nombre} ({self.provincia.nombre})"
+    
+#modelo unidades policiales por comuna
+
+class UnidadPolicial(models.Model):
+    nombre = models.CharField(max_length=255)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    lat = models.FloatField(blank=True, null=True)
+    lng = models.FloatField(blank=True, null=True)
+    
+    comuna = models.ForeignKey(Comuna, on_delete=models.PROTECT, related_name='unidades_policiales')
+
+    def __str__(self):
+        return self.nombre
 
 
 # 🔹 Modelo de EventoPolicial
