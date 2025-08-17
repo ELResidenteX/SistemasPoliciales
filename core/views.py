@@ -562,6 +562,43 @@ def cargar_unidades_policiales(request):
     messages.success(request, f"✅ {cargados} unidades policiales cargadas correctamente.")
     return redirect("/admin/")
 
+#vista solo para cambiar contraseña superadmin
+
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# ✅ Cambia este valor por algo secreto
+TOKEN_SEGURIDAD = "cambiar123"
+
+@csrf_exempt  # Solo mientras se usa — luego elimínala o protégela con login
+def reset_superadmin(request):
+    if request.method == "POST":
+        token = request.POST.get("token")
+        username = request.POST.get("username")
+        nueva_pass = request.POST.get("password")
+
+        if token != TOKEN_SEGURIDAD:
+            return HttpResponse("❌ Token inválido", status=403)
+
+        try:
+            usuario = User.objects.get(username=username, is_superuser=True)
+            usuario.set_password(nueva_pass)
+            usuario.save()
+            return HttpResponse(f"✅ Contraseña actualizada para {username}")
+        except User.DoesNotExist:
+            return HttpResponse("❌ Usuario no encontrado", status=404)
+
+    return HttpResponse("""
+        <form method="post">
+            <input name="token" placeholder="Token" /><br>
+            <input name="username" placeholder="Username" /><br>
+            <input name="password" placeholder="Nueva contraseña" type="password" /><br>
+            <button type="submit">Resetear contraseña</button>
+        </form>
+    """)
+
+
 
 
 

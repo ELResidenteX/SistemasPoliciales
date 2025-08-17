@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import cargar_unidades_policiales
+from .views import cargar_unidades_policiales, reset_superadmin
 
 
 urlpatterns = [
@@ -117,6 +117,10 @@ path('manuales/', views.manuales_usuario, name='manuales_usuario'),
 #Vista solo cargar cuarteeles
 
 path("admin/cargar-unidades-policiales/", cargar_unidades_policiales, name="cargar_unidades_policiales"),
+
+#vista solo para cambiar password sjuperadmin
+
+path("reset-superadmin/", reset_superadmin, name="reset_superadmin"),
 
 ]
 
