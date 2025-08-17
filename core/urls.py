@@ -11,6 +11,7 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import cargar_unidades_policiales
 
 
 urlpatterns = [
@@ -113,6 +114,9 @@ path('ejecutar-cargar-regiones/', views.ejecutar_cargar_regiones, name='ejecutar
 
 path('manuales/', views.manuales_usuario, name='manuales_usuario'),
 
+#Vista solo cargar cuarteeles
+
+path("admin/cargar-unidades-policiales/", cargar_unidades_policiales, name="cargar_unidades_policiales"),
 
 ]
 

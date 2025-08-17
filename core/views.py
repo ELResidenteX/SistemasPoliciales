@@ -18,11 +18,12 @@ from django.core.management import call_command
 import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
-from core.models import Delito 
+from core.models import Delito, UnidadPolicial, Comuna 
 from django.http import HttpResponse
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.admin.views.decorators import staff_member_required
+import os
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -527,6 +528,39 @@ def ejecutar_cargar_regiones(request):
 @login_required
 def manuales_usuario(request):
     return render(request, 'core/manuales.html')
+
+@staff_member_required  # Solo superusuarios o staff pueden acceder
+def cargar_unidades_policiales(request):
+    ruta = os.path.join("data", "cuarteles_normalizados.json")
+
+    if not os.path.exists(ruta):
+        messages.error(request, "❌ Archivo JSON no encontrado.")
+        return redirect("/admin/")
+
+    with open(ruta, "r", encoding="utf-8") as f:
+        cuarteles = json.load(f)
+
+    cargados = 0
+    errores = []
+
+    for item in cuarteles:
+        nombre = item["nombre"].strip()
+        comuna_nombre = item["comuna"].strip()
+        try:
+            comuna = Comuna.objects.get(nombre__iexact=comuna_nombre)
+            unidad, creado = UnidadPolicial.objects.get_or_create(
+                nombre=nombre,
+                comuna=comuna
+            )
+            if creado:
+                cargados += 1
+        except Comuna.DoesNotExist:
+            errores.append(comuna_nombre)
+
+    if errores:
+        messages.warning(request, f"Algunas comunas no se encontraron: {', '.join(set(errores))}")
+    messages.success(request, f"✅ {cargados} unidades policiales cargadas correctamente.")
+    return redirect("/admin/")
 
 
 
