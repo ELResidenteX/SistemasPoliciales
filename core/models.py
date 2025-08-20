@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # 🔹 Modelo de Delito
 class Delito(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
@@ -60,6 +61,9 @@ class EventoPolicial(models.Model):
     ]
 
     numero_evento = models.CharField(max_length=20, unique=True, blank=True, null=True)
+
+    unidad_policial = models.ForeignKey(UnidadPolicial, on_delete=models.PROTECT, null=True)
+
 
     lugar_procedimiento = models.CharField(max_length=50, choices=OPCIONES_LUGAR)
     fecha_ocurrencia = models.DateField()
@@ -205,6 +209,15 @@ class TipoLugar(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+#modelo para simular o usar una unidad activa
+
+class ConfiguracionSistema(models.Model):
+    unidad_activa = models.ForeignKey(UnidadPolicial, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"Configuración del sistema: {self.unidad_activa}"
+
 
 
 
