@@ -116,7 +116,8 @@ path('manuales/', views.manuales_usuario, name='manuales_usuario'),
 
 #Vista solo cargar cuarteeles
 
-path("admin/cargar-unidades-policiales/", cargar_unidades_policiales, name="cargar_unidades_policiales"),
+path("cargar-unidades-policiales/", cargar_unidades_policiales, name="cargar_unidades_policiales"),
+
 
 #vista solo para cambiar password sjuperadmin
 
