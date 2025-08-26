@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Cambiar unidad policial activa</h1>
+
+  <form method="post">{% csrf_token %}
+    <label for="unidad_policial">Selecciona unidad policial:</label>
+    <select name="unidad_policial" id="unidad_policial">
+      {% for unidad in unidades %}
+        <option value="{{ unidad.id }}" {% if unidad == unidad_actual %}selected{% endif %}>
+          {{ unidad.nombre }} - {{ unidad.comuna.nombre }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Cambiar</button>
+  </form>
+
+  {% if unidad_actual %}
+    <p>Unidad actual: <strong>{{ unidad_actual.nombre }}</strong></p>
+  {% endif %}
+{% endblock %}
+
+

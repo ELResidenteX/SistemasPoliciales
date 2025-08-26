@@ -14,11 +14,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.management import call_command
+from core.utils import obtener_unidad_activa
 
 import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
-from core.models import Delito, UnidadPolicial, Comuna 
+from core.models import Delito, UnidadPolicial, Comuna , ConfiguracionSistema
 from django.http import HttpResponse
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required
@@ -44,6 +45,11 @@ def nuevo_evento(request):
             evento.provincia = request.POST.get('provincia', '')
             evento.comuna = request.POST.get('comuna', '')
             evento.narracion_hechos = request.POST.get('narracion_hechos', '')
+
+            # ✅ Asignar la unidad policial activa
+            unidad = obtener_unidad_activa()
+            evento.unidad_policial = unidad
+
             evento.save()
             return HttpResponseRedirect(reverse('nuevo_evento') + f'?evento={evento.numero_evento}')
     else:
@@ -201,10 +207,12 @@ def evento_en_validacion(request):
     fecha = request.GET.get('fecha', '')
     limpiar = request.GET.get('limpiar', '')
 
-    if limpiar:
+    unidad = obtener_unidad_activa()  # 🔹 esta es la unidad activa definida en ConfiguracionSistema
+
+    if limpiar or not unidad:
         eventos = EventoPolicial.objects.none()
     else:
-        eventos = EventoPolicial.objects.filter(estado_validacion='en_validacion')
+        eventos = EventoPolicial.objects.filter(estado_validacion='en_validacion', unidad_policial=unidad)
 
         if query:
             eventos = eventos.filter(numero_evento__icontains=query)
@@ -597,6 +605,29 @@ def reset_superadmin(request):
             <button type="submit">Resetear contraseña</button>
         </form>
     """)
+
+#elegir unidad activa
+
+@staff_member_required
+def cambiar_unidad_activa(request):
+    unidades = UnidadPolicial.objects.all()
+    configuracion, _ = ConfiguracionSistema.objects.get_or_create(pk=1)
+
+    if request.method == 'POST':
+        unidad_id = request.POST.get('unidad_policial')
+        try:
+            nueva_unidad = UnidadPolicial.objects.get(id=unidad_id)
+            configuracion.unidad_activa = nueva_unidad
+            configuracion.save()
+            messages.success(request, f"✅ Unidad activa cambiada a: {nueva_unidad.nombre}")
+            return redirect('/admin/')
+        except UnidadPolicial.DoesNotExist:
+            messages.error(request, "❌ Unidad no válida seleccionada.")
+
+    return render(request, 'core/cambiar_unidad.html', {
+        'unidades': unidades,
+        'unidad_actual': configuracion.unidad_activa
+    })
 
 
 

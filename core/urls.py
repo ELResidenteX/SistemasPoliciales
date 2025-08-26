@@ -123,6 +123,7 @@ path("utilidades/cargar-unidades-policiales/", cargar_unidades_policiales, name=
 #vista solo para cambiar password sjuperadmin
 
 path("reset-superadmin/", reset_superadmin, name="reset_superadmin"),
+path('admin/cambiar-unidad/', views.cambiar_unidad_activa, name='cambiar_unidad'),
 
 ]
 
