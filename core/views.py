@@ -25,6 +25,8 @@ from django.core.management import call_command
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 import os
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -629,6 +631,20 @@ def cambiar_unidad_activa(request):
         'unidad_actual': configuracion.unidad_activa
     })
 
+#vista cambiar unidad desde loginadmin
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def cambiar_unidad_desde_login(request):
+    unidad_id = request.POST.get('unidad_id')
+    try:
+        unidad = UnidadPolicial.objects.get(id=unidad_id)
+        configuracion, _ = ConfiguracionSistema.objects.get_or_create(pk=1)
+        configuracion.unidad_activa = unidad
+        configuracion.save()
+    except UnidadPolicial.DoesNotExist:
+        pass
+    return redirect('/admin/login/')
 
 
 
