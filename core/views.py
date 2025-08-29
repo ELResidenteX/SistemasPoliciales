@@ -167,27 +167,31 @@ def eliminar_especie(request, especie_id):
 def buscar_evento(request):
     query = request.GET.get('numero_evento')
     fecha_creacion = request.GET.get('fecha_creacion')
-    eventos = EventoPolicial.objects.all()
+    unidad = obtener_unidad_activa()  # ✅ ahora filtramos por unidad
+    eventos = EventoPolicial.objects.none()
     no_encontrado = False
 
-    if query:
-        eventos = eventos.filter(numero_evento=query)
+    if unidad:
+        eventos = EventoPolicial.objects.filter(unidad_policial=unidad)
 
-    if fecha_creacion:
-        try:
-            fecha_dt = datetime.strptime(fecha_creacion, '%Y-%m-%d').date()
-            inicio_dia = datetime.combine(fecha_dt, time.min)
-            fin_dia = datetime.combine(fecha_dt, time.max)
-            eventos = eventos.filter(creado_en__range=(inicio_dia, fin_dia))
-        except ValueError:
+        if query:
+            eventos = eventos.filter(numero_evento=query)
+
+        if fecha_creacion:
+            try:
+                fecha_dt = datetime.strptime(fecha_creacion, '%Y-%m-%d').date()
+                inicio_dia = datetime.combine(fecha_dt, time.min)
+                fin_dia = datetime.combine(fecha_dt, time.max)
+                eventos = eventos.filter(creado_en__range=(inicio_dia, fin_dia))
+            except ValueError:
+                eventos = EventoPolicial.objects.none()
+                no_encontrado = True
+
+        if not query and not fecha_creacion:
             eventos = EventoPolicial.objects.none()
+
+        if not eventos.exists():
             no_encontrado = True
-
-    if not query and not fecha_creacion:
-        eventos = EventoPolicial.objects.none()
-
-    if not eventos.exists():
-        no_encontrado = True
 
     return render(request, 'core/buscar_evento.html', {
         'eventos': eventos,
