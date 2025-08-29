@@ -16,6 +16,27 @@
 <div class="login-card" style="max-width: 400px; width: 100%;">
     <h3 class="text-center mb-4">Acceso Administrador</h3>
 
+    <!-- 🔹 BLOQUE CAMBIO DE UNIDAD -->
+    <div class="mb-4 p-3 border rounded bg-light">
+        <form method="post" action="{% url 'cambiar_unidad_desde_login' %}">
+            {% csrf_token %}
+            <div class="mb-2">
+                <label for="unidad_id" class="form-label"><strong>Unidad policial activa:</strong></label>
+                <select class="form-select" name="unidad_id" id="unidad_id">
+                    {% for unidad in unidades %}
+                        <option value="{{ unidad.id }}" {% if unidad.id == unidad_actual_id %}selected{% endif %}>
+                            {{ unidad.nombre }} ({{ unidad.comuna.nombre }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-secondary w-100" type="submit">Cambiar unidad</button>
+        </form>
+        <p class="mt-2 text-muted small text-center">
+            Unidad actual: <strong>{{ unidad_actual_nombre }}</strong>
+        </p>
+    </div>
+
     {% if error %}
         <div class="alert alert-danger">{{ error }}</div>
     {% endif %}
@@ -42,5 +63,5 @@
 </div>
 
 <body class="overlay">
-
 </html>
+
