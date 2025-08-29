@@ -187,11 +187,7 @@ def buscar_evento(request):
                 eventos = EventoPolicial.objects.none()
                 no_encontrado = True
 
-        if not query and not fecha_creacion:
-            eventos = EventoPolicial.objects.none()
-
-        if not eventos.exists():
-            no_encontrado = True
+        
 
     return render(request, 'core/buscar_evento.html', {
         'eventos': eventos,
