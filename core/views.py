@@ -652,6 +652,20 @@ def cambiar_unidad_desde_login(request):
         pass
     return redirect('/admin/login/')
 
+# temporal
+
+
+@staff_member_required  # Solo usuarios staff/superadmin
+def crear_configuracion_temporal(request):
+    if ConfiguracionSistema.objects.exists():
+        config = ConfiguracionSistema.objects.first()
+        return HttpResponse(f"⚠️ Ya existe una configuración con unidad activa: {config.unidad_activa.nombre}")
+    
+    unidad = UnidadPolicial.objects.first()
+    if unidad:
+        ConfiguracionSistema.objects.create(unidad_activa=unidad)
+        return HttpResponse(f"✅ Unidad activa seteada a: {unidad.nombre}")
+    return HttpResponse("❌ No hay unidades policiales disponibles para asignar")
 
 
 

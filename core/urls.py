@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login
+from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal
 
 
 urlpatterns = [
@@ -128,6 +128,11 @@ path('admin/cambiar-unidad/', views.cambiar_unidad_activa, name='cambiar_unidad'
 #cambiar unidad desde login
 
 path("cambiar-unidad-login/", cambiar_unidad_desde_login, name="cambiar_unidad_desde_login"),
+
+#vista temporal unidad asignacion
+
+path('crear-config/', crear_configuracion_temporal, name='crear_configuracion_temporal'),
+
 
 ]
 
