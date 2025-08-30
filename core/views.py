@@ -650,7 +650,10 @@ def cambiar_unidad_desde_login(request):
         configuracion.save()
     except UnidadPolicial.DoesNotExist:
         pass
-    return redirect('/admin/login/')
+    # 🔄 Redirigir de nuevo al login personalizado, no al de Django
+    return redirect('/adminlogin/')
+
+
 
 # temporal
 
