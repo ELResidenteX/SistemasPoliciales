@@ -91,6 +91,22 @@
                 </div>
             </div>
 
+            <!-- ✅ ESTADÍSTICAS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-info text-white" type="button" data-bs-toggle="collapse" data-bs-target="#estadisticas">
+                        ESTADÍSTICAS
+                    </button>
+                </h2>
+                <div id="estadisticas" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'estadisticas_geolocalizacion' %}" class="text-white d-block py-1">Mapa de geolocalización</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- OTROS -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
@@ -102,9 +118,7 @@
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="{% url 'cambio_clave' %}" class="text-white d-block py-1">Cambio de clave</a></li>
-
                             <li><a href="{% url 'manuales_usuario' %}" class="text-white d-block py-1">Manuales</a></li>
-
 
                             {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
                                 <li><a href="{% url 'crear_usuario' %}" class="text-white d-block py-1">Configuración de usuarios</a></li>
@@ -122,7 +136,6 @@
     <!-- Panel principal de contenido -->
     <div class="main flex-grow-1 p-4">
 
-        <!-- ✅ Información del usuario con validación -->
         {% if request.user.is_authenticated and request.user.perfilusuario %}
         <div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
             <strong>Usuario:</strong> {{ request.user.username }} &nbsp; | &nbsp;
@@ -132,7 +145,6 @@
 
         {% block content %}
         {% include "core/presentacion.html" %}
-
         {% endblock %}
     </div>
 
@@ -142,3 +154,4 @@
 {% block script %}{% endblock %}
 </body>
 </html>
+
