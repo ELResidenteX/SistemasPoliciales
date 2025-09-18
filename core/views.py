@@ -27,6 +27,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 import os
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.conf import settings
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -670,6 +671,15 @@ def crear_configuracion_temporal(request):
         ConfiguracionSistema.objects.create(unidad_activa=unidad)
         return HttpResponse(f"✅ Unidad activa seteada a: {unidad.nombre}")
     return HttpResponse("❌ No hay unidades policiales disponibles para asignar")
+
+#Mapa geolocalizacion
+
+@staff_member_required
+def vista_mapa_geolocalizacion(request):
+    context = {
+        "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY
+    }
+    return render(request, "core/estadisticas_geolocalizacion.html", context)
 
 
 
