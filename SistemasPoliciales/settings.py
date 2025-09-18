@@ -155,3 +155,5 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
+GOOGLE_MAPS_API_KEY = 'AIzaSyC063ZS1iotpt1sQ7MJqoWF3dAJVYIDn-g'
+
