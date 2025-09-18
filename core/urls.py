@@ -11,7 +11,8 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal
+from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal, vista_mapa_geolocalizacion
+
 
 
 urlpatterns = [
@@ -133,6 +134,9 @@ path("cambiar-unidad-login/", cambiar_unidad_desde_login, name="cambiar_unidad_d
 
 path('crear-config/', crear_configuracion_temporal, name='crear_configuracion_temporal'),
 
+#vista geolocalizacion
+
+ path("estadisticas/geolocalizacion/", vista_mapa_geolocalizacion, name="estadisticas_geolocalizacion"),
 
 ]
 
