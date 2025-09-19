@@ -674,7 +674,7 @@ def crear_configuracion_temporal(request):
 
 #Mapa geolocalizacion
 
-@staff_member_required
+@ login_required
 def vista_mapa_geolocalizacion(request):
     context = {
         "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY

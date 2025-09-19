@@ -97,6 +97,10 @@ class EventoPolicial(models.Model):
 
     narracion_hechos = models.TextField()
 
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
+
+
     # 🔹 NUEVOS CAMPOS PARA INTEGRAR APP MÓVIL
     firma_funcionario = models.ImageField(upload_to="firmas/", null=True, blank=True)
     firma_denunciante = models.ImageField(upload_to="firmas/", null=True, blank=True)
