@@ -9,15 +9,7 @@
             width: 100%;
         }
     </style>
-
-    <!-- 👇 Verifica que la API key esté siendo inyectada correctamente -->
-    <script>
-        const clave = "{{ google_maps_api_key }}";
-        alert("GOOGLE_MAPS_API_KEY desde template: " + clave);
-    </script>
-
-    <!-- 👇 Usa el filtro 'safe' para evitar que Django escape el valor -->
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|safe }}&libraries=visualization"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
 </head>
 <body>
 
