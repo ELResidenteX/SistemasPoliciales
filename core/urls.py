@@ -140,7 +140,7 @@ path('crear-config/', crear_configuracion_temporal, name='crear_configuracion_te
 
 #coordenadas lat y long
 
-path("estadisticas/geolocalizacion/", vista_mapa_geolocalizacion, name="estadisticas_geolocalizacion"),
+
 path("api/eventos-geolocalizados/", eventos_geolocalizados_json, name="api_eventos_geolocalizados"),
 
 ]
