@@ -681,6 +681,16 @@ def vista_mapa_geolocalizacion(request):
     }
     return render(request, "core/estadisticas_geolocalizacion.html", context)
 
+#Coordenadas eventos
+
+def eventos_geolocalizados_json(request):
+    eventos = EventoPolicial.objects.filter(lat__isnull=False, lng__isnull=False)
+    data = [
+        {"lat": evento.lat, "lng": evento.lng}
+        for evento in eventos
+    ]
+    return JsonResponse(data, safe=False)
+
 
 
 
