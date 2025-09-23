@@ -9,6 +9,7 @@
             width: 100%;
         }
     </style>
+    <!-- Google Maps con capa de visualización (heatmap) -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
 </head>
 <body>
@@ -23,11 +24,27 @@
                 zoom: 12,
                 mapTypeId: "roadmap"
             });
+
+            // Cargar eventos con coordenadas desde la vista Django
+            fetch("{% url 'api_eventos_geolocalizados' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const heatmapData = data.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
+                    const heatmap = new google.maps.visualization.HeatmapLayer({
+                        data: heatmapData,
+                        radius: 25,
+                        map: map
+                    });
+                })
+                .catch(error => {
+                    console.error("Error al cargar eventos geolocalizados:", error);
+                });
         }
 
-        // Inicializar al cargar
+        // Inicializar el mapa al cargar la página
         window.onload = initMap;
     </script>
 
 </body>
 </html>
+
