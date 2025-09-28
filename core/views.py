@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.management import call_command
 from core.utils import obtener_unidad_activa
-
+from core.utils.geocoding import obtener_lat_lng
 import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
@@ -47,11 +47,25 @@ def nuevo_evento(request):
             evento.region = request.POST.get('region', '')
             evento.provincia = request.POST.get('provincia', '')
             evento.comuna = request.POST.get('comuna', '')
+            evento.direccion = request.POST.get('direccion', '')
+            evento.numero = request.POST.get('numero', '')
             evento.narracion_hechos = request.POST.get('narracion_hechos', '')
 
             # ✅ Asignar la unidad policial activa
             unidad = obtener_unidad_activa()
             evento.unidad_policial = unidad
+
+            #geocodificacion
+
+            lat, lng = obtener_lat_lng(
+                evento.region, evento.provincia, evento.comuna, evento.direccion, evento.numero
+            )
+            evento.lat = lat
+            evento.lng = lng
+            
+
+
+             
 
             evento.save()
             return HttpResponseRedirect(reverse('nuevo_evento') + f'?evento={evento.numero_evento}')
@@ -296,7 +310,6 @@ def guardar_edicion_evento(request, evento_id):
     evento = get_object_or_404(EventoPolicial, id=evento_id)
 
     if request.method == "POST":
-        # Mantener valores previos si los campos vienen vacíos
         region = request.POST.get("region", "")
         provincia = request.POST.get("provincia", "")
         comuna = request.POST.get("comuna", "")
@@ -309,8 +322,18 @@ def guardar_edicion_evento(request, evento_id):
         evento.numero = request.POST.get("numero", "")
         evento.fecha_ocurrencia = request.POST.get("fecha_ocurrencia")
         evento.hora_ocurrencia = request.POST.get("hora_ocurrencia")
+
+        # ✅ Solo geocodificar si dirección y número están presentes
+        if evento.direccion and evento.numero:
+            lat, lng = obtener_lat_lng(
+                evento.region, evento.provincia, evento.comuna, evento.direccion, evento.numero
+            )
+            evento.lat = lat
+            evento.lng = lng
+
         evento.save()
 
+        # Participantes (si vienen en la edición)
         for key in request.POST:
             if key.startswith("participante_id_"):
                 pid = key.replace("participante_id_", "")
@@ -322,8 +345,6 @@ def guardar_edicion_evento(request, evento_id):
                 participante.telefono = request.POST.get(f"participante_telefono_{pid}", "")
                 participante.fecha_nacimiento = request.POST.get(f"participante_fecha_nacimiento_{pid}", "")
 
-
-                # También conservar región/provincia/comuna si no se modifican
                 p_region = request.POST.get(f"participante_region_{pid}", "")
                 p_provincia = request.POST.get(f"participante_provincia_{pid}", "")
                 p_comuna = request.POST.get(f"participante_comuna_{pid}", "")
@@ -339,6 +360,7 @@ def guardar_edicion_evento(request, evento_id):
         return redirect('evento_en_validacion')
 
     return redirect('evento_en_validacion')
+
 
 
 # ASIGNAR FISCALIA AL PARTE
