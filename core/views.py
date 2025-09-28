@@ -58,11 +58,11 @@ def nuevo_evento(request):
 
             #geocodificacion
 
-            lat, lng = obtener_lat_lng(
-                evento.region, evento.provincia, evento.comuna, evento.direccion, evento.numero
-            )
+            direccion_completa = f"{evento.direccion} {evento.numero}, {evento.comuna}, {evento.provincia}, {evento.region}"
+            lat, lng = obtener_lat_lng(direccion_completa)
             evento.lat = lat
             evento.lng = lng
+
             
 
 
