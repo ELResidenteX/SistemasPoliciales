@@ -15,7 +15,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.management import call_command
 from core.utils import obtener_unidad_activa
-from core.utils.geocoding import obtener_lat_lng
+from core.geocoding import obtener_lat_lng  
+
 import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
