@@ -66,14 +66,12 @@
             </div>
           {% endif %}
 
-          <!-- ✅ Card Bootstrap para Datos Generales del Evento -->
           <div class="card mb-4 shadow-sm">
             <div class="card-header bg-primary text-white">
               📌 Datos Generales del Evento
             </div>
             <div class="card-body">
               <p class="text-muted">Completa la información básica del procedimiento policial y datos del funcionario.</p>
-              
               <div class="row">
                 {% for field in form %}
                   {% if field.name not in "region provincia comuna direccion numero block villa depto km interseccion narracion_hechos delito_tipificado modo_operandi otros_delitos_observados es_violencia_intrafamiliar es_accidente_transito victima_mujer_presente_guardia tipo_lugar" %}
@@ -87,7 +85,6 @@
             </div>
           </div>
 
-          <!-- SECCIÓN DELITOS ASOCIADOS -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Delitos Asociados
@@ -103,7 +100,6 @@
             </div>
           </div>
 
-          <!-- SECCIÓN DIRECCIÓN DE OCURRENCIA -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Dirección de Ocurrencia
@@ -111,7 +107,6 @@
             <div class="card-body">
               <p class="text-muted mb-3">Completa la ubicación detallada del hecho para georreferenciación.</p>
               <div class="mb-3">{{ form.tipo_lugar.label_tag }}{{ form.tipo_lugar }}</div>
-
               <div class="mb-3">
                 <label for="region" class="form-label">Región</label>
                 <select id="region" name="region" class="form-select region-select" data-tipo="evento" data-id="evento" data-selected="{{ evento.region|default_if_none:'' }}" {% if not editando %}required{% endif %}>
@@ -137,10 +132,12 @@
               <div class="mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
               <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
               <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
+              <div class="mb-3">
+                <div id="mini-map" style="height: 300px;"></div>
+              </div>
             </div>
           </div>
 
-          <!-- SECCIÓN NARRACIÓN DE LOS HECHOS -->
           <div class="card mb-4">
             <div class="card-header bg-success text-white">
               📌 Narración de los Hechos
@@ -172,7 +169,6 @@
   </div>
 </div>
 
-<!-- ✅ Modal con toda la información del evento -->
 {% if evento and evento.participantes.exists %}
 <div class="modal fade" id="modalEventoCompleto" tabindex="-1" aria-labelledby="modalEventoCompletoLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -189,12 +185,43 @@
 </div>
 {% endif %}
 
-<!-- Scripts -->
 <script src="{% static 'core/js/evento.js' %}"></script>
 <script src="{% static 'core/js/general.js' %}"></script>
 <script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+<script>
+  let map, marker, autocomplete;
+
+  function initAutocompleteAndMap() {
+    const input = document.getElementById("id_direccion");
+    autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["geocode"],
+      componentRestrictions: { country: "cl" }
+    });
+
+    map = new google.maps.Map(document.getElementById("mini-map"), {
+      center: { lat: -33.45, lng: -70.66 },
+      zoom: 14,
+    });
+
+    marker = new google.maps.Marker({
+      map: map,
+      draggable: false
+    });
+
+    autocomplete.addListener("place_changed", function () {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) return;
+      map.setCenter(place.geometry.location);
+      marker.setPosition(place.geometry.location);
+    });
+  }
+
+  window.onload = initAutocompleteAndMap;
+</script>
 {% endblock %}
+
 
 
 
