@@ -45,12 +45,23 @@
             .then(response => response.json())
             .then(data => {
                 data.features.forEach(feature => {
-                    const coords = feature.geometry.coordinates[0].map(
-                        coord => ({ lat: coord[1], lng: coord[0] })
-                    );
+                    let paths = [];
+
+                    // Soporte para Polygon y MultiPolygon
+                    if (feature.geometry.type === "Polygon") {
+                        paths = feature.geometry.coordinates[0].map(
+                            coord => ({ lat: coord[1], lng: coord[0] })
+                        );
+                    } else if (feature.geometry.type === "MultiPolygon") {
+                        feature.geometry.coordinates.forEach(polygon => {
+                            polygon[0].forEach(coord => {
+                                paths.push({ lat: coord[1], lng: coord[0] });
+                            });
+                        });
+                    }
 
                     const polygon = new google.maps.Polygon({
-                        paths: coords,
+                        paths: paths,
                         strokeColor: "#0033cc",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
@@ -60,9 +71,9 @@
 
                     polygon.setMap(map);
 
-                    // Opcional: centrar mapa en la comuna
+                    // Centrar el mapa en la comuna
                     const bounds = new google.maps.LatLngBounds();
-                    coords.forEach(c => bounds.extend(c));
+                    paths.forEach(c => bounds.extend(c));
                     map.fitBounds(bounds);
                 });
             })
@@ -72,9 +83,9 @@
     }
 
     window.onload = initMap;
-</script>
-
+    </script>
 
 </body>
 </html>
+
 
