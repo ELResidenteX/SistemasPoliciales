@@ -702,15 +702,12 @@ def vista_mapa_geolocalizacion(request):
 #Coordenadas eventos
 
 def eventos_geolocalizados_json(request):
-    unidad = obtener_unidad_activa()
-    eventos = EventoPolicial.objects.filter(
-        unidad_policial=unidad,
-        lat__isnull=False,
-        lng__isnull=False
-    )
-    data = [{"lat": evento.lat, "lng": evento.lng} for evento in eventos]
+    eventos = EventoPolicial.objects.filter(lat__isnull=False, lng__isnull=False)
+    data = [
+        {"lat": evento.lat, "lng": evento.lng}
+        for evento in eventos
+    ]
     return JsonResponse(data, safe=False)
-
 
 
 
