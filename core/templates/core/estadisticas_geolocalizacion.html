@@ -18,32 +18,62 @@
     <div id="map"></div>
 
     <script>
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: -33.45, lng: -70.66 }, // Centro en Santiago
-                zoom: 12,
-                mapTypeId: "roadmap"
+    function initMap() {
+        const map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -33.45, lng: -70.66 }, // Centro en Santiago
+            zoom: 12,
+            mapTypeId: "roadmap"
+        });
+
+        // 🔥 Heatmap de eventos
+        fetch("{% url 'api_eventos_geolocalizados' %}")
+            .then(response => response.json())
+            .then(data => {
+                const heatmapData = data.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
+                const heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData,
+                    radius: 25,
+                    map: map
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar eventos geolocalizados:", error);
             });
 
-            // Cargar eventos con coordenadas desde la vista Django
-            fetch("{% url 'api_eventos_geolocalizados' %}")
-                .then(response => response.json())
-                .then(data => {
-                    const heatmapData = data.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
-                    const heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: heatmapData,
-                        radius: 25,
-                        map: map
-                    });
-                })
-                .catch(error => {
-                    console.error("Error al cargar eventos geolocalizados:", error);
-                });
-        }
+        // 🧭 Cargar el polígono de la comuna activa
+        fetch("{% url 'geojson_comuna_activa' %}")
+            .then(response => response.json())
+            .then(data => {
+                data.features.forEach(feature => {
+                    const coords = feature.geometry.coordinates[0].map(
+                        coord => ({ lat: coord[1], lng: coord[0] })
+                    );
 
-        // Inicializar el mapa al cargar la página
-        window.onload = initMap;
-    </script>
+                    const polygon = new google.maps.Polygon({
+                        paths: coords,
+                        strokeColor: "#0033cc",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: "#0033cc",
+                        fillOpacity: 0.1
+                    });
+
+                    polygon.setMap(map);
+
+                    // Opcional: centrar mapa en la comuna
+                    const bounds = new google.maps.LatLngBounds();
+                    coords.forEach(c => bounds.extend(c));
+                    map.fitBounds(bounds);
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar el polígono de la comuna activa:", error);
+            });
+    }
+
+    window.onload = initMap;
+</script>
+
 
 </body>
 </html>

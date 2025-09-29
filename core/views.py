@@ -699,7 +699,7 @@ def vista_mapa_geolocalizacion(request):
     }
     return render(request, "core/estadisticas_geolocalizacion.html", context)
 
-#Coordenadas eventos
+#Separacion por unidad policial, respecto a eventos por unidad policial
 
 def eventos_geolocalizados_json(request):
     unidad = obtener_unidad_activa()  # ✅ Usamos la unidad activa definida en ConfiguracionSistema
@@ -716,6 +716,29 @@ def eventos_geolocalizados_json(request):
     ]
 
     return JsonResponse(data, safe=False)
+
+#Aparicion de linea divisora por comuna
+
+def geojson_comuna_activa(request):
+    unidad = obtener_unidad_activa()
+    comuna_nombre = unidad.comuna.nombre if unidad and unidad.comuna else ""
+
+    ruta_archivo = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'geojson', 'Comunas_de_Chile.geojson')
+
+    with open(ruta_archivo, encoding="utf-8") as f:
+        geojson_data = json.load(f)
+
+    # Filtrar solo la comuna activa
+    comuna_filtrada = {
+        "type": "FeatureCollection",
+        "features": [
+            f for f in geojson_data["features"]
+            if f["properties"].get("Comuna", "").lower() == comuna_nombre.lower()
+        ]
+    }
+
+    return JsonResponse(comuna_filtrada)
+
 
 
 
