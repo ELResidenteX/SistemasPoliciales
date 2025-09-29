@@ -1,4 +1,5 @@
 from core.models import ConfiguracionSistema, UnidadPolicial
+from django.conf import settings
 
 def unidad_policial_context(request):
     try:
@@ -13,4 +14,9 @@ def unidad_policial_context(request):
         "unidad_actual_id": unidad_id,
         "unidad_actual_nombre": unidad_nombre,
         "unidades": UnidadPolicial.objects.all()
+    }
+
+def google_maps_key(request):
+    return {
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     }
