@@ -9,83 +9,119 @@
             width: 100%;
         }
     </style>
-    <!-- Google Maps con capa de visualización (heatmap) -->
+    <!-- Google Maps con capa de visualización -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
 </head>
 <body>
 
-    <h2 style="text-align:center;">📍 Mapa de calor de denuncias</h2>
-    <div id="map"></div>
+<h2 style="text-align:center;">📍 Mapa de calor de denuncias</h2>
 
-    <script>
+<div style="text-align: center; margin-bottom: 10px;">
+    <label for="comuna-select">Filtrar por comuna:</label>
+    <select id="comuna-select">
+        <option value="">-- Ver todas --</option>
+    </select>
+</div>
+
+<div id="map"></div>
+
+<script>
+    let map, heatmap, polygon;
+
     function initMap() {
-        const map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: -33.45, lng: -70.66 }, // Centro en Santiago
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -33.45, lng: -70.66 },
             zoom: 12,
             mapTypeId: "roadmap"
         });
 
-        // 🔥 Heatmap de eventos
-        fetch("{% url 'api_eventos_geolocalizados' %}")
-            .then(response => response.json())
+        cargarSelectComunas(); // Llenar el dropdown y cargar comuna activa
+    }
+
+    function cargarSelectComunas() {
+        fetch("{% url 'lista_comunas' %}")
+            .then(res => res.json())
+            .then(comunas => {
+                const select = document.getElementById("comuna-select");
+
+                // Marcar comuna activa por defecto
+                const comunaActiva = "{{ request.user.perfilusuario.unidad_policial.comuna.nombre|escapejs }}".toLowerCase();
+
+                comunas.forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c.nombre;
+                    opt.text = c.nombre;
+                    if (c.nombre.toLowerCase() === comunaActiva) {
+                        opt.selected = true;
+                    }
+                    select.appendChild(opt);
+                });
+
+                // Primera carga con comuna activa
+                cargarEventosYPoligono(comunaActiva);
+
+                // Al cambiar la comuna desde el dropdown
+                select.addEventListener("change", () => {
+                    const comuna = select.value;
+                    cargarEventosYPoligono(comuna);
+                });
+            });
+    }
+
+    function cargarEventosYPoligono(comuna = "") {
+        const eventosUrl = "{% url 'api_eventos_geolocalizados' %}" + (comuna ? `?comuna=${encodeURIComponent(comuna)}` : "");
+        const geoUrl = comuna ? `/api/comuna-poligono/?comuna=${encodeURIComponent(comuna)}` : null;
+
+        // 🔥 Cargar eventos
+        fetch(eventosUrl)
+            .then(res => res.json())
             .then(data => {
                 const heatmapData = data.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
-                const heatmap = new google.maps.visualization.HeatmapLayer({
+                if (heatmap) heatmap.setMap(null);
+                heatmap = new google.maps.visualization.HeatmapLayer({
                     data: heatmapData,
                     radius: 25,
                     map: map
                 });
-            })
-            .catch(error => {
-                console.error("Error al cargar eventos geolocalizados:", error);
             });
 
-        // 🧭 Cargar el polígono de la comuna activa
-        fetch("{% url 'geojson_comuna_activa' %}")
-            .then(response => response.json())
-            .then(data => {
-                data.features.forEach(feature => {
-                    let paths = [];
+        // 🧭 Cargar polígono si hay comuna
+        if (geoUrl) {
+            fetch(geoUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (polygon) polygon.setMap(null);
+                    if (!data.features.length) return;
 
-                    // Soporte para Polygon y MultiPolygon
-                    if (feature.geometry.type === "Polygon") {
-                        paths = feature.geometry.coordinates[0].map(
-                            coord => ({ lat: coord[1], lng: coord[0] })
-                        );
-                    } else if (feature.geometry.type === "MultiPolygon") {
-                        feature.geometry.coordinates.forEach(polygon => {
-                            polygon[0].forEach(coord => {
-                                paths.push({ lat: coord[1], lng: coord[0] });
-                            });
-                        });
-                    }
+                    const coords = data.features[0].geometry.coordinates[0].map(
+                        coord => ({ lat: coord[1], lng: coord[0] })
+                    );
 
-                    const polygon = new google.maps.Polygon({
-                        paths: paths,
-                        strokeColor: "#0033cc",
+                    polygon = new google.maps.Polygon({
+                        paths: coords,
+                        strokeColor: "#cc0000",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
-                        fillColor: "#0033cc",
+                        fillColor: "#cc0000",
                         fillOpacity: 0.1
                     });
 
                     polygon.setMap(map);
 
-                    // Centrar el mapa en la comuna
                     const bounds = new google.maps.LatLngBounds();
-                    paths.forEach(c => bounds.extend(c));
+                    coords.forEach(c => bounds.extend(c));
                     map.fitBounds(bounds);
                 });
-            })
-            .catch(error => {
-                console.error("Error al cargar el polígono de la comuna activa:", error);
-            });
+        } else {
+            if (polygon) polygon.setMap(null); // Oculta polígono si se seleccionó "ver todas"
+        }
     }
 
     window.onload = initMap;
-    </script>
+</script>
 
 </body>
 </html>
+
 
 

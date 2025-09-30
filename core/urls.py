@@ -143,6 +143,9 @@ path('crear-config/', crear_configuracion_temporal, name='crear_configuracion_te
 
 path("api/eventos-geolocalizados/", eventos_geolocalizados_json, name="api_eventos_geolocalizados"),
 path("api/comuna-activa/", geojson_comuna_activa, name="geojson_comuna_activa"),
+path('api/comuna-poligono/', views.geojson_comuna_por_nombre, name='geojson_comuna_nombre'),
+path('api/comunas/', views.lista_comunas_json, name='lista_comunas'),
+
 ]
 
 

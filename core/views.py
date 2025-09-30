@@ -739,6 +739,14 @@ def geojson_comuna_activa(request):
 
     return JsonResponse(comuna_filtrada)
 
+#filtro comunas
+
+
+def lista_comunas_json(request):
+    comunas = Comuna.objects.all().order_by('nombre')
+    data = [{"id": c.id, "nombre": c.nombre} for c in comunas]
+    return JsonResponse(data, safe=False)
+
 
 
 
