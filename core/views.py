@@ -719,25 +719,48 @@ def eventos_geolocalizados_json(request):
 
 #Aparicion de linea divisora por comuna
 
+import json
+import os
+from django.http import JsonResponse, HttpResponse
+from django.conf import settings
+from core.utils import obtener_unidad_activa
+
 def geojson_comuna_activa(request):
     unidad = obtener_unidad_activa()
     comuna_nombre = unidad.comuna.nombre if unidad and unidad.comuna else ""
+    print(f"✅ Unidad activa: {unidad.nombre if unidad else 'None'}")
+    print(f"🏙️ Buscando comuna: {comuna_nombre}")
 
-    ruta_archivo = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'geojson', 'Comunas_de_Chile.geojson')
+    # Ruta absoluta al archivo
+    ruta_geojson = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'geojson', 'Comunas_de_Chile.geojson')
 
-    with open(ruta_archivo, encoding="utf-8") as f:
+    if not os.path.exists(ruta_geojson):
+        print("❌ Archivo GeoJSON no encontrado en:", ruta_geojson)
+        return HttpResponse("Archivo GeoJSON no encontrado", status=404)
+
+    with open(ruta_geojson, encoding="utf-8") as f:
         geojson_data = json.load(f)
 
-    # Filtrar solo la comuna activa
+    print(f"📦 Total comunas en GeoJSON: {len(geojson_data['features'])}")
+
+    # Filtrar comuna activa
+    features_filtradas = [
+        f for f in geojson_data["features"]
+        if f["properties"].get("Comuna", "").strip().lower() == comuna_nombre.strip().lower()
+    ]
+
+    if not features_filtradas:
+        print(f"⚠️ No se encontró la comuna '{comuna_nombre}' en el archivo GeoJSON.")
+    else:
+        print(f"✅ Comuna encontrada: {features_filtradas[0]['properties'].get('Comuna')}")
+
     comuna_filtrada = {
         "type": "FeatureCollection",
-        "features": [
-            f for f in geojson_data["features"]
-            if f["properties"].get("Comuna", "").lower() == comuna_nombre.lower()
-        ]
+        "features": features_filtradas
     }
 
     return JsonResponse(comuna_filtrada)
+
 
 
 
