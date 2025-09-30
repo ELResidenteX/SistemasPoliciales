@@ -41,7 +41,7 @@
             });
 
         // 🧭 Cargar el polígono de la comuna activa
-        fetch("{% url 'Comunas_de_Chile' %}")
+        fetch("{% url 'geojson_comuna_activa' %}")
             .then(response => response.json())
             .then(data => {
                 data.features.forEach(feature => {
