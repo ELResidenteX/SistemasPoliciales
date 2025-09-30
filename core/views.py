@@ -768,7 +768,7 @@ def geojson_comuna_por_nombre(request):
 
     features_filtradas = [
         f for f in geojson_data["features"]
-        if f["properties"].get("Comuna", "").strip().lower() == nombre_comuna
+        if f["properties"].get("comuna", "").strip().lower() == nombre_comuna
     ]
 
     return JsonResponse({
