@@ -747,6 +747,29 @@ def lista_comunas_json(request):
     data = [{"id": c.id, "nombre": c.nombre} for c in comunas]
     return JsonResponse(data, safe=False)
 
+#Filtro comunas desde mapa
+
+def geojson_comuna_por_nombre(request):
+    nombre_comuna = request.GET.get("comuna", "").strip().lower()
+    ruta_geojson = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'geojson', 'Comunas_de_Chile.geojson')
+
+    if not os.path.exists(ruta_geojson):
+        return HttpResponse("Archivo GeoJSON no encontrado", status=404)
+
+    with open(ruta_geojson, encoding="utf-8") as f:
+        geojson_data = json.load(f)
+
+    features_filtradas = [
+        f for f in geojson_data["features"]
+        if f["properties"].get("Comuna", "").strip().lower() == nombre_comuna
+    ]
+
+    return JsonResponse({
+        "type": "FeatureCollection",
+        "features": features_filtradas
+    })
+
+
 
 
 
