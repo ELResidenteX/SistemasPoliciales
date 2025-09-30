@@ -694,8 +694,15 @@ def crear_configuracion_temporal(request):
 
 @ login_required
 def vista_mapa_geolocalizacion(request):
+    unidad = obtener_unidad_activa()
+    comuna_activa = unidad.comuna.nombre if unidad and unidad.comuna else ""
+
+    comunas = Comuna.objects.all().order_by('nombre')
+
     context = {
-        "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY
+        "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY,
+        "comunas": comunas,
+        "comuna_activa": comuna_activa
     }
     return render(request, "core/estadisticas_geolocalizacion.html", context)
 
