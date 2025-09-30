@@ -34,8 +34,16 @@
         let heatmap;
         let poligonoComuna;
 
-        function cargarHeatmap() {
-            fetch("{% url 'api_eventos_geolocalizados' %}")
+        function cargarHeatmap(comuna = "") {
+            if (heatmap) {
+                heatmap.setMap(null); // Quitar heatmap anterior
+            }
+
+            const url = comuna
+                ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
+                : "{% url 'api_eventos_geolocalizados' %}";
+
+            fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     const heatmapData = data.map(p => new google.maps.LatLng(p.lat, p.lng));
@@ -88,16 +96,15 @@
                 mapTypeId: "roadmap"
             });
 
-            cargarHeatmap();
-
-            // Cargar la comuna activa por defecto
             const comunaInicial = document.getElementById("comunaSelect").value;
             cargarPoligono(comunaInicial);
+            cargarHeatmap(comunaInicial);  // ✅ importante para mostrar solo eventos de esa comuna
 
             // Manejar cambio de comuna
             document.getElementById("comunaSelect").addEventListener("change", function () {
                 const seleccionada = this.value;
                 cargarPoligono(seleccionada);
+                cargarHeatmap(seleccionada); // ✅ actualizar mapa de calor también
             });
         }
 
@@ -106,6 +113,7 @@
 
 </body>
 </html>
+
 
 
 
