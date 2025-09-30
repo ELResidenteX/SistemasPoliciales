@@ -9,125 +9,104 @@
             width: 100%;
         }
     </style>
-    <!-- Google Maps con capa de visualización -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
 </head>
 <body>
 
-<h2 style="text-align:center;">📍 Mapa de calor de denuncias</h2>
+    <h2 style="text-align:center;">📍 Mapa de calor de denuncias</h2>
 
-<div style="text-align:center; margin-bottom:10px;">
-    <label for="comunaSelect"><strong>Filtrar por comuna:</strong></label>
-    <select id="comunaSelect">
-        <option value="">-- Ver todas --</option>
-        {% for comuna in comunas %}
-            <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
-                {{ comuna.nombre }}
-            </option>
-        {% endfor %}
-    </select>
-</div>
+    <div style="text-align:center; margin-bottom:10px;">
+        <label for="comunaSelect"><strong>Filtrar por comuna:</strong></label>
+        <select id="comunaSelect">
+            <option value="">-- Ver todas --</option>
+            {% for comuna in comunas %}
+                <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
+                    {{ comuna.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
 
+    <div id="map"></div>
 
-<div id="map"></div>
+    <script>
+        let map;
+        let heatmap;
+        let poligonoComuna;
 
-<script>
-    let map, heatmap, polygon;
-
-    function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: -33.45, lng: -70.66 },
-            zoom: 12,
-            mapTypeId: "roadmap"
-        });
-
-        cargarSelectComunas(); // Llenar el dropdown y cargar comuna activa
-    }
-
-    function cargarSelectComunas() {
-        fetch("{% url 'lista_comunas' %}")
-            .then(res => res.json())
-            .then(comunas => {
-                const select = document.getElementById("comuna-select");
-
-                // Marcar comuna activa por defecto
-                const comunaActiva = "{{ request.user.perfilusuario.unidad_policial.comuna.nombre|escapejs }}".toLowerCase();
-
-                comunas.forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c.nombre;
-                    opt.text = c.nombre;
-                    if (c.nombre.toLowerCase() === comunaActiva) {
-                        opt.selected = true;
-                    }
-                    select.appendChild(opt);
-                });
-
-                // Primera carga con comuna activa
-                cargarEventosYPoligono(comunaActiva);
-
-                // Al cambiar la comuna desde el dropdown
-                select.addEventListener("change", () => {
-                    const comuna = select.value;
-                    cargarEventosYPoligono(comuna);
-                });
-            });
-    }
-
-    function cargarEventosYPoligono(comuna = "") {
-        const eventosUrl = "{% url 'api_eventos_geolocalizados' %}" + (comuna ? `?comuna=${encodeURIComponent(comuna)}` : "");
-        const geoUrl = comuna ? `/api/comuna-poligono/?comuna=${encodeURIComponent(comuna)}` : null;
-
-        // 🔥 Cargar eventos
-        fetch(eventosUrl)
-            .then(res => res.json())
-            .then(data => {
-                const heatmapData = data.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
-                if (heatmap) heatmap.setMap(null);
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatmapData,
-                    radius: 25,
-                    map: map
-                });
-            });
-
-        // 🧭 Cargar polígono si hay comuna
-        if (geoUrl) {
-            fetch(geoUrl)
+        function cargarHeatmap() {
+            fetch("{% url 'api_eventos_geolocalizados' %}")
                 .then(res => res.json())
                 .then(data => {
-                    if (polygon) polygon.setMap(null);
-                    if (!data.features.length) return;
+                    const heatmapData = data.map(p => new google.maps.LatLng(p.lat, p.lng));
+                    heatmap = new google.maps.visualization.HeatmapLayer({
+                        data: heatmapData,
+                        radius: 25
+                    });
+                    heatmap.setMap(map);
+                });
+        }
 
-                    const coords = data.features[0].geometry.coordinates[0].map(
-                        coord => ({ lat: coord[1], lng: coord[0] })
-                    );
+        function cargarPoligono(nombre_comuna) {
+            if (poligonoComuna) {
+                poligonoComuna.setMap(null);  // quitar el anterior
+            }
 
-                    polygon = new google.maps.Polygon({
+            if (!nombre_comuna) return; // no cargar si está vacío (ver todas)
+
+            fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.features.length === 0) return;
+
+                    const coords = data.features[0].geometry.coordinates[0].map(c => ({
+                        lat: c[1],
+                        lng: c[0]
+                    }));
+
+                    poligonoComuna = new google.maps.Polygon({
                         paths: coords,
-                        strokeColor: "#cc0000",
+                        strokeColor: "#FF0000",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
-                        fillColor: "#cc0000",
+                        fillColor: "#FF0000",
                         fillOpacity: 0.1
                     });
 
-                    polygon.setMap(map);
+                    poligonoComuna.setMap(map);
 
                     const bounds = new google.maps.LatLngBounds();
                     coords.forEach(c => bounds.extend(c));
                     map.fitBounds(bounds);
                 });
-        } else {
-            if (polygon) polygon.setMap(null); // Oculta polígono si se seleccionó "ver todas"
         }
-    }
 
-    window.onload = initMap;
-</script>
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -33.45, lng: -70.66 },
+                zoom: 12,
+                mapTypeId: "roadmap"
+            });
+
+            cargarHeatmap();
+
+            // Cargar la comuna activa por defecto
+            const comunaInicial = document.getElementById("comunaSelect").value;
+            cargarPoligono(comunaInicial);
+
+            // Manejar cambio de comuna
+            document.getElementById("comunaSelect").addEventListener("change", function () {
+                const seleccionada = this.value;
+                cargarPoligono(seleccionada);
+            });
+        }
+
+        window.onload = initMap;
+    </script>
 
 </body>
 </html>
+
 
 
 
