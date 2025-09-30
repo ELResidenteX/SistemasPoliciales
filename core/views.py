@@ -746,7 +746,7 @@ def geojson_comuna_activa(request):
     # Filtrar comuna activa
     features_filtradas = [
         f for f in geojson_data["features"]
-        if f["properties"].get("Comuna", "").strip().lower() == comuna_nombre.strip().lower()
+        if f["properties"].get("comuna", "").strip().lower() == comuna_nombre.strip().lower()
     ]
 
     if not features_filtradas:
