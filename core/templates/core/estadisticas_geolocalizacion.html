@@ -97,14 +97,18 @@
             });
 
             const comunaInicial = document.getElementById("comunaSelect").value;
-            cargarPoligono(comunaInicial);
-            cargarHeatmap(comunaInicial);  // ✅ importante para mostrar solo eventos de esa comuna
 
-            // Manejar cambio de comuna
+            if (comunaInicial) {
+                cargarPoligono(comunaInicial);
+                cargarHeatmap(comunaInicial);
+            } else {
+                cargarHeatmap();
+            }
+
             document.getElementById("comunaSelect").addEventListener("change", function () {
                 const seleccionada = this.value;
                 cargarPoligono(seleccionada);
-                cargarHeatmap(seleccionada); // ✅ actualizar mapa de calor también
+                cargarHeatmap(seleccionada);
             });
         }
 
@@ -113,8 +117,3 @@
 
 </body>
 </html>
-
-
-
-
-

@@ -776,6 +776,22 @@ def geojson_comuna_por_nombre(request):
         "features": features_filtradas
     })
 
+#eventos filtrados por comuna
+
+def eventos_por_comuna_json(request):
+    nombre = request.GET.get("comuna", "").strip()
+
+    # Normalización para evitar errores por espacios, mayúsculas, tildes, etc.
+    eventos = EventoPolicial.objects.filter(
+        Q(comuna__iregex=rf'^{re.escape(nombre)}$'),
+        lat__isnull=False,
+        lng__isnull=False
+    )
+
+    data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
+    return JsonResponse(data, safe=False)
+
+
 
 
 
