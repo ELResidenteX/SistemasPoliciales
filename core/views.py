@@ -52,16 +52,21 @@ def nuevo_evento(request):
             evento.numero = request.POST.get('numero', '')
             evento.narracion_hechos = request.POST.get('narracion_hechos', '')
 
-            # ✅ Asignar la unidad policial activa
+            # ✅ Asignar unidad policial activa desde configuración
             unidad = obtener_unidad_activa()
             evento.unidad_policial = unidad
 
-            #geocodificacion
-
+            # ✅ Geocodificación (usando Google Maps)
             direccion_completa = f"{evento.direccion} {evento.numero}, {evento.comuna}, {evento.provincia}, {evento.region}"
             lat, lng = obtener_lat_lng(direccion_completa)
+
             evento.lat = lat
-            evento.lng = lng 
+            evento.lng = lng
+
+            # ⚠️ Opción: advertir si falló la geocodificación
+            if lat is None or lng is None:
+                from django.contrib import messages
+                messages.warning(request, "⚠️ No se pudo obtener ubicación geográfica para esta dirección.")
 
             evento.save()
             return HttpResponseRedirect(reverse('nuevo_evento') + f'?evento={evento.numero_evento}')
@@ -95,6 +100,7 @@ def nuevo_evento(request):
         'participante_editando': participante_editando,
         'especie_editando': especie_editando,
     })
+
 
 # ✅ Agregar o actualizar participante
 def agregar_participante(request, evento_id):
