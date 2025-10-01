@@ -61,7 +61,8 @@ def nuevo_evento(request):
             direccion_completa = f"{evento.direccion} {evento.numero}, {evento.comuna}, {evento.provincia}, {evento.region}"
             lat, lng = obtener_lat_lng(direccion_completa)
             evento.lat = lat
-            
+            evento.lng = lng 
+
             evento.save()
             return HttpResponseRedirect(reverse('nuevo_evento') + f'?evento={evento.numero_evento}')
     else:
