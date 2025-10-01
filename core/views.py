@@ -61,6 +61,7 @@ def nuevo_evento(request):
             lat, lng = obtener_lat_lng(direccion_completa)
 
             evento.lat = lat
+            evento.lng = lng
             
             # ⚠️ Opción: advertir si falló la geocodificación
             if lat is None or lng is None:
