@@ -25,7 +25,7 @@ from django.http import HttpResponse
 from django.core.management import call_command
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-import os
+import os, re
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
