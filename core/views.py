@@ -792,25 +792,32 @@ def eventos_por_comuna_json(request):
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
+    # Base Query
     eventos = EventoPolicial.objects.filter(
         Q(comuna__iregex=rf'^{re.escape(nombre)}$') if nombre else Q(),
         lat__isnull=False,
         lng__isnull=False
     )
 
-    if delito_id:
+    # 🔹 Filtro solo si delito_id existe y es un número y hay delito con ese ID
+    if delito_id and delito_id.isdigit() and Delito.objects.filter(id=delito_id).exists():
         eventos = eventos.filter(delito_tipificado_id=delito_id)
+    elif delito_id:  
+        # si mandaron un id inválido devolvemos vacío en vez de todos
+        eventos = eventos.none()
 
+    # 🔹 Filtro por rango de fechas
     if fecha_inicio and fecha_fin:
         try:
             fecha_ini = datetime.strptime(fecha_inicio, "%Y-%m-%d")
             fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
             eventos = eventos.filter(fecha_ocurrencia__range=(fecha_ini, fecha_fin))
         except ValueError:
-            pass  # formato inválido
+            eventos = eventos.none()
 
     data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
     return JsonResponse(data, safe=False)
+
 
 
 
