@@ -63,14 +63,29 @@
     let heatmap;
     let poligonoComuna;
 
-    function cargarHeatmap(params = {}) {
+    function construirURLHeatmap(comuna = "") {
+        const delito = document.getElementById("delitoSelect")?.value || "";
+        const fechaInicio = document.getElementById("fechaInicio")?.value || "";
+        const fechaFin = document.getElementById("fechaFin")?.value || "";
+
+        let urlBase = comuna
+            ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
+            : "{% url 'api_eventos_geolocalizados' %}?";
+
+        const params = new URLSearchParams();
+        if (delito) params.append("delito", delito);
+        if (fechaInicio) params.append("fecha_inicio", fechaInicio);
+        if (fechaFin) params.append("fecha_fin", fechaFin);
+
+        return urlBase + "&" + params.toString();
+    }
+
+    function cargarHeatmap(comuna = "") {
         if (heatmap) {
-            heatmap.setMap(null);
+            heatmap.setMap(null); // Quitar heatmap anterior
         }
 
-        const urlBase = "{% url 'api_eventos_por_comuna' %}";
-        const queryParams = new URLSearchParams(params).toString();
-        const url = urlBase + "?" + queryParams;
+        const url = construirURLHeatmap(comuna);
 
         fetch(url)
             .then(res => res.json())
@@ -86,10 +101,10 @@
 
     function cargarPoligono(nombre_comuna) {
         if (poligonoComuna) {
-            poligonoComuna.setMap(null);
+            poligonoComuna.setMap(null);  // quitar el anterior
         }
 
-        if (!nombre_comuna) return;
+        if (!nombre_comuna) return; // no cargar si está vacío (ver todas)
 
         fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
             .then(res => res.json())
@@ -118,23 +133,6 @@
             });
     }
 
-    function aplicarFiltros() {
-        const comuna = document.getElementById("comunaSelect").value;
-        const delito_id = document.getElementById("delitoSelect").value;
-        const fecha_desde = document.getElementById("fechaDesde").value;
-        const fecha_hasta = document.getElementById("fechaHasta").value;
-
-        const params = {
-            comuna: comuna,
-            delito_id: delito_id,
-            fecha_desde: fecha_desde,
-            fecha_hasta: fecha_hasta
-        };
-
-        cargarHeatmap(params);
-        cargarPoligono(comuna);
-    }
-
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
@@ -143,15 +141,40 @@
         });
 
         const comunaInicial = document.getElementById("comunaSelect").value;
-        const params = comunaInicial ? { comuna: comunaInicial } : {};
-        cargarHeatmap(params);
-        cargarPoligono(comunaInicial);
 
-        document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
+        if (comunaInicial) {
+            cargarPoligono(comunaInicial);
+            cargarHeatmap(comunaInicial);
+        } else {
+            cargarHeatmap();
+        }
+
+        document.getElementById("comunaSelect").addEventListener("change", function () {
+            const seleccionada = this.value;
+            cargarPoligono(seleccionada);
+            cargarHeatmap(seleccionada);
+        });
+
+        // Nuevos filtros
+        document.getElementById("delitoSelect")?.addEventListener("change", () => {
+            const comuna = document.getElementById("comunaSelect").value;
+            cargarHeatmap(comuna);
+        });
+
+        document.getElementById("fechaInicio")?.addEventListener("change", () => {
+            const comuna = document.getElementById("comunaSelect").value;
+            cargarHeatmap(comuna);
+        });
+
+        document.getElementById("fechaFin")?.addEventListener("change", () => {
+            const comuna = document.getElementById("comunaSelect").value;
+            cargarHeatmap(comuna);
+        });
     }
 
     window.onload = initMap;
 </script>
+
 
 </body>
 </html>
