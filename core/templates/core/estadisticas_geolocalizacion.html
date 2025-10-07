@@ -63,29 +63,17 @@
     let heatmap;
     let poligonoComuna;
 
-    function construirURLHeatmap(comuna = "") {
-        const delito = document.getElementById("delitoSelect")?.value || "";
-        const fechaInicio = document.getElementById("fechaInicio")?.value || "";
-        const fechaFin = document.getElementById("fechaFin")?.value || "";
+    function cargarHeatmap(comuna = "", delito = "", fecha_inicio = "", fecha_fin = "") {
+        if (heatmap) heatmap.setMap(null);
 
-        let urlBase = comuna
+        let url = comuna
             ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
-            : "{% url 'api_eventos_geolocalizados' %}?";
+            : "{% url 'api_eventos_geolocalizados' %}";
 
-        const params = new URLSearchParams();
-        if (delito) params.append("delito", delito);
-        if (fechaInicio) params.append("fecha_inicio", fechaInicio);
-        if (fechaFin) params.append("fecha_fin", fechaFin);
-
-        return urlBase + "&" + params.toString();
-    }
-
-    function cargarHeatmap(comuna = "") {
-        if (heatmap) {
-            heatmap.setMap(null); // Quitar heatmap anterior
-        }
-
-        const url = construirURLHeatmap(comuna);
+        // Agregar filtros
+        if (delito) url += "&delito=" + encodeURIComponent(delito);
+        if (fecha_inicio) url += "&fecha_inicio=" + encodeURIComponent(fecha_inicio);
+        if (fecha_fin) url += "&fecha_fin=" + encodeURIComponent(fecha_fin);
 
         fetch(url)
             .then(res => res.json())
@@ -100,11 +88,8 @@
     }
 
     function cargarPoligono(nombre_comuna) {
-        if (poligonoComuna) {
-            poligonoComuna.setMap(null);  // quitar el anterior
-        }
-
-        if (!nombre_comuna) return; // no cargar si está vacío (ver todas)
+        if (poligonoComuna) poligonoComuna.setMap(null);
+        if (!nombre_comuna) return;
 
         fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
             .then(res => res.json())
@@ -133,6 +118,16 @@
             });
     }
 
+    function aplicarFiltros() {
+        const comuna = document.getElementById("comunaSelect").value;
+        const delito = document.getElementById("delitoSelect")?.value || "";
+        const fecha_inicio = document.getElementById("fechaInicio").value;
+        const fecha_fin = document.getElementById("fechaFin").value;
+
+        cargarPoligono(comuna);
+        cargarHeatmap(comuna, delito, fecha_inicio, fecha_fin);
+    }
+
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
@@ -140,40 +135,18 @@
             mapTypeId: "roadmap"
         });
 
-        const comunaInicial = document.getElementById("comunaSelect").value;
+        aplicarFiltros();
 
-        if (comunaInicial) {
-            cargarPoligono(comunaInicial);
-            cargarHeatmap(comunaInicial);
-        } else {
-            cargarHeatmap();
-        }
+        // Listener: cambiar comuna por dropdown
+        document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
 
-        document.getElementById("comunaSelect").addEventListener("change", function () {
-            const seleccionada = this.value;
-            cargarPoligono(seleccionada);
-            cargarHeatmap(seleccionada);
-        });
-
-        // Nuevos filtros
-        document.getElementById("delitoSelect")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
-
-        document.getElementById("fechaInicio")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
-
-        document.getElementById("fechaFin")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
+        // Listener: botón aplicar filtro
+        document.getElementById("btnAplicarFiltro")?.addEventListener("click", aplicarFiltros);
     }
 
     window.onload = initMap;
 </script>
+
 
 
 </body>
