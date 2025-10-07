@@ -5,7 +5,7 @@
     <title>Mapa de Calor - Estadísticas</title>
     <style>
         #map {
-            height: 90vh;
+            height: 60vh;
             width: 100%;
         }
         .filtros-container {
@@ -22,7 +22,9 @@
             padding: 4px;
         }
     </style>
+
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -58,10 +60,16 @@
 
 <div id="map"></div>
 
+<h3 style="text-align:center;">📈 Denuncias por tipo de delito</h3>
+<div style="max-width: 800px; margin: auto;">
+    <canvas id="graficoDelitos"></canvas>
+</div>
+
 <script>
     let map;
     let heatmap;
     let poligonoComuna;
+    let chartDelitos;
 
     function construirURLHeatmap(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
@@ -77,18 +85,18 @@
         if (fechaDesde) params.append("fecha_inicio", fechaDesde);
         if (fechaHasta) params.append("fecha_fin", fechaHasta);
 
-        // unir base + params
         if (urlBase.includes("?") && !urlBase.endsWith("?")) {
             urlBase += "&" + params.toString();
         } else {
             urlBase += params.toString();
         }
+
         return urlBase;
     }
 
     function cargarHeatmap(comuna = "") {
         if (heatmap) {
-            heatmap.setMap(null); // Quitar heatmap anterior
+            heatmap.setMap(null);
         }
 
         const url = construirURLHeatmap(comuna);
@@ -107,10 +115,10 @@
 
     function cargarPoligono(nombre_comuna) {
         if (poligonoComuna) {
-            poligonoComuna.setMap(null);  // quitar el anterior
+            poligonoComuna.setMap(null);
         }
 
-        if (!nombre_comuna) return; // no cargar si está vacío (ver todas)
+        if (!nombre_comuna) return;
 
         fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
             .then(res => res.json())
@@ -139,10 +147,54 @@
             });
     }
 
+    function cargarGraficoDelitos(comuna = "") {
+        const delito = document.getElementById("delitoSelect")?.value || "";
+        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
+
+        const params = new URLSearchParams();
+        if (comuna) params.append("comuna", comuna);
+        if (delito) params.append("delito", delito);
+        if (fechaDesde) params.append("fecha_inicio", fechaDesde);
+        if (fechaHasta) params.append("fecha_fin", fechaHasta);
+
+        fetch("{% url 'api_estadisticas_por_delito' %}?" + params.toString())
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(d => d.nombre);
+                const valores = data.map(d => d.total);
+
+                const ctx = document.getElementById("graficoDelitos").getContext("2d");
+
+                if (chartDelitos) chartDelitos.destroy();
+
+                chartDelitos = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Cantidad de denuncias",
+                            data: valores,
+                            backgroundColor: "rgba(54, 162, 235, 0.5)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            });
+    }
+
     function aplicarFiltros() {
         const comuna = document.getElementById("comunaSelect").value;
         cargarPoligono(comuna);
         cargarHeatmap(comuna);
+        cargarGraficoDelitos(comuna);
     }
 
     function initMap() {
@@ -157,11 +209,13 @@
         if (comunaInicial) {
             cargarPoligono(comunaInicial);
             cargarHeatmap(comunaInicial);
+            cargarGraficoDelitos(comunaInicial);
         } else {
             cargarHeatmap();
+            cargarGraficoDelitos();
         }
 
-        // listener botón
+        // listeners
         document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
         document.getElementById("delitoSelect")?.addEventListener("change", aplicarFiltros);
         document.getElementById("fechaDesde")?.addEventListener("change", aplicarFiltros);
@@ -173,4 +227,5 @@
 
 </body>
 </html>
+
 

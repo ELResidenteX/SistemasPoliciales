@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from .forms import EventoPolicialForm, ParticipanteForm, EspecieForm
 from .models import EventoPolicial, Participante, Especie, PartePolicial
 from datetime import datetime, time
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils.timezone import now
 from django.utils.timezone import make_aware, localtime
 from django.contrib import messages
@@ -835,8 +835,34 @@ def eventos_por_comuna_json(request):
     return JsonResponse(data, safe=False)
 
 
+#graficos delitos   
 
+def api_estadisticas_por_delito(request):
+    comuna = request.GET.get("comuna", "").strip()
+    delito_id = request.GET.get("delito", "")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
 
+    eventos = EventoPolicial.objects.all()
+
+    if comuna:
+        eventos = eventos.filter(comuna__iexact=comuna)
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado__id=delito_id)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    conteo = (
+        eventos
+        .values("delito_tipificado__nombre")
+        .annotate(total=Count("id"))
+        .order_by("-total")
+    )
+
+    data = [{"nombre": c["delito_tipificado__nombre"] or "Sin tipificar", "total": c["total"]} for c in conteo]
+    return JsonResponse(data, safe=False)
 
 
 

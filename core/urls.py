@@ -146,6 +146,7 @@ path("api/comuna-activa/", geojson_comuna_activa, name="geojson_comuna_activa"),
 path('api/comuna-poligono/', views.geojson_comuna_por_nombre, name='geojson_comuna_nombre'),
 path('api/comunas/', views.lista_comunas_json, name='lista_comunas'),
 path("api/eventos-por-comuna/", views.eventos_por_comuna_json, name="api_eventos_por_comuna"),
+path("api/estadisticas-delitos/", views.api_estadisticas_por_delito, name="api_estadisticas_por_delito"),
 
 
 ]
