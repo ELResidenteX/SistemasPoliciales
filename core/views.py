@@ -698,19 +698,21 @@ def crear_configuracion_temporal(request):
 
 #Mapa geolocalizacion
 
-@ login_required
+@login_required
 def vista_mapa_geolocalizacion(request):
     unidad = obtener_unidad_activa()
     comuna_activa = unidad.comuna.nombre if unidad and unidad.comuna else ""
-
     comunas = Comuna.objects.all().order_by('nombre')
+    delitos = Delito.objects.all().order_by('nombre')  # 🔽 para futuros filtros por delito
 
     context = {
         "google_maps_api_key": settings.GOOGLE_MAPS_API_KEY,
         "comunas": comunas,
+        "delitos": delitos,
         "comuna_activa": comuna_activa
     }
     return render(request, "core/estadisticas_geolocalizacion.html", context)
+
 
 #Separacion por unidad policial, respecto a eventos por unidad policial
 
@@ -786,16 +788,30 @@ def geojson_comuna_por_nombre(request):
 
 def eventos_por_comuna_json(request):
     nombre = request.GET.get("comuna", "").strip()
+    delito_id = request.GET.get("delito")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
 
-    # Normalización para evitar errores por espacios, mayúsculas, tildes, etc.
     eventos = EventoPolicial.objects.filter(
-        Q(comuna__iregex=rf'^{re.escape(nombre)}$'),
+        Q(comuna__iregex=rf'^{re.escape(nombre)}$') if nombre else Q(),
         lat__isnull=False,
         lng__isnull=False
     )
 
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
+
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_ini = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+            eventos = eventos.filter(fecha_ocurrencia__range=(fecha_ini, fecha_fin))
+        except ValueError:
+            pass  # formato inválido
+
     data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
     return JsonResponse(data, safe=False)
+
 
 
 

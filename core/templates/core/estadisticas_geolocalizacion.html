@@ -8,112 +8,151 @@
             height: 90vh;
             width: 100%;
         }
+        .filtros-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .filtros-container label {
+            margin-left: 15px;
+            font-weight: bold;
+        }
+        .filtros-container select,
+        .filtros-container input[type="date"] {
+            margin-left: 5px;
+            padding: 4px;
+        }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
 </head>
 <body>
 
-    <h2 style="text-align:center;"> Estadisticas de denuncias</h2>
+<h2 style="text-align:center;">📊 Estadísticas de denuncias</h2>
 
-    <div style="text-align:center; margin-bottom:10px;">
-        <label for="comunaSelect"><strong>Filtrar por comuna:</strong></label>
-        <select id="comunaSelect">
-            <option value="">-- Ver todas --</option>
-            {% for comuna in comunas %}
-                <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
-                    {{ comuna.nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
+<div class="filtros-container">
+    <label for="comunaSelect">Comuna:</label>
+    <select id="comunaSelect">
+        <option value="">-- Ver todas --</option>
+        {% for comuna in comunas %}
+            <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
+                {{ comuna.nombre }}
+            </option>
+        {% endfor %}
+    </select>
 
-    <div id="map"></div>
+    <label for="delitoSelect">Delito:</label>
+    <select id="delitoSelect">
+        <option value="">-- Todos --</option>
+        {% for delito in delitos %}
+            <option value="{{ delito.id }}">{{ delito.nombre }}</option>
+        {% endfor %}
+    </select>
 
-    <script>
-        let map;
-        let heatmap;
-        let poligonoComuna;
+    <label for="fechaDesde">Desde:</label>
+    <input type="date" id="fechaDesde">
 
-        function cargarHeatmap(comuna = "") {
-            if (heatmap) {
-                heatmap.setMap(null); // Quitar heatmap anterior
-            }
+    <label for="fechaHasta">Hasta:</label>
+    <input type="date" id="fechaHasta">
 
-            const url = comuna
-                ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
-                : "{% url 'api_eventos_geolocalizados' %}";
+    <button onclick="aplicarFiltros()">Aplicar filtros</button>
+</div>
 
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    const heatmapData = data.map(p => new google.maps.LatLng(p.lat, p.lng));
-                    heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: heatmapData,
-                        radius: 25
-                    });
-                    heatmap.setMap(map);
+<div id="map"></div>
+
+<script>
+    let map;
+    let heatmap;
+    let poligonoComuna;
+
+    function cargarHeatmap(params = {}) {
+        if (heatmap) {
+            heatmap.setMap(null);
+        }
+
+        const urlBase = "{% url 'api_eventos_por_comuna' %}";
+        const queryParams = new URLSearchParams(params).toString();
+        const url = urlBase + "?" + queryParams;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const heatmapData = data.map(p => new google.maps.LatLng(p.lat, p.lng));
+                heatmap = new google.maps.visualization.HeatmapLayer({
+                    data: heatmapData,
+                    radius: 25
                 });
+                heatmap.setMap(map);
+            });
+    }
+
+    function cargarPoligono(nombre_comuna) {
+        if (poligonoComuna) {
+            poligonoComuna.setMap(null);
         }
 
-        function cargarPoligono(nombre_comuna) {
-            if (poligonoComuna) {
-                poligonoComuna.setMap(null);  // quitar el anterior
-            }
+        if (!nombre_comuna) return;
 
-            if (!nombre_comuna) return; // no cargar si está vacío (ver todas)
+        fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
+            .then(res => res.json())
+            .then(data => {
+                if (data.features.length === 0) return;
 
-            fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
-                .then(res => res.json())
-                .then(data => {
-                    if (data.features.length === 0) return;
+                const coords = data.features[0].geometry.coordinates[0].map(c => ({
+                    lat: c[1],
+                    lng: c[0]
+                }));
 
-                    const coords = data.features[0].geometry.coordinates[0].map(c => ({
-                        lat: c[1],
-                        lng: c[0]
-                    }));
-
-                    poligonoComuna = new google.maps.Polygon({
-                        paths: coords,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: "#FF0000",
-                        fillOpacity: 0.1
-                    });
-
-                    poligonoComuna.setMap(map);
-
-                    const bounds = new google.maps.LatLngBounds();
-                    coords.forEach(c => bounds.extend(c));
-                    map.fitBounds(bounds);
+                poligonoComuna = new google.maps.Polygon({
+                    paths: coords,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.1
                 });
-        }
 
-        function initMap() {
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: -33.45, lng: -70.66 },
-                zoom: 12,
-                mapTypeId: "roadmap"
+                poligonoComuna.setMap(map);
+
+                const bounds = new google.maps.LatLngBounds();
+                coords.forEach(c => bounds.extend(c));
+                map.fitBounds(bounds);
             });
+    }
 
-            const comunaInicial = document.getElementById("comunaSelect").value;
+    function aplicarFiltros() {
+        const comuna = document.getElementById("comunaSelect").value;
+        const delito_id = document.getElementById("delitoSelect").value;
+        const fecha_desde = document.getElementById("fechaDesde").value;
+        const fecha_hasta = document.getElementById("fechaHasta").value;
 
-            if (comunaInicial) {
-                cargarPoligono(comunaInicial);
-                cargarHeatmap(comunaInicial);
-            } else {
-                cargarHeatmap();
-            }
+        const params = {
+            comuna: comuna,
+            delito_id: delito_id,
+            fecha_desde: fecha_desde,
+            fecha_hasta: fecha_hasta
+        };
 
-            document.getElementById("comunaSelect").addEventListener("change", function () {
-                const seleccionada = this.value;
-                cargarPoligono(seleccionada);
-                cargarHeatmap(seleccionada);
-            });
-        }
+        cargarHeatmap(params);
+        cargarPoligono(comuna);
+    }
 
-        window.onload = initMap;
-    </script>
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: -33.45, lng: -70.66 },
+            zoom: 12,
+            mapTypeId: "roadmap"
+        });
+
+        const comunaInicial = document.getElementById("comunaSelect").value;
+        const params = comunaInicial ? { comuna: comunaInicial } : {};
+        cargarHeatmap(params);
+        cargarPoligono(comunaInicial);
+
+        document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
+    }
+
+    window.onload = initMap;
+</script>
 
 </body>
 </html>
+
