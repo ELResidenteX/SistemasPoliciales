@@ -65,8 +65,8 @@
 
     function construirURLHeatmap(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
-        const fechaInicio = document.getElementById("fechaInicio")?.value || "";
-        const fechaFin = document.getElementById("fechaFin")?.value || "";
+        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
 
         let urlBase = comuna
             ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
@@ -74,10 +74,16 @@
 
         const params = new URLSearchParams();
         if (delito) params.append("delito", delito);
-        if (fechaInicio) params.append("fecha_inicio", fechaInicio);
-        if (fechaFin) params.append("fecha_fin", fechaFin);
+        if (fechaDesde) params.append("fecha_inicio", fechaDesde);
+        if (fechaHasta) params.append("fecha_fin", fechaHasta);
 
-        return urlBase + "&" + params.toString();
+        // unir base + params
+        if (urlBase.includes("?") && !urlBase.endsWith("?")) {
+            urlBase += "&" + params.toString();
+        } else {
+            urlBase += params.toString();
+        }
+        return urlBase;
     }
 
     function cargarHeatmap(comuna = "") {
@@ -133,6 +139,12 @@
             });
     }
 
+    function aplicarFiltros() {
+        const comuna = document.getElementById("comunaSelect").value;
+        cargarPoligono(comuna);
+        cargarHeatmap(comuna);
+    }
+
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
@@ -149,32 +161,15 @@
             cargarHeatmap();
         }
 
-        document.getElementById("comunaSelect").addEventListener("change", function () {
-            const seleccionada = this.value;
-            cargarPoligono(seleccionada);
-            cargarHeatmap(seleccionada);
-        });
-
-        // Nuevos filtros
-        document.getElementById("delitoSelect")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
-
-        document.getElementById("fechaInicio")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
-
-        document.getElementById("fechaFin")?.addEventListener("change", () => {
-            const comuna = document.getElementById("comunaSelect").value;
-            cargarHeatmap(comuna);
-        });
+        // listener botón
+        document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
+        document.getElementById("delitoSelect")?.addEventListener("change", aplicarFiltros);
+        document.getElementById("fechaDesde")?.addEventListener("change", aplicarFiltros);
+        document.getElementById("fechaHasta")?.addEventListener("change", aplicarFiltros);
     }
 
     window.onload = initMap;
 </script>
-
 
 </body>
 </html>

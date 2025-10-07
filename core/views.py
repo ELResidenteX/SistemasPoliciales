@@ -29,6 +29,8 @@ import os, re
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
+from django.utils.dateparse import parse_date
+
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -809,31 +811,25 @@ from datetime import datetime
 def eventos_por_comuna_json(request):
     nombre = request.GET.get("comuna", "").strip()
     delito_id = request.GET.get("delito", "").strip()
-    fecha_inicio = request.GET.get("fecha_inicio", "").strip()
-    fecha_fin = request.GET.get("fecha_fin", "").strip()
+    fecha_inicio = parse_date(request.GET.get("fecha_inicio", ""))
+    fecha_fin = parse_date(request.GET.get("fecha_fin", ""))
 
     eventos = EventoPolicial.objects.filter(
-        Q(comuna__iregex=rf'^{re.escape(nombre)}$'),
         lat__isnull=False,
         lng__isnull=False
     )
+
+    if nombre:
+        eventos = eventos.filter(comuna__iexact=nombre)
 
     if delito_id:
         eventos = eventos.filter(delito_tipificado_id=delito_id)
 
     if fecha_inicio:
-        try:
-            fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
-            eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio_dt)
-        except ValueError:
-            pass  # fecha inválida → ignora
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
 
     if fecha_fin:
-        try:
-            fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
-            eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin_dt)
-        except ValueError:
-            pass
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
     data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
     return JsonResponse(data, safe=False)
