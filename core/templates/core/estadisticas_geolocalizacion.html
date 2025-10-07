@@ -23,6 +23,7 @@
         }
     </style>
 
+    <!-- Google Maps + Chart.js -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -70,7 +71,9 @@
     let heatmap;
     let poligonoComuna;
     let chartDelitos;
+    let markers = [];
 
+    // 🔹 Construye la URL del heatmap según los filtros activos
     function construirURLHeatmap(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
         const fechaDesde = document.getElementById("fechaDesde")?.value || "";
@@ -94,17 +97,51 @@
         return urlBase;
     }
 
+    // 🔹 Carga el heatmap + markers invisibles con infoWindow
     function cargarHeatmap(comuna = "") {
-        if (heatmap) {
-            heatmap.setMap(null);
-        }
+        if (heatmap) heatmap.setMap(null);
+        markers.forEach(m => m.setMap(null));
+        markers = [];
 
         const url = construirURLHeatmap(comuna);
 
         fetch(url)
             .then(res => res.json())
             .then(data => {
-                const heatmapData = data.map(p => new google.maps.LatLng(p.lat, p.lng));
+                const heatmapData = [];
+
+                data.forEach(evento => {
+                    heatmapData.push(new google.maps.LatLng(evento.lat, evento.lng));
+
+                    const marker = new google.maps.Marker({
+                        position: { lat: evento.lat, lng: evento.lng },
+                        map: map,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 4,
+                            fillColor: "#ff0000",
+                            fillOpacity: 0.0, // invisible marker
+                            strokeWeight: 0
+                        }
+                    });
+
+                    const content = `
+                        <div style="font-size:14px;">
+                            <strong>Delito:</strong> ${evento.delito}<br>
+                            <strong>Lugar:</strong> ${evento.lugar}<br>
+                            <strong>Dirección:</strong> ${evento.direccion}<br>
+                            <strong>Unidad:</strong> ${evento.unidad}
+                        </div>
+                    `;
+
+                    const infowindow = new google.maps.InfoWindow({ content: content });
+                    marker.addListener("click", () => {
+                        infowindow.open(map, marker);
+                    });
+
+                    markers.push(marker);
+                });
+
                 heatmap = new google.maps.visualization.HeatmapLayer({
                     data: heatmapData,
                     radius: 25
@@ -113,23 +150,19 @@
             });
     }
 
+    // 🔹 Cargar polígono de la comuna seleccionada
     function cargarPoligono(nombre_comuna) {
-        if (poligonoComuna) {
-            poligonoComuna.setMap(null);
-        }
-
+        if (poligonoComuna) poligonoComuna.setMap(null);
         if (!nombre_comuna) return;
 
         fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
             .then(res => res.json())
             .then(data => {
                 if (data.features.length === 0) return;
-
                 const coords = data.features[0].geometry.coordinates[0].map(c => ({
                     lat: c[1],
                     lng: c[0]
                 }));
-
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
                     strokeColor: "#FF0000",
@@ -138,15 +171,14 @@
                     fillColor: "#FF0000",
                     fillOpacity: 0.1
                 });
-
                 poligonoComuna.setMap(map);
-
                 const bounds = new google.maps.LatLngBounds();
                 coords.forEach(c => bounds.extend(c));
                 map.fitBounds(bounds);
             });
     }
 
+    // 🔹 Gráfico de barras dinámico
     function cargarGraficoDelitos(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
         const fechaDesde = document.getElementById("fechaDesde")?.value || "";
@@ -163,9 +195,7 @@
             .then(data => {
                 const labels = data.map(d => d.nombre);
                 const valores = data.map(d => d.total);
-
                 const ctx = document.getElementById("graficoDelitos").getContext("2d");
-
                 if (chartDelitos) chartDelitos.destroy();
 
                 chartDelitos = new Chart(ctx, {
@@ -182,14 +212,13 @@
                     },
                     options: {
                         responsive: true,
-                        scales: {
-                            y: { beginAtZero: true }
-                        }
+                        scales: { y: { beginAtZero: true } }
                     }
                 });
             });
     }
 
+    // 🔹 Aplicar filtros al presionar botón
     function aplicarFiltros() {
         const comuna = document.getElementById("comunaSelect").value;
         cargarPoligono(comuna);
@@ -197,6 +226,7 @@
         cargarGraficoDelitos(comuna);
     }
 
+    // 🔹 Inicializar mapa
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
@@ -217,9 +247,9 @@
 
         // listeners
         document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
-        document.getElementById("delitoSelect")?.addEventListener("change", aplicarFiltros);
-        document.getElementById("fechaDesde")?.addEventListener("change", aplicarFiltros);
-        document.getElementById("fechaHasta")?.addEventListener("change", aplicarFiltros);
+        document.getElementById("delitoSelect").addEventListener("change", aplicarFiltros);
+        document.getElementById("fechaDesde").addEventListener("change", aplicarFiltros);
+        document.getElementById("fechaHasta").addEventListener("change", aplicarFiltros);
     }
 
     window.onload = initMap;
@@ -227,5 +257,6 @@
 
 </body>
 </html>
+
 
 

@@ -810,20 +810,18 @@ from datetime import datetime
 
 def eventos_por_comuna_json(request):
     nombre = request.GET.get("comuna", "").strip()
-    delito_id = request.GET.get("delito", "").strip()
-    fecha_inicio = parse_date(request.GET.get("fecha_inicio", ""))
-    fecha_fin = parse_date(request.GET.get("fecha_fin", ""))
+    delito_id = request.GET.get("delito")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
 
     eventos = EventoPolicial.objects.filter(
+        Q(comuna__iregex=rf'^{re.escape(nombre)}$'),
         lat__isnull=False,
         lng__isnull=False
     )
 
-    if nombre:
-        eventos = eventos.filter(comuna__iexact=nombre)
-
     if delito_id:
-        eventos = eventos.filter(delito_tipificado_id=delito_id)
+        eventos = eventos.filter(delito_tipificado__id=delito_id)
 
     if fecha_inicio:
         eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
@@ -831,7 +829,17 @@ def eventos_por_comuna_json(request):
     if fecha_fin:
         eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
-    data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
+    data = []
+    for e in eventos:
+        data.append({
+            "lat": e.lat,
+            "lng": e.lng,
+            "delito": e.delito_tipificado.nombre if e.delito_tipificado else "Sin tipificar",
+            "lugar": e.get_tipo_lugar_display(),
+            "direccion": f"{e.direccion} {e.numero}",
+            "unidad": str(e.unidad_policial) if e.unidad_policial else "N/D"
+        })
+
     return JsonResponse(data, safe=False)
 
 
