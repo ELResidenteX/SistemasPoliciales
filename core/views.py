@@ -717,7 +717,11 @@ def vista_mapa_geolocalizacion(request):
 #Separacion por unidad policial, respecto a eventos por unidad policial
 
 def eventos_geolocalizados_json(request):
-    unidad = obtener_unidad_activa()  # ✅ Usamos la unidad activa definida en ConfiguracionSistema
+    unidad = obtener_unidad_activa()
+
+    delito_id = request.GET.get("delito", "").strip()
+    fecha_inicio = request.GET.get("fecha_inicio", "").strip()
+    fecha_fin = request.GET.get("fecha_fin", "").strip()
 
     eventos = EventoPolicial.objects.filter(
         unidad_policial=unidad,
@@ -725,12 +729,26 @@ def eventos_geolocalizados_json(request):
         lng__isnull=False
     )
 
-    data = [
-        {"lat": evento.lat, "lng": evento.lng}
-        for evento in eventos
-    ]
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
 
+    if fecha_inicio:
+        try:
+            fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+            eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio_dt)
+        except ValueError:
+            pass
+
+    if fecha_fin:
+        try:
+            fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+            eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin_dt)
+        except ValueError:
+            pass
+
+    data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
     return JsonResponse(data, safe=False)
+
 
 #Aparicion de linea divisora por comuna
 
@@ -786,34 +804,36 @@ def geojson_comuna_por_nombre(request):
 
 #eventos filtrados por comuna
 
+from datetime import datetime
+
 def eventos_por_comuna_json(request):
     nombre = request.GET.get("comuna", "").strip()
-    delito_id = request.GET.get("delito")
-    fecha_inicio = request.GET.get("fecha_inicio")
-    fecha_fin = request.GET.get("fecha_fin")
+    delito_id = request.GET.get("delito", "").strip()
+    fecha_inicio = request.GET.get("fecha_inicio", "").strip()
+    fecha_fin = request.GET.get("fecha_fin", "").strip()
 
-    # Base Query
     eventos = EventoPolicial.objects.filter(
-        Q(comuna__iregex=rf'^{re.escape(nombre)}$') if nombre else Q(),
+        Q(comuna__iregex=rf'^{re.escape(nombre)}$'),
         lat__isnull=False,
         lng__isnull=False
     )
 
-    # 🔹 Filtro solo si delito_id existe y es un número y hay delito con ese ID
-    if delito_id and delito_id.isdigit() and Delito.objects.filter(id=delito_id).exists():
+    if delito_id:
         eventos = eventos.filter(delito_tipificado_id=delito_id)
-    elif delito_id:  
-        # si mandaron un id inválido devolvemos vacío en vez de todos
-        eventos = eventos.none()
 
-    # 🔹 Filtro por rango de fechas
-    if fecha_inicio and fecha_fin:
+    if fecha_inicio:
         try:
-            fecha_ini = datetime.strptime(fecha_inicio, "%Y-%m-%d")
-            fecha_fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
-            eventos = eventos.filter(fecha_ocurrencia__range=(fecha_ini, fecha_fin))
+            fecha_inicio_dt = datetime.strptime(fecha_inicio, "%Y-%m-%d").date()
+            eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio_dt)
         except ValueError:
-            eventos = eventos.none()
+            pass  # fecha inválida → ignora
+
+    if fecha_fin:
+        try:
+            fecha_fin_dt = datetime.strptime(fecha_fin, "%Y-%m-%d").date()
+            eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin_dt)
+        except ValueError:
+            pass
 
     data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
     return JsonResponse(data, safe=False)
