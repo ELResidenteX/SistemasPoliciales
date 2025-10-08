@@ -5,13 +5,13 @@
     <title>Mapa de Calor - Estadísticas</title>
     <style>
         body {
-            background-color: #202020;
-            color: #ffffff;
             font-family: sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
         }
 
         h2, h3 {
-            color: #A5D6A7;
+            color: #2E7D32;
             text-align: center;
         }
 
@@ -19,8 +19,6 @@
             height: 60vh;
             width: 100%;
             margin-bottom: 20px;
-            border: 2px solid #2E7D32;
-            border-radius: 8px;
         }
 
         .filtros-container {
@@ -31,7 +29,7 @@
         .filtros-container label {
             margin-left: 10px;
             font-weight: bold;
-            color: #A5D6A7;
+            color: #2E7D32;
         }
 
         .filtros-container select,
@@ -50,7 +48,9 @@
         }
 
         canvas {
-            background-color: #202020;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 
@@ -142,7 +142,7 @@
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 4,
-                            fillColor: "#00FF00",
+                            fillColor: "#2E7D32",
                             fillOpacity: 0.0,
                             strokeWeight: 0
                         }
@@ -184,11 +184,11 @@
 
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
-                    strokeColor: "#00E676",
+                    strokeColor: "#2E7D32",
                     strokeOpacity: 1,
                     strokeWeight: 2,
-                    fillColor: "#00E676",
-                    fillOpacity: 0.15
+                    fillColor: "#81C784",
+                    fillOpacity: 0.2
                 });
 
                 poligonoComuna.setMap(map);
@@ -234,7 +234,7 @@
                         responsive: true,
                         scales: { y: { beginAtZero: true } },
                         plugins: {
-                            legend: { labels: { color: 'white' } },
+                            legend: { labels: { color: '#2E7D32' } },
                             tooltip: { backgroundColor: "#2E7D32" }
                         }
                     }
@@ -278,6 +278,7 @@
 
 </body>
 </html>
+
 
 
 
