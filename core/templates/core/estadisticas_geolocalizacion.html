@@ -4,32 +4,60 @@
     <meta charset="UTF-8">
     <title>Mapa de Calor - Estadísticas</title>
     <style>
+        body {
+            background-color: #1B1B1B;
+            color: white;
+            font-family: sans-serif;
+        }
+
+        h2, h3 {
+            color: #A5D6A7;
+        }
+
         #map {
             height: 60vh;
             width: 100%;
+            border: 2px solid #2E7D32;
+            border-radius: 10px;
         }
+
         .filtros-container {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+
         .filtros-container label {
             margin-left: 15px;
             font-weight: bold;
+            color: #A5D6A7;
         }
+
         .filtros-container select,
-        .filtros-container input[type="date"] {
+        .filtros-container input[type="date"],
+        .filtros-container button {
             margin-left: 5px;
-            padding: 4px;
+            padding: 5px 10px;
+            border: 1px solid #2E7D32;
+            border-radius: 5px;
+            background-color: #2E7D32;
+            color: white;
+        }
+
+        .filtros-container button:hover {
+            background-color: #388E3C;
+        }
+
+        canvas {
+            background-color: #1B1B1B;
         }
     </style>
 
-    <!-- Google Maps y Chart.js -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<h2 style="text-align:center;"> Estadísticas de denuncias</h2>
+<h2 style="text-align:center;">📍 Estadísticas de Denuncias</h2>
 
 <div class="filtros-container">
     <label for="comunaSelect">Comuna:</label>
@@ -61,7 +89,7 @@
 
 <div id="map"></div>
 
-<h3 style="text-align:center;">📈 Denuncias por tipo de delito</h3>
+<h3 style="text-align:center;">📊 Delitos por tipo</h3>
 <div style="max-width: 800px; margin: auto;">
     <canvas id="graficoDelitos"></canvas>
 </div>
@@ -117,7 +145,7 @@
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 4,
-                            fillColor: "#ff0000",
+                            fillColor: "#2E7D32",
                             fillOpacity: 0.0,
                             strokeWeight: 0
                         }
@@ -132,7 +160,7 @@
                         </div>
                     `;
 
-                    const infowindow = new google.maps.InfoWindow({ content: content });
+                    const infowindow = new google.maps.InfoWindow({ content });
 
                     marker.addListener("mouseover", () => infowindow.open(map, marker));
                     marker.addListener("mouseout", () => infowindow.close());
@@ -159,11 +187,11 @@
                 const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 0.8,
+                    strokeColor: "#66BB6A",
+                    strokeOpacity: 0.9,
                     strokeWeight: 2,
-                    fillColor: "#FF0000",
-                    fillOpacity: 0.1
+                    fillColor: "#A5D6A7",
+                    fillOpacity: 0.2
                 });
                 poligonoComuna.setMap(map);
                 const bounds = new google.maps.LatLngBounds();
@@ -194,12 +222,12 @@
                 chartDelitos = new Chart(ctx, {
                     type: "bar",
                     data: {
-                        labels: labels,
+                        labels,
                         datasets: [{
                             label: "Cantidad de denuncias",
                             data: valores,
-                            backgroundColor: "rgba(54, 162, 235, 0.5)",
-                            borderColor: "rgba(54, 162, 235, 1)",
+                            backgroundColor: "#A5D6A7",
+                            borderColor: "#2E7D32",
                             borderWidth: 1
                         }]
                     },
