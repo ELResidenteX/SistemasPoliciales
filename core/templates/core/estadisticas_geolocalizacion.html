@@ -4,53 +4,22 @@
     <meta charset="UTF-8">
     <title>Mapa de Calor - Estadísticas</title>
     <style>
-        body {
-            background-color: #202020;
-            color: #ffffff;
-            font-family: sans-serif;
-        }
-
-        h2, h3 {
-            color: #A5D6A7;
-            text-align: center;
-        }
-
         #map {
             height: 60vh;
             width: 100%;
-            margin-bottom: 20px;
-            border: 2px solid #2E7D32;
-            border-radius: 8px;
         }
-
         .filtros-container {
             text-align: center;
             margin-bottom: 15px;
         }
-
         .filtros-container label {
-            margin-left: 10px;
+            margin-left: 15px;
             font-weight: bold;
-            color: #A5D6A7;
         }
-
         .filtros-container select,
-        .filtros-container input[type="date"],
-        .filtros-container button {
+        .filtros-container input[type="date"] {
             margin-left: 5px;
-            padding: 6px 10px;
-            border: 1px solid #2E7D32;
-            border-radius: 5px;
-            background-color: #2E7D32;
-            
-        }
-
-        .filtros-container button:hover {
-            background-color: #388E3C;
-        }
-
-        canvas {
-            background-color: #202020;
+            padding: 4px;
         }
     </style>
 
@@ -60,7 +29,7 @@
 </head>
 <body>
 
-<h2>📍 Estadísticas de Denuncias</h2>
+<h2 style="text-align:center;"> Estadísticas de denuncias</h2>
 
 <div class="filtros-container">
     <label for="comunaSelect">Comuna:</label>
@@ -92,7 +61,7 @@
 
 <div id="map"></div>
 
-<h3>📊 Delitos por tipo</h3>
+<h3 style="text-align:center;">📈 Denuncias por tipo de delito</h3>
 <div style="max-width: 800px; margin: auto;">
     <canvas id="graficoDelitos"></canvas>
 </div>
@@ -118,7 +87,13 @@
         if (fechaDesde) params.append("fecha_inicio", fechaDesde);
         if (fechaHasta) params.append("fecha_fin", fechaHasta);
 
-        return urlBase + (urlBase.includes("?") ? "&" : "") + params.toString();
+        if (urlBase.includes("?") && !urlBase.endsWith("?")) {
+            urlBase += "&" + params.toString();
+        } else {
+            urlBase += params.toString();
+        }
+
+        return urlBase;
     }
 
     function cargarHeatmap(comuna = "") {
@@ -142,7 +117,7 @@
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 4,
-                            fillColor: "#00FF00",
+                            fillColor: "#ff0000",
                             fillOpacity: 0.0,
                             strokeWeight: 0
                         }
@@ -157,7 +132,8 @@
                         </div>
                     `;
 
-                    const infowindow = new google.maps.InfoWindow({ content });
+                    const infowindow = new google.maps.InfoWindow({ content: content });
+
                     marker.addListener("mouseover", () => infowindow.open(map, marker));
                     marker.addListener("mouseout", () => infowindow.close());
 
@@ -181,18 +157,15 @@
             .then(data => {
                 if (data.features.length === 0) return;
                 const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
-
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
-                    strokeColor: "#00E676",
-                    strokeOpacity: 1,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.8,
                     strokeWeight: 2,
-                    fillColor: "#00E676",
-                    fillOpacity: 0.15
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.1
                 });
-
                 poligonoComuna.setMap(map);
-
                 const bounds = new google.maps.LatLngBounds();
                 coords.forEach(c => bounds.extend(c));
                 map.fitBounds(bounds);
@@ -221,22 +194,18 @@
                 chartDelitos = new Chart(ctx, {
                     type: "bar",
                     data: {
-                        labels,
+                        labels: labels,
                         datasets: [{
                             label: "Cantidad de denuncias",
                             data: valores,
-                            backgroundColor: "#66BB6A",
-                            borderColor: "#2E7D32",
+                            backgroundColor: "rgba(54, 162, 235, 0.5)",
+                            borderColor: "rgba(54, 162, 235, 1)",
                             borderWidth: 1
                         }]
                     },
                     options: {
                         responsive: true,
-                        scales: { y: { beginAtZero: true } },
-                        plugins: {
-                            legend: { labels: { color: 'white' } },
-                            tooltip: { backgroundColor: "#2E7D32" }
-                        }
+                        scales: { y: { beginAtZero: true } }
                     }
                 });
             });
@@ -253,7 +222,7 @@
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
             zoom: 12,
-            mapTypeId: "roadmap" // modo claro
+            mapTypeId: "roadmap"
         });
 
         const comunaInicial = document.getElementById("comunaSelect").value;
@@ -278,7 +247,6 @@
 
 </body>
 </html>
-
 
 
 
