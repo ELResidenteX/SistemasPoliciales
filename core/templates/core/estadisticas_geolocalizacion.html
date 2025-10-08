@@ -23,13 +23,13 @@
         }
     </style>
 
-    <!-- Google Maps + Chart.js -->
+    <!-- Google Maps y Chart.js -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<h2 style="text-align:center;">📊 Estadísticas de denuncias</h2>
+<h2 style="text-align:center;"> Estadísticas de denuncias</h2>
 
 <div class="filtros-container">
     <label for="comunaSelect">Comuna:</label>
@@ -150,7 +150,7 @@
             });
     }
 
-    // 🔹 Cargar polígono de la comuna seleccionada
+    // Cargar polígono de la comuna seleccionada en el mapa
     function cargarPoligono(nombre_comuna) {
         if (poligonoComuna) poligonoComuna.setMap(null);
         if (!nombre_comuna) return;

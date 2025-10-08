@@ -763,7 +763,7 @@ def geojson_comuna_activa(request):
     with open(ruta_archivo, encoding="utf-8") as f:
         geojson_data = json.load(f)
 
-    # Filtrar solo la comuna activa
+              # Filtrar solo la comuna activa en el select
     comuna_filtrada = {
         "type": "FeatureCollection",
         "features": [
