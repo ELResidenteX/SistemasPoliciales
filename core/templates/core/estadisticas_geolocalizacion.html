@@ -5,13 +5,13 @@
     <title>Mapa de Calor - Estadísticas</title>
     <style>
         body {
+            background-color: #202020;
+            color: #ffffff;
             font-family: sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
         }
 
         h2, h3 {
-            color: #2E7D32;
+            color: #A5D6A7;
             text-align: center;
         }
 
@@ -19,6 +19,8 @@
             height: 60vh;
             width: 100%;
             margin-bottom: 20px;
+            border: 2px solid #2E7D32;
+            border-radius: 8px;
         }
 
         .filtros-container {
@@ -29,7 +31,7 @@
         .filtros-container label {
             margin-left: 10px;
             font-weight: bold;
-            color: #2E7D32;
+            color: #A5D6A7;
         }
 
         .filtros-container select,
@@ -40,7 +42,7 @@
             border: 1px solid #2E7D32;
             border-radius: 5px;
             background-color: #2E7D32;
-            color: white;
+            
         }
 
         .filtros-container button:hover {
@@ -48,9 +50,7 @@
         }
 
         canvas {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background-color: #202020;
         }
     </style>
 
@@ -142,7 +142,7 @@
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 4,
-                            fillColor: "#2E7D32",
+                            fillColor: "#00FF00",
                             fillOpacity: 0.0,
                             strokeWeight: 0
                         }
@@ -184,11 +184,11 @@
 
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
-                    strokeColor: "#2E7D32",
+                    strokeColor: "#00E676",
                     strokeOpacity: 1,
                     strokeWeight: 2,
-                    fillColor: "#81C784",
-                    fillOpacity: 0.2
+                    fillColor: "#00E676",
+                    fillOpacity: 0.15
                 });
 
                 poligonoComuna.setMap(map);
@@ -234,7 +234,7 @@
                         responsive: true,
                         scales: { y: { beginAtZero: true } },
                         plugins: {
-                            legend: { labels: { color: '#2E7D32' } },
+                            legend: { labels: { color: 'white' } },
                             tooltip: { backgroundColor: "#2E7D32" }
                         }
                     }
@@ -278,7 +278,6 @@
 
 </body>
 </html>
-
 
 
 
