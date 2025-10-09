@@ -73,6 +73,7 @@
     let chartDelitos;
     let markers = [];
 
+    // 🔹 Construye la URL del heatmap según los filtros activos
     function construirURLHeatmap(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
         const fechaDesde = document.getElementById("fechaDesde")?.value || "";
@@ -96,6 +97,7 @@
         return urlBase;
     }
 
+    // 🔹 Carga el heatmap + markers invisibles con infoWindow
     function cargarHeatmap(comuna = "") {
         if (heatmap) heatmap.setMap(null);
         markers.forEach(m => m.setMap(null));
@@ -118,7 +120,7 @@
                             path: google.maps.SymbolPath.CIRCLE,
                             scale: 4,
                             fillColor: "#ff0000",
-                            fillOpacity: 0.0,
+                            fillOpacity: 0.0, // invisible marker
                             strokeWeight: 0
                         }
                     });
@@ -133,9 +135,9 @@
                     `;
 
                     const infowindow = new google.maps.InfoWindow({ content: content });
-
-                    marker.addListener("mouseover", () => infowindow.open(map, marker));
-                    marker.addListener("mouseout", () => infowindow.close());
+                    marker.addListener("click", () => {
+                        infowindow.open(map, marker);
+                    });
 
                     markers.push(marker);
                 });
@@ -148,6 +150,7 @@
             });
     }
 
+    // Cargar polígono de la comuna seleccionada en el mapa
     function cargarPoligono(nombre_comuna) {
         if (poligonoComuna) poligonoComuna.setMap(null);
         if (!nombre_comuna) return;
@@ -156,7 +159,10 @@
             .then(res => res.json())
             .then(data => {
                 if (data.features.length === 0) return;
-                const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
+                const coords = data.features[0].geometry.coordinates[0].map(c => ({
+                    lat: c[1],
+                    lng: c[0]
+                }));
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
                     strokeColor: "#FF0000",
@@ -172,6 +178,7 @@
             });
     }
 
+    // 🔹 Gráfico de barras dinámico
     function cargarGraficoDelitos(comuna = "") {
         const delito = document.getElementById("delitoSelect")?.value || "";
         const fechaDesde = document.getElementById("fechaDesde")?.value || "";
@@ -211,6 +218,7 @@
             });
     }
 
+    // 🔹 Aplicar filtros al presionar botón
     function aplicarFiltros() {
         const comuna = document.getElementById("comunaSelect").value;
         cargarPoligono(comuna);
@@ -218,6 +226,7 @@
         cargarGraficoDelitos(comuna);
     }
 
+    // 🔹 Inicializar mapa
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: -33.45, lng: -70.66 },
@@ -236,6 +245,7 @@
             cargarGraficoDelitos();
         }
 
+        // listeners
         document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
         document.getElementById("delitoSelect").addEventListener("change", aplicarFiltros);
         document.getElementById("fechaDesde").addEventListener("change", aplicarFiltros);
@@ -247,7 +257,6 @@
 
 </body>
 </html>
-
 
 
 
