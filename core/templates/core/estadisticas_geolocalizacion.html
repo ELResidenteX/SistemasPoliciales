@@ -21,6 +21,9 @@
         #map {
             height: 60vh;
             width: 100%;
+            border: 2px solid #2e7d32;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
 
         .filtros-container {
@@ -68,17 +71,21 @@
             background-color: #1b5e20;
         }
 
-        .grafico-container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 10px;
-            background: white;
+        canvas {
+            background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 6px;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
         }
+
+        .grafico-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 10px;
+        }
     </style>
 
+    <!-- Google Maps y Chart.js -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -214,10 +221,10 @@
                     const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
                     poligonoComuna = new google.maps.Polygon({
                         paths: coords,
-                        strokeColor: "#FF0000",
+                        strokeColor: "#2e7d32",
                         strokeOpacity: 0.8,
                         strokeWeight: 2,
-                        fillColor: "#FF0000",
+                        fillColor: "#2e7d32",
                         fillOpacity: 0.1
                     });
                     poligonoComuna.setMap(map);
@@ -302,4 +309,3 @@
 
 </body>
 </html>
-
