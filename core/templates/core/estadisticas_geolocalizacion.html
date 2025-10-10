@@ -1,24 +1,87 @@
-
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Calor - Estadísticas</title>
+    <title>📍 Estadísticas de Denuncias</title>
+
     <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #2e7d32;
+        }
+
         #map {
             height: 60vh;
             width: 100%;
+            border: 2px solid #2e7d32;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
+
         .filtros-container {
-            text-align: center;
-            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8f5e9;
+            padding: 15px 10px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #2e7d32;
         }
+
         .filtros-container label {
-            margin-left: 15px;
-            font-weight: bold;
+            margin: 5px 10px;
+            font-weight: 600;
+            color: #1b5e20;
         }
+
+        .filtros-container select,
+        .filtros-container input[type="date"],
+        .filtros-container button {
+            margin: 5px 5px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
         .filtros-container select,
         .filtros-container input[type="date"] {
-            margin-left: 5px;
-            padding: 4px;
+            background-color: #fff;
+        }
+
+        .filtros-container button {
+            background-color: #2e7d32;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .filtros-container button:hover {
+            background-color: #1b5e20;
+        }
+
+        canvas {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .grafico-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 10px;
         }
     </style>
 
@@ -28,221 +91,221 @@
 </head>
 <body>
 
-<h2 style="text-align:center;"> Estadísticas de denuncias</h2>
+    <h2>📍 Estadísticas de Denuncias</h2>
 
-<div class="filtros-container">
-    <label for="comunaSelect">Comuna:</label>
-    <select id="comunaSelect">
-        <option value="">-- Ver todas --</option>
-        {% for comuna in comunas %}
-            <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
-                {{ comuna.nombre }}
-            </option>
-        {% endfor %}
-    </select>
+    <div class="filtros-container">
+        <label for="comunaSelect">Comuna:</label>
+        <select id="comunaSelect">
+            <option value="">-- Ver todas --</option>
+            {% for comuna in comunas %}
+                <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>
+                    {{ comuna.nombre }}
+                </option>
+            {% endfor %}
+        </select>
 
-    <label for="delitoSelect">Delito:</label>
-    <select id="delitoSelect">
-        <option value="">-- Todos --</option>
-        {% for delito in delitos %}
-            <option value="{{ delito.id }}">{{ delito.nombre }}</option>
-        {% endfor %}
-    </select>
+        <label for="delitoSelect">Delito:</label>
+        <select id="delitoSelect">
+            <option value="">-- Todos --</option>
+            {% for delito in delitos %}
+                <option value="{{ delito.id }}">{{ delito.nombre }}</option>
+            {% endfor %}
+        </select>
 
-    <label for="fechaDesde">Desde:</label>
-    <input type="date" id="fechaDesde">
+        <label for="fechaDesde">Desde:</label>
+        <input type="date" id="fechaDesde">
 
-    <label for="fechaHasta">Hasta:</label>
-    <input type="date" id="fechaHasta">
+        <label for="fechaHasta">Hasta:</label>
+        <input type="date" id="fechaHasta">
 
-    <button onclick="aplicarFiltros()">Aplicar filtros</button>
-</div>
+        <button onclick="aplicarFiltros()">Aplicar filtros</button>
+    </div>
 
-<div id="map"></div>
+    <div id="map"></div>
 
-<h3 style="text-align:center;">📈 Denuncias por tipo de delito</h3>
-<div style="max-width: 800px; margin: auto;">
-    <canvas id="graficoDelitos"></canvas>
-</div>
+    <h3>📊 Delitos por tipo</h3>
+    <div class="grafico-container">
+        <canvas id="graficoDelitos"></canvas>
+    </div>
 
-<script>
-    let map;
-    let heatmap;
-    let poligonoComuna;
-    let chartDelitos;
-    let markers = [];
+    <script>
+        let map;
+        let heatmap;
+        let poligonoComuna;
+        let chartDelitos;
+        let markers = [];
 
-    function construirURLHeatmap(comuna = "") {
-        const delito = document.getElementById("delitoSelect")?.value || "";
-        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
-        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
+        function construirURLHeatmap(comuna = "") {
+            const delito = document.getElementById("delitoSelect")?.value || "";
+            const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+            const fechaHasta = document.getElementById("fechaHasta")?.value || "";
 
-        let urlBase = comuna
-            ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
-            : "{% url 'api_eventos_geolocalizados' %}?";
+            let urlBase = comuna
+                ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
+                : "{% url 'api_eventos_geolocalizados' %}?";
 
-        const params = new URLSearchParams();
-        if (delito) params.append("delito", delito);
-        if (fechaDesde) params.append("fecha_inicio", fechaDesde);
-        if (fechaHasta) params.append("fecha_fin", fechaHasta);
+            const params = new URLSearchParams();
+            if (delito) params.append("delito", delito);
+            if (fechaDesde) params.append("fecha_inicio", fechaDesde);
+            if (fechaHasta) params.append("fecha_fin", fechaHasta);
 
-        if (urlBase.includes("?") && !urlBase.endsWith("?")) {
-            urlBase += "&" + params.toString();
-        } else {
-            urlBase += params.toString();
+            if (urlBase.includes("?") && !urlBase.endsWith("?")) {
+                urlBase += "&" + params.toString();
+            } else {
+                urlBase += params.toString();
+            }
+
+            return urlBase;
         }
 
-        return urlBase;
-    }
+        function cargarHeatmap(comuna = "") {
+            if (heatmap) heatmap.setMap(null);
+            markers.forEach(m => m.setMap(null));
+            markers = [];
 
-    function cargarHeatmap(comuna = "") {
-        if (heatmap) heatmap.setMap(null);
-        markers.forEach(m => m.setMap(null));
-        markers = [];
+            const url = construirURLHeatmap(comuna);
 
-        const url = construirURLHeatmap(comuna);
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const heatmapData = [];
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                const heatmapData = [];
+                    data.forEach(evento => {
+                        heatmapData.push(new google.maps.LatLng(evento.lat, evento.lng));
 
-                data.forEach(evento => {
-                    heatmapData.push(new google.maps.LatLng(evento.lat, evento.lng));
+                        const marker = new google.maps.Marker({
+                            position: { lat: evento.lat, lng: evento.lng },
+                            map: map,
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 4,
+                                fillColor: "#ff0000",
+                                fillOpacity: 0.0,
+                                strokeWeight: 0
+                            }
+                        });
 
-                    const marker = new google.maps.Marker({
-                        position: { lat: evento.lat, lng: evento.lng },
-                        map: map,
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 4,
-                            fillColor: "#ff0000",
-                            fillOpacity: 0.0,
-                            strokeWeight: 0
-                        }
+                        const content = `
+                            <div style="font-size:14px;">
+                                <strong>Delito:</strong> ${evento.delito}<br>
+                                <strong>Lugar:</strong> ${evento.lugar}<br>
+                                <strong>Dirección:</strong> ${evento.direccion}<br>
+                                <strong>Unidad:</strong> ${evento.unidad}
+                            </div>
+                        `;
+
+                        const infowindow = new google.maps.InfoWindow({ content: content });
+
+                        marker.addListener("mouseover", () => infowindow.open(map, marker));
+                        marker.addListener("mouseout", () => infowindow.close());
+
+                        markers.push(marker);
                     });
 
-                    const content = `
-                        <div style="font-size:14px;">
-                            <strong>Delito:</strong> ${evento.delito}<br>
-                            <strong>Lugar:</strong> ${evento.lugar}<br>
-                            <strong>Dirección:</strong> ${evento.direccion}<br>
-                            <strong>Unidad:</strong> ${evento.unidad}
-                        </div>
-                    `;
-
-                    const infowindow = new google.maps.InfoWindow({ content: content });
-
-                    marker.addListener("mouseover", () => infowindow.open(map, marker));
-                    marker.addListener("mouseout", () => infowindow.close());
-
-                    markers.push(marker);
+                    heatmap = new google.maps.visualization.HeatmapLayer({
+                        data: heatmapData,
+                        radius: 25
+                    });
+                    heatmap.setMap(map);
                 });
-
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatmapData,
-                    radius: 25
-                });
-                heatmap.setMap(map);
-            });
-    }
-
-    function cargarPoligono(nombre_comuna) {
-        if (poligonoComuna) poligonoComuna.setMap(null);
-        if (!nombre_comuna) return;
-
-        fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
-            .then(res => res.json())
-            .then(data => {
-                if (data.features.length === 0) return;
-                const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
-                poligonoComuna = new google.maps.Polygon({
-                    paths: coords,
-                    strokeColor: "#FF0000",
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: "#FF0000",
-                    fillOpacity: 0.1
-                });
-                poligonoComuna.setMap(map);
-                const bounds = new google.maps.LatLngBounds();
-                coords.forEach(c => bounds.extend(c));
-                map.fitBounds(bounds);
-            });
-    }
-
-    function cargarGraficoDelitos(comuna = "") {
-        const delito = document.getElementById("delitoSelect")?.value || "";
-        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
-        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
-
-        const params = new URLSearchParams();
-        if (comuna) params.append("comuna", comuna);
-        if (delito) params.append("delito", delito);
-        if (fechaDesde) params.append("fecha_inicio", fechaDesde);
-        if (fechaHasta) params.append("fecha_fin", fechaHasta);
-
-        fetch("{% url 'api_estadisticas_por_delito' %}?" + params.toString())
-            .then(res => res.json())
-            .then(data => {
-                const labels = data.map(d => d.nombre);
-                const valores = data.map(d => d.total);
-                const ctx = document.getElementById("graficoDelitos").getContext("2d");
-                if (chartDelitos) chartDelitos.destroy();
-
-                chartDelitos = new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "Cantidad de denuncias",
-                            data: valores,
-                            backgroundColor: "rgba(54, 162, 235, 0.5)",
-                            borderColor: "rgba(54, 162, 235, 1)",
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: { y: { beginAtZero: true } }
-                    }
-                });
-            });
-    }
-
-    function aplicarFiltros() {
-        const comuna = document.getElementById("comunaSelect").value;
-        cargarPoligono(comuna);
-        cargarHeatmap(comuna);
-        cargarGraficoDelitos(comuna);
-    }
-
-    function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: -33.45, lng: -70.66 },
-            zoom: 12,
-            mapTypeId: "roadmap"
-        });
-
-        const comunaInicial = document.getElementById("comunaSelect").value;
-
-        if (comunaInicial) {
-            cargarPoligono(comunaInicial);
-            cargarHeatmap(comunaInicial);
-            cargarGraficoDelitos(comunaInicial);
-        } else {
-            cargarHeatmap();
-            cargarGraficoDelitos();
         }
 
-        document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
-        document.getElementById("delitoSelect").addEventListener("change", aplicarFiltros);
-        document.getElementById("fechaDesde").addEventListener("change", aplicarFiltros);
-        document.getElementById("fechaHasta").addEventListener("change", aplicarFiltros);
-    }
+        function cargarPoligono(nombre_comuna) {
+            if (poligonoComuna) poligonoComuna.setMap(null);
+            if (!nombre_comuna) return;
 
-    window.onload = initMap;
-</script>
+            fetch("{% url 'geojson_comuna_nombre' %}?comuna=" + encodeURIComponent(nombre_comuna))
+                .then(res => res.json())
+                .then(data => {
+                    if (data.features.length === 0) return;
+                    const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
+                    poligonoComuna = new google.maps.Polygon({
+                        paths: coords,
+                        strokeColor: "#2e7d32",
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        fillColor: "#2e7d32",
+                        fillOpacity: 0.1
+                    });
+                    poligonoComuna.setMap(map);
+                    const bounds = new google.maps.LatLngBounds();
+                    coords.forEach(c => bounds.extend(c));
+                    map.fitBounds(bounds);
+                });
+        }
+
+        function cargarGraficoDelitos(comuna = "") {
+            const delito = document.getElementById("delitoSelect")?.value || "";
+            const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+            const fechaHasta = document.getElementById("fechaHasta")?.value || "";
+
+            const params = new URLSearchParams();
+            if (comuna) params.append("comuna", comuna);
+            if (delito) params.append("delito", delito);
+            if (fechaDesde) params.append("fecha_inicio", fechaDesde);
+            if (fechaHasta) params.append("fecha_fin", fechaHasta);
+
+            fetch("{% url 'api_estadisticas_por_delito' %}?" + params.toString())
+                .then(res => res.json())
+                .then(data => {
+                    const labels = data.map(d => d.nombre);
+                    const valores = data.map(d => d.total);
+                    const ctx = document.getElementById("graficoDelitos").getContext("2d");
+                    if (chartDelitos) chartDelitos.destroy();
+
+                    chartDelitos = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Cantidad de denuncias",
+                                data: valores,
+                                backgroundColor: "#66bb6a",
+                                borderColor: "#2e7d32",
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: { y: { beginAtZero: true } }
+                        }
+                    });
+                });
+        }
+
+        function aplicarFiltros() {
+            const comuna = document.getElementById("comunaSelect").value;
+            cargarPoligono(comuna);
+            cargarHeatmap(comuna);
+            cargarGraficoDelitos(comuna);
+        }
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -33.45, lng: -70.66 },
+                zoom: 12,
+                mapTypeId: "roadmap"
+            });
+
+            const comunaInicial = document.getElementById("comunaSelect").value;
+
+            if (comunaInicial) {
+                cargarPoligono(comunaInicial);
+                cargarHeatmap(comunaInicial);
+                cargarGraficoDelitos(comunaInicial);
+            } else {
+                cargarHeatmap();
+                cargarGraficoDelitos();
+            }
+
+            document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
+            document.getElementById("delitoSelect").addEventListener("change", aplicarFiltros);
+            document.getElementById("fechaDesde").addEventListener("change", aplicarFiltros);
+            document.getElementById("fechaHasta").addEventListener("change", aplicarFiltros);
+        }
+
+        window.onload = initMap;
+    </script>
 
 </body>
 </html>
