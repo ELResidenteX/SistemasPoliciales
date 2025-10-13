@@ -875,3 +875,62 @@ def api_estadisticas_por_delito(request):
 
 
 
+#estadistica por denuncia
+
+def vista_estadisticas_denuncias(request):
+    # Parámetros GET
+    comuna = request.GET.get("comuna")
+    delito_id = request.GET.get("delito")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+
+    if comuna:
+        eventos = eventos.filter(comuna__nombre=comuna)
+    if delito_id:
+        eventos = eventos.filter(delito__id=delito_id)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha__lte=fecha_fin)
+
+    # Agrupación por unidad policial
+    unidades = (
+        eventos
+        .values("unidad_policial", "comuna__nombre")
+        .annotate(total_denuncias=Count("id"))
+    )
+
+    # Calcular delito más frecuente por unidad
+    resumen_unidades = []
+    for unidad in unidades:
+        unidad_nombre = unidad["unidad_policial"]
+        eventos_unidad = eventos.filter(unidad_policial=unidad_nombre)
+        delito_frecuente = (
+            eventos_unidad
+            .values("delito__nombre")
+            .annotate(total=Count("id"))
+            .order_by("-total")
+            .first()
+        )
+
+        resumen_unidades.append({
+            "nombre": unidad_nombre,
+            "total_denuncias": unidad["total_denuncias"],
+            "delito_frecuente": delito_frecuente["delito__nombre"] if delito_frecuente else "N/A",
+            "comuna_principal": unidad["comuna__nombre"]
+        })
+
+    # Otras variables para filtros
+    comunas = EventoPolicial.objects.values("comuna__nombre").distinct()
+    delitos = EventoPolicial.objects.values("delito__id", "delito__nombre").distinct()
+
+    context = {
+        "resumen_unidades": resumen_unidades,
+        "comunas": [ {"nombre": c["comuna__nombre"]} for c in comunas ],
+        "delitos": [ {"id": d["delito__id"], "nombre": d["delito__nombre"]} for d in delitos ],
+        "comuna_activa": comuna or ""
+    }
+
+    return render(request, "estadisticas_geolocalizacion.html", context)
