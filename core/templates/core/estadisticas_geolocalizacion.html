@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>📍 Estadísticas de Denuncias</title>
+
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -10,6 +11,14 @@
             margin: 0;
             padding: 0;
             color: #333;
+        }
+
+        header {
+            background-color: #1b5e20;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
         h2, h3 {
@@ -62,8 +71,107 @@
             background-color: #1b5e20;
         }
 
-        .grafico-container,
+        .kpi-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            max-width: 1100px;
+            gap: 15px;
+        }
+
+        .kpi-card {
+            flex: 1;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            text-align: center;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+
+        .kpi-card h4 {
+            color: #1b5e20;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .kpi-card p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0 0;
+            color: #1b5e20;
+        }
+
+        .charts {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            max-width: 1000px;
+            gap: 30px;
+        }
+
+        .chart-container {
+            flex: 1;
+            min-width: 400px;
+            max-width: 600px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+
         .tabla-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #1b5e20;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f8e9;
+        }
+
+        .export-buttons {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .export-buttons button {
+            background-color: #388e3c;
+            color: white;
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .export-buttons button:hover {
+            background-color: #1b5e20;
+        }
+
+        .grafico-container {
             max-width: 900px;
             margin: 30px auto;
             padding: 10px;
@@ -72,37 +180,40 @@
             border-radius: 6px;
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        table th,
-        table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        table th {
-            background-color: #2e7d32;
-            color: white;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #f1f8e9;
-        }
     </style>
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<h2>📍 Estadísticas de Denuncias</h2>
+<header>
+    <h2>📍 Dashboard de Estadísticas - Carabineros de Chile</h2>
+</header>
 
+<!-- 🔹 KPIs -->
+<div class="kpi-container">
+    <div class="kpi-card">
+        <h4>Total de denuncias</h4>
+        <p id="kpi-total">0</p>
+    </div>
+    <div class="kpi-card">
+        <h4>Tipos de delitos</h4>
+        <p id="kpi-delitos">0</p>
+    </div>
+    <div class="kpi-card">
+        <h4>Comuna seleccionada</h4>
+        <p id="kpi-comuna">Todas</p>
+    </div>
+    <div class="kpi-card">
+        <h4>Rango de fechas</h4>
+        <p id="kpi-fechas">-</p>
+    </div>
+</div>
+
+<!-- 🔹 Filtros -->
 <div class="filtros-container">
     <label for="comunaSelect">Comuna:</label>
     <select id="comunaSelect">
@@ -131,39 +242,41 @@
     <button onclick="aplicarFiltros()">Aplicar filtros</button>
 </div>
 
+<!-- 🔹 Mapa -->
 <div id="map"></div>
 
-<h3>📊 Delitos por tipo</h3>
-<div class="grafico-container">
-    <canvas id="graficoDelitos"></canvas>
+<!-- 🔹 Gráficos -->
+<div class="charts">
+    <div class="chart-container">
+        <h3>📊 Delitos por tipo</h3>
+        <canvas id="graficoDelitos"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>📈 Distribución porcentual</h3>
+        <canvas id="graficoTorta"></canvas>
+    </div>
 </div>
 
-<h3>📋 Resumen por unidad policial</h3>
+<!-- 🔹 Tabla -->
 <div class="tabla-container">
-    <table>
+    <h3>📋 Resumen por unidad policial</h3>
+    <table id="tablaUnidades">
         <thead>
             <tr>
                 <th>Unidad Policial</th>
+                <th>Comuna</th>
                 <th>Total Denuncias</th>
-                <th>Delito más frecuente</th>
-                <th>Comuna Principal</th>
             </tr>
         </thead>
         <tbody>
-            {% for unidad in resumen_unidades %}
-            <tr>
-                <td>{{ unidad.nombre }}</td>
-                <td>{{ unidad.total_denuncias }}</td>
-                <td>{{ unidad.delito_frecuente }}</td>
-                <td>{{ unidad.comuna_principal }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No hay datos disponibles para esta combinación de filtros.</td>
-            </tr>
-            {% endfor %}
+            <tr><td colspan="3" style="text-align:center;">Sin datos disponibles</td></tr>
         </tbody>
     </table>
+
+    <div class="export-buttons">
+        <button onclick="exportarPDF()">📄 Exportar PDF</button>
+        <button onclick="exportarExcel()">📊 Exportar Excel</button>
+    </div>
 </div>
 
 <script>
@@ -171,12 +284,13 @@
     let heatmap;
     let poligonoComuna;
     let chartDelitos;
+    let chartTorta;
     let markers = [];
 
     function construirURLHeatmap(comuna = "") {
-        const delito = document.getElementById("delitoSelect").value || "";
-        const fechaDesde = document.getElementById("fechaDesde").value || "";
-        const fechaHasta = document.getElementById("fechaHasta").value || "";
+        const delito = document.getElementById("delitoSelect")?.value || "";
+        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
 
         let urlBase = comuna
             ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna)
@@ -206,21 +320,17 @@
         fetch(url)
             .then(res => res.json())
             .then(data => {
-                const heatmapData = [];
+                document.getElementById("kpi-total").textContent = data.length;
+                document.getElementById("kpi-comuna").textContent = comuna || "Todas";
 
+                const heatmapData = [];
                 data.forEach(evento => {
                     heatmapData.push(new google.maps.LatLng(evento.lat, evento.lng));
 
                     const marker = new google.maps.Marker({
                         position: { lat: evento.lat, lng: evento.lng },
                         map: map,
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 4,
-                            fillColor: "#ff0000",
-                            fillOpacity: 0.0,
-                            strokeWeight: 0
-                        }
+                        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 4, fillColor: "#ff0000", fillOpacity: 0.0, strokeWeight: 0 }
                     });
 
                     const content = `
@@ -231,19 +341,13 @@
                             <strong>Unidad:</strong> ${evento.unidad}
                         </div>
                     `;
-
-                    const infowindow = new google.maps.InfoWindow({ content: content });
-
+                    const infowindow = new google.maps.InfoWindow({ content });
                     marker.addListener("mouseover", () => infowindow.open(map, marker));
                     marker.addListener("mouseout", () => infowindow.close());
-
                     markers.push(marker);
                 });
 
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatmapData,
-                    radius: 25
-                });
+                heatmap = new google.maps.visualization.HeatmapLayer({ data: heatmapData, radius: 25 });
                 heatmap.setMap(map);
             });
     }
@@ -256,16 +360,23 @@
             .then(res => res.json())
             .then(data => {
                 if (data.features.length === 0) return;
-                const coords = data.features[0].geometry.coordinates[0].map(c => ({ lat: c[1], lng: c[0] }));
+
+                const coords = data.features[0].geometry.coordinates[0].map(c => ({
+                    lat: c[1],
+                    lng: c[0]
+                }));
+
                 poligonoComuna = new google.maps.Polygon({
                     paths: coords,
                     strokeColor: "#2e7d32",
-                    strokeOpacity: 0.8,
+                    strokeOpacity: 0.9,
                     strokeWeight: 2,
                     fillColor: "#a5d6a7",
-                    fillOpacity: 0.15
+                    fillOpacity: 0.1
                 });
+
                 poligonoComuna.setMap(map);
+
                 const bounds = new google.maps.LatLngBounds();
                 coords.forEach(c => bounds.extend(c));
                 map.fitBounds(bounds);
@@ -273,9 +384,9 @@
     }
 
     function cargarGraficoDelitos(comuna = "") {
-        const delito = document.getElementById("delitoSelect").value || "";
-        const fechaDesde = document.getElementById("fechaDesde").value || "";
-        const fechaHasta = document.getElementById("fechaHasta").value || "";
+        const delito = document.getElementById("delitoSelect")?.value || "";
+        const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+        const fechaHasta = document.getElementById("fechaHasta")?.value || "";
 
         const params = new URLSearchParams();
         if (comuna) params.append("comuna", comuna);
@@ -286,29 +397,44 @@
         fetch("{% url 'api_estadisticas_por_delito' %}?" + params.toString())
             .then(res => res.json())
             .then(data => {
+                document.getElementById("kpi-delitos").textContent = data.length;
+
                 const labels = data.map(d => d.nombre);
                 const valores = data.map(d => d.total);
-                const ctx = document.getElementById("graficoDelitos").getContext("2d");
-                if (chartDelitos) chartDelitos.destroy();
+                const colores = data.map(() => `hsl(${Math.random()*360},60%,60%)`);
 
-                chartDelitos = new Chart(ctx, {
+                const ctxBar = document.getElementById("graficoDelitos").getContext("2d");
+                const ctxPie = document.getElementById("graficoTorta").getContext("2d");
+
+                if (chartDelitos) chartDelitos.destroy();
+                if (chartTorta) chartTorta.destroy();
+
+                chartDelitos = new Chart(ctxBar, {
                     type: "bar",
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: "Cantidad de denuncias",
-                            data: valores,
-                            backgroundColor: "#66bb6a",
-                            borderColor: "#2e7d32",
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: { y: { beginAtZero: true } }
-                    }
+                    data: { labels, datasets: [{ label: "Cantidad de denuncias", data: valores, backgroundColor: "#66bb6a", borderColor: "#2e7d32", borderWidth: 1 }] },
+                    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                });
+
+                chartTorta = new Chart(ctxPie, {
+                    type: "pie",
+                    data: { labels, datasets: [{ data: valores, backgroundColor: colores }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
                 });
             });
+    }
+
+    function exportarPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        pdf.text("Reporte de Estadísticas - Ojo Guardián", 10, 10);
+        pdf.text("Generado: " + new Date().toLocaleString(), 10, 20);
+        pdf.save("reporte_estadisticas.pdf");
+    }
+
+    function exportarExcel() {
+        const tabla = document.getElementById("tablaUnidades");
+        const wb = XLSX.utils.table_to_book(tabla, { sheet: "Resumen" });
+        XLSX.writeFile(wb, "reporte_estadisticas.xlsx");
     }
 
     function aplicarFiltros() {
@@ -319,14 +445,8 @@
     }
 
     function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: -33.45, lng: -70.66 },
-            zoom: 12,
-            mapTypeId: "roadmap"
-        });
-
+        map = new google.maps.Map(document.getElementById("map"), { center: { lat: -33.45, lng: -70.66 }, zoom: 12, mapTypeId: "roadmap" });
         const comunaInicial = document.getElementById("comunaSelect").value;
-
         if (comunaInicial) {
             cargarPoligono(comunaInicial);
             cargarHeatmap(comunaInicial);
@@ -335,7 +455,6 @@
             cargarHeatmap();
             cargarGraficoDelitos();
         }
-
         document.getElementById("comunaSelect").addEventListener("change", aplicarFiltros);
         document.getElementById("delitoSelect").addEventListener("change", aplicarFiltros);
         document.getElementById("fechaDesde").addEventListener("change", aplicarFiltros);
@@ -347,3 +466,5 @@
 
 </body>
 </html>
+
+
