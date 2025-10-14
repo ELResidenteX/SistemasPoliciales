@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal, vista_mapa_geolocalizacion, eventos_geolocalizados_json, vista_mapa_geolocalizacion, geojson_comuna_activa
+from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal, vista_mapa_geolocalizacion, eventos_geolocalizados_json, vista_mapa_geolocalizacion, geojson_comuna_activa, api_eventos_tiempo, api_top_unidades, api_top_comunas, api_porcentaje_delitos_criticos, api_eventos_hora_dia
 
 
 
@@ -147,6 +147,15 @@ path('api/comuna-poligono/', views.geojson_comuna_por_nombre, name='geojson_comu
 path('api/comunas/', views.lista_comunas_json, name='lista_comunas'),
 path("api/eventos-por-comuna/", views.eventos_por_comuna_json, name="api_eventos_por_comuna"),
 path("api/estadisticas-delitos/", views.api_estadisticas_por_delito, name="api_estadisticas_por_delito"),
+
+
+#estadisticas mapa
+
+path('api_eventos_tiempo', api_eventos_tiempo, name='api_eventos_tiempo'),
+path('api_top_unidades', api_top_unidades, name='api_top_unidades'),
+path('api_top_comunas', api_top_comunas, name='api_top_comunas'),
+path('api_porcentaje_delitos_criticos', api_porcentaje_delitos_criticos, name='api_porcentaje_delitos_criticos'),
+path('api_eventos_hora_dia', api_eventos_hora_dia, name='api_eventos_hora_dia'),
 
 
 ]

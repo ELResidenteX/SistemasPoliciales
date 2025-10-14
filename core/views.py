@@ -873,5 +873,97 @@ def api_estadisticas_por_delito(request):
     return JsonResponse(data, safe=False)
 
 
+#evolucion temporarl denuncias
+
+from django.db.models.functions import TruncMonth
+
+def api_eventos_tiempo(request):
+    comuna = request.GET.get("comuna", "")
+    delito_id = request.GET.get("delito", "")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+    if comuna:
+        eventos = eventos.filter(comuna__iexact=comuna)
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    eventos = eventos.annotate(mes=TruncMonth("fecha_ocurrencia")).values("mes").annotate(total=Count("id")).order_by("mes")
+    
+    data = [{"mes": e["mes"].strftime("%Y-%m"), "total": e["total"]} for e in eventos if e["mes"]]
+    return JsonResponse(data, safe=False)
 
 
+#top unidades con mas denuncias
+
+def api_top_unidades(request):
+    comuna = request.GET.get("comuna", "")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+    if comuna:
+        eventos = eventos.filter(comuna__iexact=comuna)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    unidades = (
+        eventos
+        .values("unidad_policial__nombre")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+
+    data = [{"unidad": u["unidad_policial__nombre"] or "No definida", "total": u["total"]} for u in unidades]
+    return JsonResponse(data, safe=False)
+
+#porcentaje de delitos criticos
+
+def api_top_comunas(request):
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    comunas = (
+        eventos
+        .values("comuna")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:10]
+    )
+
+    data = [{"comuna": c["comuna"], "total": c["total"]} for c in comunas]
+    return JsonResponse(data, safe=False)
+
+#heat map dia/hora/ti´po
+
+from django.db.models.functions import ExtractHour, ExtractWeekDay
+
+def api_eventos_hora_dia(request):
+    eventos = EventoPolicial.objects.exclude(fecha_ocurrencia=None).exclude(hora_ocurrencia=None)
+
+    matriz = {}
+
+    for i in range(1, 8):  # Lunes (1) a Domingo (7)
+        matriz[i] = [0] * 24
+
+    for evento in eventos:
+        try:
+            hora = evento.hora_ocurrencia.hour
+            dia = evento.fecha_ocurrencia.isoweekday()  # Lunes=1, Domingo=7
+            matriz[dia][hora] += 1
+        except:
+            continue
+
+    return JsonResponse(matriz)
