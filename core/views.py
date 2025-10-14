@@ -967,3 +967,20 @@ def api_eventos_hora_dia(request):
             continue
 
     return JsonResponse(matriz)
+
+def api_porcentaje_delitos_criticos(request):
+    # ⚠️ Ajusta esta lista a tus nombres reales de delitos graves
+    delitos_criticos = ["Robo", "Homicidio", "Violación", "Lesiones graves"]
+
+    eventos = EventoPolicial.objects.all()
+    total = eventos.count()
+    criticos = eventos.filter(delito_tipificado__nombre__in=delitos_criticos).count()
+
+    porcentaje = (criticos / total * 100) if total > 0 else 0
+
+    data = {
+        "total_eventos": total,
+        "delitos_criticos": criticos,
+        "porcentaje": round(porcentaje, 2)
+    }
+    return JsonResponse(data)
