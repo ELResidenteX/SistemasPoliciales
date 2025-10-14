@@ -149,7 +149,7 @@ path("api/eventos-por-comuna/", views.eventos_por_comuna_json, name="api_eventos
 path("api/estadisticas-delitos/", views.api_estadisticas_por_delito, name="api_estadisticas_por_delito"),
 
 
-#estadisticas mapa
+#estadisticas mapaa
 
 path('api_eventos_tiempo', api_eventos_tiempo, name='api_eventos_tiempo'),
 path('api_top_unidades', api_top_unidades, name='api_top_unidades'),
