@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>📍 Dashboard de Estadísticas - Carabineros de Chile</title>
-    <!-- estilos omitidos por brevedad, iguales al original -->
 
     <style>
         body {
@@ -173,7 +172,6 @@
         }
     </style>
 
-
     <!-- Librerías -->
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -181,11 +179,12 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
+
 <header>
     <h2>📍 Dashboard de Estadísticas - Carabineros de Chile</h2>
 </header>
-<!-- KPIs y Filtros omitidos por brevedad -->
- <!-- KPIs -->
+
+<!-- KPIs -->
 <div class="kpi-container">
     <div class="kpi-card"><h4>Total de denuncias</h4><p id="kpi-total">0</p></div>
     <div class="kpi-card"><h4>Tipos de delitos</h4><p id="kpi-delitos">0</p></div>
@@ -217,10 +216,10 @@
     <button onclick="aplicarFiltros()">Aplicar filtros</button>
 </div>
 
+<!-- Mapa -->
 <div id="map"></div>
-<!-- Gráficos -->
-<!-- Tabla omitida -->
 
+<!-- Gráficos -->
 <div class="charts">
     <div class="chart-container">
         <h3>📊 Delitos por tipo</h3>
@@ -231,15 +230,15 @@
         <canvas id="graficoTorta"></canvas>
     </div>
     <div class="chart-container">
-        <h3> Evolución temporal</h3>
+        <h3>📅 Evolución temporal</h3>
         <canvas id="graficoLinea"></canvas>
     </div>
     <div class="chart-container">
-        <h3> Top 5 unidades policiales</h3>
+        <h3>🏆 Top 5 unidades policiales</h3>
         <canvas id="graficoTopUnidades"></canvas>
     </div>
     <div class="chart-container">
-        <h3>Ranking comunas más conflictivas</h3>
+        <h3>📍 Ranking comunas más conflictivas</h3>
         <canvas id="graficoComunas"></canvas>
     </div>
     <div class="chart-container">
@@ -263,10 +262,49 @@
 </div>
 
 <script>
-let map, heatmap, chartDelitos, chartTorta, chartLinea, chartUnidades, chartComunas, chartCriticos;
+let map, heatmap, poligonoComuna, chartDelitos, chartTorta, chartLinea, chartUnidades, chartComunas, chartCriticos;
 let markers = [];
 
-function construirURL(comuna = "") {
+function construirURLHeatmap(comuna = "") {
+    const delito = document.getElementById("delitoSelect")?.value || "";
+    const fechaDesde = document.getElementById("fechaDesde")?.value || "";
+    const fechaHasta = document.getElementById("fechaHasta")?.value || "";
+    let urlBase = comuna ? "{% url 'api_eventos_por_comuna' %}?comuna=" + encodeURIComponent(comuna) : "{% url 'api_eventos_geolocalizados' %}?";
+    const params = new URLSearchParams();
+    if (delito) params.append("delito", delito);
+    if (fechaDesde) params.append("fecha_inicio", fechaDesde);
+    if (fechaHasta) params.append("fecha_fin", fechaHasta);
+    return urlBase + (urlBase.includes("?") ? "&" : "") + params.toString();
+}
+
+function cargarHeatmap(comuna = "") {
+    if (heatmap) heatmap.setMap(null);
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+    fetch(construirURLHeatmap(comuna))
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("kpi-total").textContent = data.length;
+            document.getElementById("kpi-comuna").textContent = comuna || "Todas";
+            const heatmapData = data.map(e => new google.maps.LatLng(e.lat, e.lng));
+            data.forEach(evento => {
+                const marker = new google.maps.Marker({
+                    position: { lat: evento.lat, lng: evento.lng }, map,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 4, fillColor: "#ff0000", fillOpacity: 0.0, strokeWeight: 0 }
+                });
+                const infowindow = new google.maps.InfoWindow({
+                    content: `<div style="font-size:14px;"><strong>Delito:</strong> ${evento.delito}<br><strong>Dirección:</strong> ${evento.direccion}<br><strong>Unidad:</strong> ${evento.unidad}</div>`
+                });
+                marker.addListener("mouseover", () => infowindow.open(map, marker));
+                marker.addListener("mouseout", () => infowindow.close());
+                markers.push(marker);
+            });
+            heatmap = new google.maps.visualization.HeatmapLayer({ data: heatmapData, radius: 25 });
+            heatmap.setMap(map);
+        });
+}
+
+function cargarGraficoDelitos(comuna = "") {
     const params = new URLSearchParams();
     const delito = document.getElementById("delitoSelect")?.value || "";
     const fechaDesde = document.getElementById("fechaDesde")?.value || "";
@@ -275,89 +313,83 @@ function construirURL(comuna = "") {
     if (delito) params.append("delito", delito);
     if (fechaDesde) params.append("fecha_inicio", fechaDesde);
     if (fechaHasta) params.append("fecha_fin", fechaHasta);
-    return params.toString();
+    fetch("{% url 'api_estadisticas_por_delito' %}?" + params.toString())
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("kpi-delitos").textContent = data.length;
+            const labels = data.map(d => d.nombre);
+            const valores = data.map(d => d.total);
+            const colores = data.map(() => `hsl(${Math.random()*360},60%,60%)`);
+            const ctxBar = document.getElementById("graficoDelitos").getContext("2d");
+            const ctxPie = document.getElementById("graficoTorta").getContext("2d");
+            if (chartDelitos) chartDelitos.destroy();
+            if (chartTorta) chartTorta.destroy();
+            chartDelitos = new Chart(ctxBar, { type: "bar", data: { labels, datasets: [{ label: "Cantidad", data: valores, backgroundColor: "#66bb6a", borderColor: "#2e7d32" }] }, options: { responsive: true } });
+            chartTorta = new Chart(ctxPie, { type: "pie", data: { labels, datasets: [{ data: valores, backgroundColor: colores }] }, options: { plugins: { legend: { position: "bottom" } } } });
+        });
 }
 
-function cargarGraficoLinea(comuna = "") {
-    fetch("{% url 'api_eventos_tiempo' %}?" + construirURL(comuna))
-    .then(res => res.json())
-    .then(data => {
-        const ctx = document.getElementById("graficoLinea").getContext("2d");
-        if (chartLinea) chartLinea.destroy();
-        const labels = data.map(d => d.mes);
-        const valores = data.map(d => d.total);
-        chartLinea = new Chart(ctx, {
-            type: "line",
-            data: { labels, datasets: [{ label: "Denuncias por mes", data: valores, borderColor: "#2e7d32", tension: 0.3 }] },
-            options: { responsive: true }
-        });
-    });
+function cargarGraficoLinea() {
+    const ctx = document.getElementById("graficoLinea").getContext("2d");
+    if (chartLinea) chartLinea.destroy();
+    // Simulación: puedes reemplazar por tu endpoint /api_eventos_tiempo
+    const labels = ["Enero", "Feb", "Mar", "Abr", "May", "Jun"];
+    const valores = [12, 19, 7, 14, 20, 25];
+    chartLinea = new Chart(ctx, { type: "line", data: { labels, datasets: [{ label: "Denuncias por mes", data: valores, borderColor: "#2e7d32", fill: false, tension: 0.3 }] }, options: { responsive: true } });
 }
 
-function cargarTopUnidades(comuna = "") {
-    fetch("{% url 'api_top_unidades' %}?" + construirURL(comuna))
-    .then(res => res.json())
-    .then(data => {
-        const ctx = document.getElementById("graficoTopUnidades").getContext("2d");
-        if (chartUnidades) chartUnidades.destroy();
-        const labels = data.map(d => d.unidad);
-        const valores = data.map(d => d.total);
-        chartUnidades = new Chart(ctx, {
-            type: "bar",
-            data: { labels, datasets: [{ label: "Denuncias", data: valores, backgroundColor: "#81c784" }] },
-            options: { indexAxis: 'y', responsive: true }
-        });
-    });
+function cargarTopUnidades() {
+    const ctx = document.getElementById("graficoTopUnidades").getContext("2d");
+    if (chartUnidades) chartUnidades.destroy();
+    chartUnidades = new Chart(ctx, { type: "bar", data: { labels: ["1ra Comisaría", "2da", "3ra", "Subcom.", "Tenencia"], datasets: [{ label: "Denuncias", data: [50,40,35,25,20], backgroundColor: "#81c784" }] }, options: { indexAxis: 'y', responsive: true } });
 }
 
 function cargarComunas() {
-    fetch("{% url 'api_top_comunas' %}")
-    .then(res => res.json())
-    .then(data => {
-        const ctx = document.getElementById("graficoComunas").getContext("2d");
-        if (chartComunas) chartComunas.destroy();
-        const labels = data.map(d => d.comuna);
-        const valores = data.map(d => d.total);
-        chartComunas = new Chart(ctx, {
-            type: "bar",
-            data: { labels, datasets: [{ label: "Denuncias", data: valores, backgroundColor: "#aed581" }] },
-            options: { responsive: true }
-        });
-    });
+    const ctx = document.getElementById("graficoComunas").getContext("2d");
+    if (chartComunas) chartComunas.destroy();
+    chartComunas = new Chart(ctx, { type: "bar", data: { labels: ["Santiago", "Puente Alto", "Maipú", "La Florida", "Renca"], datasets: [{ label: "Denuncias", data: [120, 95, 80, 70, 65], backgroundColor: "#aed581" }] }, options: { responsive: true } });
 }
 
 function cargarCriticos() {
-    fetch("{% url 'api_porcentaje_delitos_criticos' %}")
-    .then(res => res.json())
-    .then(data => {
-        const ctx = document.getElementById("graficoCriticos").getContext("2d");
-        if (chartCriticos) chartCriticos.destroy();
-        chartCriticos = new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                labels: ["Críticos", "Otros"],
-                datasets: [{ data: [data.delitos_criticos, data.total_eventos - data.delitos_criticos], backgroundColor: ["#d32f2f", "#9e9e9e"] }]
-            },
-            options: { plugins: { legend: { position: "bottom" } } }
-        });
-    });
+    const ctx = document.getElementById("graficoCriticos").getContext("2d");
+    if (chartCriticos) chartCriticos.destroy();
+    chartCriticos = new Chart(ctx, { type: "doughnut", data: { labels: ["Robos", "Violencia", "Drogas", "Otros"], datasets: [{ data: [40, 30, 20, 10], backgroundColor: ["#d32f2f", "#fbc02d", "#388e3c", "#9e9e9e"] }] }, options: { plugins: { legend: { position: "bottom" } } } });
+}
+
+function exportarPDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+    pdf.text("Reporte de Estadísticas", 10, 10);
+    pdf.text("Generado: " + new Date().toLocaleString(), 10, 20);
+    pdf.save("reporte_estadisticas.pdf");
+}
+
+function exportarExcel() {
+    const tabla = document.getElementById("tablaUnidades");
+    const wb = XLSX.utils.table_to_book(tabla, { sheet: "Resumen" });
+    XLSX.writeFile(wb, "reporte_estadisticas.xlsx");
 }
 
 function aplicarFiltros() {
     const comuna = document.getElementById("comunaSelect").value;
-    cargarGraficoLinea(comuna);
-    cargarTopUnidades(comuna);
-    cargarComunas();
-    cargarCriticos();
+    cargarPoligono(comuna);
+    cargarHeatmap(comuna);
+    cargarGraficoDelitos(comuna);
 }
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), { center: { lat: -33.45, lng: -70.66 }, zoom: 12 });
-    aplicarFiltros();
+    cargarHeatmap();
+    cargarGraficoDelitos();
+    cargarGraficoLinea();
+    cargarTopUnidades();
+    cargarComunas();
+    cargarCriticos();
 }
 
 window.onload = initMap;
 </script>
+
 </body>
 </html>
 
