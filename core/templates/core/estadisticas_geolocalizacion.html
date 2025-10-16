@@ -350,30 +350,44 @@ async function cargarPoligono(comuna = "") {
     if (poligonoComuna) { poligonoComuna.setMap(null); poligonoComuna = null; }
     if (!comuna) return;
 
-    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ nombre: comuna });
+    // ✅ usar "comuna" (no "nombre")
+    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ comuna: comuna });
     const geojson = await fetchJSON(url);
-    // Se espera un GeoJSON con geometry.coordinates [ [ [lng,lat], ... ] ]
-    const coords = geojson?.features?.[0]?.geometry?.coordinates?.[0] || [];
+
+    // Compatibilidad con Polygon y MultiPolygon
+    const feature = geojson?.features?.[0];
+    if (!feature) return;
+
+    let coords = [];
+    if (feature.geometry?.type === "Polygon") {
+      coords = feature.geometry.coordinates[0];
+    } else if (feature.geometry?.type === "MultiPolygon") {
+      coords = feature.geometry.coordinates[0][0];
+    }
+
+    if (!coords.length) return;
+
     const path = coords.map(pair => ({ lng: pair[0], lat: pair[1] }));
 
     poligonoComuna = new google.maps.Polygon({
       paths: path,
-      strokeColor: "#2e7d32",
+      strokeColor: "#1b5e20",
       strokeOpacity: 0.9,
       strokeWeight: 2,
-      fillColor: "#2e7d32",
+      fillColor: "#66bb6a",
       fillOpacity: 0.08
     });
     poligonoComuna.setMap(map);
-    if (path.length) {
-      const bounds = new google.maps.LatLngBounds();
-      path.forEach(p => bounds.extend(p));
-      map.fitBounds(bounds);
-    }
+
+    // Ajustar vista al polígono
+    const bounds = new google.maps.LatLngBounds();
+    path.forEach(p => bounds.extend(p));
+    map.fitBounds(bounds);
   } catch (e) {
     console.error("Error en cargarPoligono:", e);
   }
 }
+
 
 /* ====== GRÁFICOS ====== */
 async function cargarGraficoDelitos(comuna = "") {
