@@ -882,38 +882,7 @@ def api_estadisticas_por_delito(request):
 
 
 # 🔹 2. Evolución temporal (gráfico de línea)
-def api_eventos_tiempo(request):
-    unidad = obtener_unidad_activa()
-    comuna = request.GET.get("comuna", "")
-    delito_id = request.GET.get("delito", "")
-    fecha_inicio = request.GET.get("fecha_inicio")
-    fecha_fin = request.GET.get("fecha_fin")
 
-    eventos = EventoPolicial.objects.all()
-    if unidad:
-        eventos = eventos.filter(unidad_policial=unidad)
-    if comuna:
-        eventos = eventos.filter(comuna__iexact=comuna)
-    if delito_id:
-        eventos = eventos.filter(delito_tipificado_id=delito_id)
-    if fecha_inicio:
-        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
-    if fecha_fin:
-        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
-
-    # 🔸 Agrupar por fecha (día)
-    eventos = (
-        eventos.annotate(fecha=TruncDate("fecha_ocurrencia"))
-        .values("fecha")
-        .annotate(total=Count("id"))
-        .order_by("fecha")
-    )
-
-    data = {
-        "fechas": [e["fecha"].strftime("%Y-%m-%d") for e in eventos if e["fecha"]],
-        "valores": [e["total"] for e in eventos if e["fecha"]],
-    }
-    return JsonResponse(data)
 
 
 # 🔹 3. Top 5 unidades policiales
