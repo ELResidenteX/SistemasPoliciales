@@ -366,7 +366,8 @@ async function cargarPoligono(comuna = "") {
     if (poligonoComuna) { poligonoComuna.setMap(null); poligonoComuna = null; }
     if (!comuna) return;
 
-    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ nombre: comuna });
+    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ comuna: comuna });
+
     const geojson = await fetchJSON(url);
     // Se espera un GeoJSON con geometry.coordinates [ [ [lng,lat], ... ] ]
     const coords = geojson?.features?.[0]?.geometry?.coordinates?.[0] || [];
