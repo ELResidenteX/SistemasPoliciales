@@ -525,26 +525,49 @@ async function cargarGraficoHoras(comuna = "") {
     if (window.chartHoras) window.chartHoras.destroy();
 
     window.chartHoras = new Chart(ctx, {
-      type: "bar",
+      type: "line",
       data: {
         labels: data.horas || [],
         datasets: [{
-          label: "Cantidad de delitos",
+          label: "Delitos registrados por hora",
           data: data.valores || [],
-          backgroundColor: "#81c784",
-          borderColor: "#2e7d32",
-          borderWidth: 1
+          borderColor: "#1b5e20",
+          backgroundColor: "rgba(46,125,50,0.2)",
+          pointBackgroundColor: "#2e7d32",
+          pointRadius: 4,
+          tension: 0.35, // suaviza la curva
+          fill: true
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: "Frecuencia de delitos por hora del día" }
+          title: {
+            display: true,
+            text: "📈 Distribución horaria de delitos",
+            color: "#1b5e20",
+            font: { size: 16, weight: "bold" }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return ` ${context.parsed.y} delitos a las ${context.label}`;
+              }
+            }
+          }
         },
         scales: {
-          y: { beginAtZero: true, title: { display: true, text: "Cantidad" } },
-          x: { title: { display: true, text: "Hora del día" } }
+          x: {
+            title: { display: true, text: "Hora del día", color: "#1b5e20" },
+            ticks: { color: "#2e7d32" }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Cantidad de delitos", color: "#1b5e20" },
+            ticks: { stepSize: 1, color: "#2e7d32" },
+            grid: { color: "rgba(0,0,0,0.1)" }
+          }
         }
       }
     });
@@ -552,6 +575,7 @@ async function cargarGraficoHoras(comuna = "") {
     console.error("Error en cargarGraficoHoras:", e);
   }
 }
+
 
 
 
