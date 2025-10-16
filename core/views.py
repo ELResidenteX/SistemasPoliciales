@@ -749,8 +749,20 @@ def eventos_geolocalizados_json(request):
         except ValueError:
             pass
 
-    data = [{"lat": e.lat, "lng": e.lng} for e in eventos]
+    # ✅ Enviar datos completos para InfoWindow
+    data = [
+        {
+            "lat": e.lat,
+            "lng": e.lng,
+            "delito": e.delito_tipificado.nombre if e.delito_tipificado else "Sin tipificar",
+            "lugar": e.get_tipo_lugar_display() if hasattr(e, "get_tipo_lugar_display") else "-",
+            "direccion": f"{e.direccion or ''} {e.numero or ''}".strip() or "-",
+            "unidad": e.unidad_policial.nombre if e.unidad_policial else "No asignada",
+        }
+        for e in eventos
+    ]
     return JsonResponse(data, safe=False)
+
 
 
 #Aparicion de linea divisora por comuna
