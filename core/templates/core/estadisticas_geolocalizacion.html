@@ -247,6 +247,12 @@
     </div>
 </div>
 
+<div class="chart-container">
+    <h3>🕒 Delitos por hora del día</h3>
+    <canvas id="graficoHoras"></canvas>
+</div>
+
+
 <!-- Tabla -->
 <div class="tabla-container">
     <h3>📋 Resumen por unidad policial</h3>
@@ -504,6 +510,52 @@ async function cargarComunas() {
   } catch (e) { console.error("Error en cargarComunas:", e); }
 }
 
+async function cargarGraficoHoras(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_eventos_hora_dia' %}" + qs({
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+
+    const ctx = document.getElementById("graficoHoras").getContext("2d");
+    if (window.chartHoras) window.chartHoras.destroy();
+
+    window.chartHoras = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.horas || [],
+        datasets: [{
+          label: "Cantidad de delitos",
+          data: data.valores || [],
+          backgroundColor: "#81c784",
+          borderColor: "#2e7d32",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: "Frecuencia de delitos por hora del día" }
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "Cantidad" } },
+          x: { title: { display: true, text: "Hora del día" } }
+        }
+      }
+    });
+  } catch (e) {
+    console.error("Error en cargarGraficoHoras:", e);
+  }
+}
+
+
+
+
 async function cargarCriticos(comuna = "") {
   try {
     const f = getFiltros();
@@ -552,6 +604,7 @@ function aplicarFiltros() {
   cargarTopUnidades(comuna);
   cargarComunas();
   cargarCriticos(comuna);
+    cargarGraficoHoras(comuna);
 }
 
 /* ====== INIT ====== */
@@ -564,6 +617,7 @@ function initMap() {
   cargarTopUnidades();
   cargarComunas();
   cargarCriticos();
+  cargarGraficoHoras();
 }
 window.onload = initMap;
 </script>
