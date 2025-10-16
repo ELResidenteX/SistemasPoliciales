@@ -343,22 +343,6 @@ async function cargarHeatmap(comuna = "") {
   }
 }
 
-async function cargarEventosPorHora(comuna = "") {
-  const f = getFiltros();
-  const url = "{% url 'api_eventos_hora_dia' %}" + qs({
-    comuna: comuna || "",
-    delito: f.delito,
-    fecha_inicio: f.fecha_inicio,
-    fecha_fin: f.fecha_fin
-  });
-  const data = await fetchJSON(url);
-  const ctx = document.getElementById("graficoHora").getContext("2d");
-  new Chart(ctx, {
-    type: "bar",
-    data: { labels: data.horas, datasets: [{ label: "Delitos por hora", data: data.valores, backgroundColor: "#66bb6a" }] },
-    options: { responsive: true, scales: { y: { beginAtZero: true } } }
-  });
-}
 
 
 async function cargarPoligono(comuna = "") {
@@ -366,8 +350,7 @@ async function cargarPoligono(comuna = "") {
     if (poligonoComuna) { poligonoComuna.setMap(null); poligonoComuna = null; }
     if (!comuna) return;
 
-    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ comuna: comuna });
-
+    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ nombre: comuna });
     const geojson = await fetchJSON(url);
     // Se espera un GeoJSON con geometry.coordinates [ [ [lng,lat], ... ] ]
     const coords = geojson?.features?.[0]?.geometry?.coordinates?.[0] || [];
