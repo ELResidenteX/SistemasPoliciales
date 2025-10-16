@@ -16,6 +16,7 @@ from rest_framework import status
 from django.core.management import call_command
 from core.utils import obtener_unidad_activa
 from core.geocoding import obtener_lat_lng  
+from django.db.models.functions import TruncDate
 
 import json
 from django.contrib.admin.views.decorators import staff_member_required
@@ -845,7 +846,9 @@ def eventos_por_comuna_json(request):
 
 #graficos delitos   
 
+# 🔹 1. Delitos por tipo
 def api_estadisticas_por_delito(request):
+    unidad = obtener_unidad_activa()
     comuna = request.GET.get("comuna", "").strip()
     delito_id = request.GET.get("delito", "")
     fecha_inicio = request.GET.get("fecha_inicio")
@@ -853,6 +856,9 @@ def api_estadisticas_por_delito(request):
 
     eventos = EventoPolicial.objects.all()
 
+    # 🔸 Filtrar por unidad activa si existe
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
     if comuna:
         eventos = eventos.filter(comuna__iexact=comuna)
     if delito_id:
@@ -863,27 +869,29 @@ def api_estadisticas_por_delito(request):
         eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
     conteo = (
-        eventos
-        .values("delito_tipificado__nombre")
+        eventos.values("delito_tipificado__nombre")
         .annotate(total=Count("id"))
         .order_by("-total")
     )
 
-    data = [{"nombre": c["delito_tipificado__nombre"] or "Sin tipificar", "total": c["total"]} for c in conteo]
+    data = [
+        {"nombre": c["delito_tipificado__nombre"] or "Sin tipificar", "total": c["total"]}
+        for c in conteo
+    ]
     return JsonResponse(data, safe=False)
 
 
-#evolucion temporarl denuncias
-
-from django.db.models.functions import TruncMonth
-
+# 🔹 2. Evolución temporal (gráfico de línea)
 def api_eventos_tiempo(request):
+    unidad = obtener_unidad_activa()
     comuna = request.GET.get("comuna", "")
     delito_id = request.GET.get("delito", "")
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
     eventos = EventoPolicial.objects.all()
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
     if comuna:
         eventos = eventos.filter(comuna__iexact=comuna)
     if delito_id:
@@ -893,20 +901,31 @@ def api_eventos_tiempo(request):
     if fecha_fin:
         eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
-    eventos = eventos.annotate(mes=TruncMonth("fecha_ocurrencia")).values("mes").annotate(total=Count("id")).order_by("mes")
-    
-    data = [{"mes": e["mes"].strftime("%Y-%m"), "total": e["total"]} for e in eventos if e["mes"]]
-    return JsonResponse(data, safe=False)
+    # 🔸 Agrupar por fecha (día)
+    eventos = (
+        eventos.annotate(fecha=TruncDate("fecha_ocurrencia"))
+        .values("fecha")
+        .annotate(total=Count("id"))
+        .order_by("fecha")
+    )
+
+    data = {
+        "fechas": [e["fecha"].strftime("%Y-%m-%d") for e in eventos if e["fecha"]],
+        "valores": [e["total"] for e in eventos if e["fecha"]],
+    }
+    return JsonResponse(data)
 
 
-#top unidades con mas denuncias
-
+# 🔹 3. Top 5 unidades policiales
 def api_top_unidades(request):
+    unidad = obtener_unidad_activa()
     comuna = request.GET.get("comuna", "")
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
     eventos = EventoPolicial.objects.all()
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
     if comuna:
         eventos = eventos.filter(comuna__iexact=comuna)
     if fecha_inicio:
@@ -915,72 +934,64 @@ def api_top_unidades(request):
         eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
     unidades = (
-        eventos
-        .values("unidad_policial__nombre")
+        eventos.values("unidad_policial__nombre")
         .annotate(total=Count("id"))
         .order_by("-total")[:5]
     )
 
-    data = [{"unidad": u["unidad_policial__nombre"] or "No definida", "total": u["total"]} for u in unidades]
+    data = [
+        {"nombre_unidad": u["unidad_policial__nombre"] or "No definida", "total": u["total"]}
+        for u in unidades
+    ]
     return JsonResponse(data, safe=False)
 
-#porcentaje de delitos criticos
 
+# 🔹 4. Ranking de comunas más conflictivas
 def api_top_comunas(request):
+    unidad = obtener_unidad_activa()
+    delito_id = request.GET.get("delito", "")
     fecha_inicio = request.GET.get("fecha_inicio")
     fecha_fin = request.GET.get("fecha_fin")
 
     eventos = EventoPolicial.objects.all()
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
     if fecha_inicio:
         eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
     if fecha_fin:
         eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
 
     comunas = (
-        eventos
-        .values("comuna")
+        eventos.values("comuna")
         .annotate(total=Count("id"))
         .order_by("-total")[:10]
     )
 
-    data = [{"comuna": c["comuna"], "total": c["total"]} for c in comunas]
+    data = [
+        {"nombre_comuna": c["comuna"] or "No definida", "total": c["total"]}
+        for c in comunas
+    ]
     return JsonResponse(data, safe=False)
 
-#heat map dia/hora/ti´po
 
-from django.db.models.functions import ExtractHour, ExtractWeekDay
-
-def api_eventos_hora_dia(request):
-    eventos = EventoPolicial.objects.exclude(fecha_ocurrencia=None).exclude(hora_ocurrencia=None)
-
-    matriz = {}
-
-    for i in range(1, 8):  # Lunes (1) a Domingo (7)
-        matriz[i] = [0] * 24
-
-    for evento in eventos:
-        try:
-            hora = evento.hora_ocurrencia.hour
-            dia = evento.fecha_ocurrencia.isoweekday()  # Lunes=1, Domingo=7
-            matriz[dia][hora] += 1
-        except:
-            continue
-
-    return JsonResponse(matriz)
-
+# 🔹 5. Porcentaje de delitos críticos
 def api_porcentaje_delitos_criticos(request):
-    # ⚠️ Ajusta esta lista a tus nombres reales de delitos graves
-    delitos_criticos = ["Robo", "Homicidio", "Violación", "Lesiones graves"]
+    unidad = obtener_unidad_activa()
+    delitos_criticos = ["Robo con violencia", "Homicidio", "Violación", "Lesiones graves"]
 
     eventos = EventoPolicial.objects.all()
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
+
     total = eventos.count()
     criticos = eventos.filter(delito_tipificado__nombre__in=delitos_criticos).count()
-
-    porcentaje = (criticos / total * 100) if total > 0 else 0
+    porcentaje = round((criticos / total * 100), 2) if total else 0
 
     data = {
         "total_eventos": total,
         "delitos_criticos": criticos,
-        "porcentaje": round(porcentaje, 2)
+        "porcentaje": porcentaje,
     }
     return JsonResponse(data)
