@@ -155,7 +155,7 @@ path('api_eventos_tiempo', api_eventos_tiempo, name='api_eventos_tiempo'),
 path('api_top_unidades', api_top_unidades, name='api_top_unidades'),
 path('api_top_comunas', api_top_comunas, name='api_top_comunas'),
 path('api_porcentaje_delitos_criticos', api_porcentaje_delitos_criticos, name='api_porcentaje_delitos_criticos'),
-path('api_eventos_hora_dia', api_eventos_hora_dia, name='api_eventos_hora_dia'),
+
 
 
 ]
