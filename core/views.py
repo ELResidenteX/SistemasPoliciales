@@ -798,8 +798,15 @@ def lista_comunas_json(request):
 #Filtro comunas desde mapa
 
 def geojson_comuna_por_nombre(request):
-    nombre_comuna = request.GET.get("comuna", "").strip().lower()
-    ruta_geojson = os.path.join(settings.BASE_DIR, 'core', 'static', 'core', 'geojson', 'Comunas_de_Chile.geojson')
+    nombre_comuna = (
+        request.GET.get("comuna")
+        or request.GET.get("nombre")
+        or ""
+    ).strip().lower()
+
+    ruta_geojson = os.path.join(
+        settings.BASE_DIR, "core", "static", "core", "geojson", "Comunas_de_Chile.geojson"
+    )
 
     if not os.path.exists(ruta_geojson):
         return HttpResponse("Archivo GeoJSON no encontrado", status=404)
@@ -807,15 +814,28 @@ def geojson_comuna_por_nombre(request):
     with open(ruta_geojson, encoding="utf-8") as f:
         geojson_data = json.load(f)
 
+    # claves posibles
+    posibles = ["comuna", "Comuna", "NOM_COM", "NOM_COMUNA", "name", "NOMBRE"]
+
+    def nombre_prop(properties):
+        for k in posibles:
+            if k in properties and isinstance(properties[k], str):
+                return properties[k].strip().lower()
+        return ""
+
     features_filtradas = [
-        f for f in geojson_data["features"]
-        if f["properties"].get("comuna", "").strip().lower() == nombre_comuna
+        f for f in geojson_data.get("features", [])
+        if nombre_prop(f.get("properties", {})) == nombre_comuna
     ]
+
+    if not features_filtradas:
+        print(f"[DEBUG] ❌ No se encontró {nombre_comuna} en el GeoJSON")
 
     return JsonResponse({
         "type": "FeatureCollection",
         "features": features_filtradas
     })
+
 
 #eventos filtrados por comuna
 
