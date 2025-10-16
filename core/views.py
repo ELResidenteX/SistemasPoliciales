@@ -882,7 +882,38 @@ def api_estadisticas_por_delito(request):
 
 
 # 🔹 2. Evolución temporal (gráfico de línea)
+def api_eventos_tiempo(request):
+    unidad = obtener_unidad_activa()
+    comuna = request.GET.get("comuna", "")
+    delito_id = request.GET.get("delito", "")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
 
+    eventos = EventoPolicial.objects.all()
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
+    if comuna:
+        eventos = eventos.filter(comuna__iexact=comuna)
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    # 🔸 Agrupar por fecha (día)
+    eventos = (
+        eventos.annotate(fecha=TruncDate("fecha_ocurrencia"))
+        .values("fecha")
+        .annotate(total=Count("id"))
+        .order_by("fecha")
+    )
+
+    data = {
+        "fechas": [e["fecha"].strftime("%Y-%m-%d") for e in eventos if e["fecha"]],
+        "valores": [e["total"] for e in eventos if e["fecha"]],
+    }
+    return JsonResponse(data)
 
 
 # 🔹 3. Top 5 unidades policiales
@@ -962,5 +993,54 @@ def api_porcentaje_delitos_criticos(request):
         "total_eventos": total,
         "delitos_criticos": criticos,
         "porcentaje": porcentaje,
+    }
+    return JsonResponse(data)
+
+# 🔹 6. Eventos por hora del día (para gráfico de barras o radar)
+def api_eventos_hora_dia(request):
+    """
+    Devuelve la cantidad de delitos agrupados por hora del día (0 a 23).
+    Filtra por unidad activa, comuna, delito y rango de fechas.
+    """
+    unidad = obtener_unidad_activa()
+    comuna = request.GET.get("comuna", "").strip()
+    delito_id = request.GET.get("delito", "").strip()
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+
+    # Filtros dinámicos
+    if unidad:
+        eventos = eventos.filter(unidad_policial=unidad)
+    if comuna:
+        eventos = eventos.filter(comuna__iexact=comuna)
+    if delito_id:
+        eventos = eventos.filter(delito_tipificado_id=delito_id)
+    if fecha_inicio:
+        eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin:
+        eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    # Agrupar por hora (campo hora_ocurrencia)
+    conteo_por_hora = (
+        eventos.values("hora_ocurrencia")
+        .annotate(total=Count("id"))
+        .order_by("hora_ocurrencia")
+    )
+
+    # Convertir a formato JSON (horas 00 a 23)
+    horas = list(range(0, 24))
+    totales = []
+    for h in horas:
+        count = next(
+            (c["total"] for c in conteo_por_hora if c["hora_ocurrencia"] and c["hora_ocurrencia"].hour == h),
+            0
+        )
+        totales.append(count)
+
+    data = {
+        "horas": [f"{h:02d}:00" for h in horas],
+        "valores": totales,
     }
     return JsonResponse(data)
