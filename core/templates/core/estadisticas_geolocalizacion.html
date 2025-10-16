@@ -350,26 +350,21 @@ async function cargarPoligono(comuna = "") {
     if (poligonoComuna) { poligonoComuna.setMap(null); poligonoComuna = null; }
     if (!comuna) return;
 
-    // 🔹 Cambio clave: usar el parámetro correcto ?comuna=
-    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ comuna: comuna });
-
+    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ nombre: comuna });
     const geojson = await fetchJSON(url);
+    // Se espera un GeoJSON con geometry.coordinates [ [ [lng,lat], ... ] ]
     const coords = geojson?.features?.[0]?.geometry?.coordinates?.[0] || [];
     const path = coords.map(pair => ({ lng: pair[0], lat: pair[1] }));
 
-    // 🔹 Polígono con estilo más visible
     poligonoComuna = new google.maps.Polygon({
       paths: path,
-      strokeColor: "#1b5e20",
+      strokeColor: "#2e7d32",
       strokeOpacity: 0.9,
       strokeWeight: 2,
-      fillColor: "#66bb6a",
+      fillColor: "#2e7d32",
       fillOpacity: 0.08
     });
-
     poligonoComuna.setMap(map);
-
-    // 🔹 Ajustar vista al área del polígono
     if (path.length) {
       const bounds = new google.maps.LatLngBounds();
       path.forEach(p => bounds.extend(p));
