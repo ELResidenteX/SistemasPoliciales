@@ -17,7 +17,8 @@ from django.core.management import call_command
 from core.utils import obtener_unidad_activa
 from core.geocoding import obtener_lat_lng  
 from django.db.models.functions import TruncDate
-
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
 import json
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
@@ -1098,3 +1099,36 @@ def api_eventos_dia_vs_noche(request):
     noche = eventos.exclude(hora_ocurrencia__hour__gte=6, hora_ocurrencia__hour__lt=18).count()
 
     return JsonResponse({"dia": dia, "noche": noche})
+
+#tendencia ensual
+
+def api_tendencia_mensual(request):
+    unidad = obtener_unidad_activa()
+    eventos = EventoPolicial.objects.all()
+    if unidad: eventos = eventos.filter(unidad_policial=unidad)
+
+    data = (
+        eventos.annotate(mes=TruncMonth("fecha_ocurrencia"))
+        .values("mes")
+        .annotate(total=Count("id"))
+        .order_by("mes")
+    )
+    labels = [d["mes"].strftime("%b %Y") for d in data]
+    valores = [d["total"] for d in data]
+    return JsonResponse({"labels": labels, "valores": valores})
+
+#estadisticas mes
+
+
+def api_top_delitos_mes_actual(request):
+    hoy = timezone.now()
+    eventos = EventoPolicial.objects.filter(fecha_ocurrencia__month=hoy.month)
+    data = (
+        eventos.values("delito_tipificado__nombre")
+        .annotate(total=Count("id"))
+        .order_by("-total")[:5]
+    )
+    return JsonResponse({
+        "labels": [d["delito_tipificado__nombre"] for d in data],
+        "valores": [d["total"] for d in data]
+    })

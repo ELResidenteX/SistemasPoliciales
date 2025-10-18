@@ -332,6 +332,19 @@ tr:hover {
   <canvas id="graficoDiaNoche"></canvas>
 </div>
 
+<div class="chart-container">
+  <h3>📆 Tendencia mensual de delitos</h3>
+  <canvas id="graficoTendenciaMensual"></canvas>
+</div>
+
+<div class="chart-container">
+  <h3>🏅 Delitos más frecuentes (Mes actual)</h3>
+  <canvas id="graficoTopDelitosMes"></canvas>
+</div>
+
+
+
+
 
 
 <!-- Tabla -->
@@ -703,6 +716,53 @@ async function cargarGraficoDiaNoche(comuna = "") {
     });
   } catch(e) { console.error("Error en cargarGraficoDiaNoche:", e); }
 }
+
+async function cargarGraficoTendenciaMensual(comuna = "") {
+  try {
+    const url = "{% url 'api_tendencia_mensual' %}";
+    const data = await fetchJSON(url);
+    const ctx = document.getElementById("graficoTendenciaMensual").getContext("2d");
+    if (window.chartTendencia) window.chartTendencia.destroy();
+    window.chartTendencia = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: "Total de delitos",
+          data: data.valores,
+          borderColor: "#1b5e20",
+          backgroundColor: "rgba(46,125,50,0.2)",
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  } catch(e) { console.error("Error en cargarGraficoTendenciaMensual:", e); }
+}
+
+async function cargarTopDelitosMes() {
+  try {
+    const url = "{% url 'api_top_delitos_mes_actual' %}";
+    const data = await fetchJSON(url);
+    const ctx = document.getElementById("graficoTopDelitosMes").getContext("2d");
+    if (window.chartTopMes) window.chartTopMes.destroy();
+    window.chartTopMes = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: "Delitos",
+          data: data.valores,
+          backgroundColor: "#81c784"
+        }]
+      },
+      options: { indexAxis: 'y', plugins: { legend: { display: false } } }
+    });
+  } catch(e) { console.error("Error en cargarTopDelitosMes:", e); }
+}
+
+
 
 
 
