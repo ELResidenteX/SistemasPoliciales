@@ -151,14 +151,25 @@ h2, h3 {
   gap: 25px;
 }
 
+/* 🔥 Normaliza todos los gráficos */
 .chart-container {
   flex: 1;
   min-width: 360px;
+  max-width: 400px;        /* evita que crezcan demasiado */
   background: #ffffff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 380px;           /* 🔹 altura uniforme */
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 280px !important; /* 🔹 misma altura visible del gráfico */
 }
 
 .chart-container:hover {
@@ -173,6 +184,7 @@ h2, h3 {
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 5px;
   margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
 /* ======= TABLA ======= */
@@ -234,17 +246,11 @@ tr:hover {
 }
 
 /* ======= SCROLL BAR ======= */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: #2e7d32;
-  border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #1b5e20;
-}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb { background: #2e7d32; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #1b5e20; }
 </style>
+
 
 
     <!-- Librerías -->
@@ -342,19 +348,7 @@ tr:hover {
   <canvas id="graficoTopDelitosMes"></canvas>
 </div>
 
-<!-- Gráficos agrupados -->
-<div class="charts">
-  <div class="chart-container"><h3>📊 Delitos por tipo</h3><canvas id="graficoDelitos"></canvas></div>
-  <div class="chart-container"><h3>📈 Distribución porcentual</h3><canvas id="graficoTorta"></canvas></div>
-  <div class="chart-container"><h3>📅 Evolución temporal</h3><canvas id="graficoLinea"></canvas></div>
-  <div class="chart-container"><h3>🏆 Top 5 unidades policiales</h3><canvas id="graficoTopUnidades"></canvas></div>
-  <div class="chart-container"><h3>📍 Ranking comunas más conflictivas</h3><canvas id="graficoComunas"></canvas></div>
-  <div class="chart-container"><h3>⚠️ Porcentaje delitos críticos</h3><canvas id="graficoCriticos"></canvas></div>
-  <div class="chart-container"><h3>🕒 Delitos por hora del día</h3><canvas id="graficoHoras"></canvas></div>
-  <div class="chart-container"><h3>🌞 vs 🌙 Delitos por turno</h3><canvas id="graficoDiaNoche"></canvas></div>
-  <div class="chart-container"><h3>📆 Tendencia mensual de delitos</h3><canvas id="graficoTendenciaMensual"></canvas></div>
-  <div class="chart-container"><h3>🏅 Delitos más frecuentes (Mes actual)</h3><canvas id="graficoTopDelitosMes"></canvas></div>
-</div>
+
 
 
 
