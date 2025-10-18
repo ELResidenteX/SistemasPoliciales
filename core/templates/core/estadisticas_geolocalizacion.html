@@ -794,6 +794,10 @@ function aplicarFiltros() {
   cargarComunas();
   cargarCriticos(comuna);
     cargarGraficoHoras(comuna);
+      cargarGraficoDiaNoche();
+  cargarGraficoTendenciaMensual();
+  cargarTopDelitosMes();
+
 }
 
 /* ====== INIT ====== */
@@ -807,6 +811,10 @@ function initMap() {
   cargarComunas();
   cargarCriticos();
   cargarGraficoHoras();
+    cargarGraficoDiaNoche();
+  cargarGraficoTendenciaMensual();
+  cargarTopDelitosMes();
+
 }
 window.onload = initMap;
 </script>
