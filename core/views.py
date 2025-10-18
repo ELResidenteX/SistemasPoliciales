@@ -1076,3 +1076,25 @@ def api_eventos_hora_dia(request):
         "valores": totales,
     }
     return JsonResponse(data)
+
+
+#estadisticas noche dia
+
+def api_eventos_dia_vs_noche(request):
+    unidad = obtener_unidad_activa()
+    comuna = request.GET.get("comuna", "")
+    delito_id = request.GET.get("delito", "")
+    fecha_inicio = request.GET.get("fecha_inicio")
+    fecha_fin = request.GET.get("fecha_fin")
+
+    eventos = EventoPolicial.objects.all()
+    if unidad: eventos = eventos.filter(unidad_policial=unidad)
+    if comuna: eventos = eventos.filter(comuna__iexact=comuna)
+    if delito_id: eventos = eventos.filter(delito_tipificado_id=delito_id)
+    if fecha_inicio: eventos = eventos.filter(fecha_ocurrencia__gte=fecha_inicio)
+    if fecha_fin: eventos = eventos.filter(fecha_ocurrencia__lte=fecha_fin)
+
+    dia = eventos.filter(hora_ocurrencia__hour__gte=6, hora_ocurrencia__hour__lt=18).count()
+    noche = eventos.exclude(hora_ocurrencia__hour__gte=6, hora_ocurrencia__hour__lt=18).count()
+
+    return JsonResponse({"dia": dia, "noche": noche})

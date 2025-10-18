@@ -327,6 +327,12 @@ tr:hover {
     <canvas id="graficoHoras"></canvas>
 </div>
 
+<div class="chart-container">
+  <h3>🌞 vs 🌙 Delitos por turno</h3>
+  <canvas id="graficoDiaNoche"></canvas>
+</div>
+
+
 
 <!-- Tabla -->
 <div class="tabla-container">
@@ -676,6 +682,30 @@ async function cargarCriticos(comuna = "") {
     });
   } catch (e) { console.error("Error en cargarCriticos:", e); }
 }
+
+async function cargarGraficoDiaNoche(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_eventos_dia_vs_noche' %}" + qs({
+      comuna: comuna, delito: f.delito,
+      fecha_inicio: f.fecha_inicio, fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+    const ctx = document.getElementById("graficoDiaNoche").getContext("2d");
+    if (window.chartDiaNoche) window.chartDiaNoche.destroy();
+    window.chartDiaNoche = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Día (06:00–18:00)", "Noche (18:00–06:00)"],
+        datasets: [{ data: [data.dia, data.noche], backgroundColor: ["#81c784", "#388e3c"] }]
+      },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } catch(e) { console.error("Error en cargarGraficoDiaNoche:", e); }
+}
+
+
+
 
 /* ====== EXPORTACIONES ====== */
 function exportarPDF() {
