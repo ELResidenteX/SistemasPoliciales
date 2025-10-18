@@ -510,6 +510,7 @@ async function cargarComunas() {
   } catch (e) { console.error("Error en cargarComunas:", e); }
 }
 
+/* ====== NUEVO: GRÁFICO DE DELITOS POR HORA ====== */
 async function cargarGraficoHoras(comuna = "") {
   try {
     const f = getFiltros();
@@ -535,7 +536,7 @@ async function cargarGraficoHoras(comuna = "") {
           backgroundColor: "rgba(46,125,50,0.2)",
           pointBackgroundColor: "#2e7d32",
           pointRadius: 4,
-          tension: 0.35, // suaviza la curva
+          tension: 0.35,
           fill: true
         }]
       },
