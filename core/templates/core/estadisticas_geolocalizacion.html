@@ -155,7 +155,7 @@ h2, h3 {
 .chart-container {
   flex: 1;
   min-width: 360px;
-  max-width: 400px;        /* evita que crezcan demasiado */
+  max-width: 400px;
   background: #ffffff;
   padding: 20px;
   border-radius: 12px;
@@ -164,12 +164,13 @@ h2, h3 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 380px;           /* 🔹 altura uniforme */
+  height: 380px;
+  margin: 15px;
 }
 
 .chart-container canvas {
   width: 100% !important;
-  height: 280px !important; /* 🔹 misma altura visible del gráfico */
+  height: 280px !important;
 }
 
 .chart-container:hover {
@@ -185,6 +186,31 @@ h2, h3 {
   padding-bottom: 5px;
   margin-bottom: 10px;
   flex-shrink: 0;
+}
+
+/* ======= CORRECCIÓN DE ALINEACIÓN ======= */
+.chart-container:nth-of-type(n+7) {
+  display: inline-block;
+  vertical-align: top;
+}
+
+@media (min-width: 1200px) {
+  .chart-container {
+    width: calc(33% - 40px); /* tres por fila */
+  }
+}
+
+@media (max-width: 1199px) {
+  .chart-container {
+    width: calc(50% - 30px); /* dos por fila */
+  }
+}
+
+@media (max-width: 700px) {
+  .chart-container {
+    width: 100%; /* uno por fila en móviles */
+    max-width: none;
+  }
 }
 
 /* ======= TABLA ======= */
@@ -250,6 +276,8 @@ tr:hover {
 ::-webkit-scrollbar-thumb { background: #2e7d32; border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: #1b5e20; }
 </style>
+
+
 
 
 
