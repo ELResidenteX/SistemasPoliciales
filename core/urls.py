@@ -157,6 +157,9 @@ path('api_top_comunas', api_top_comunas, name='api_top_comunas'),
 path('api_porcentaje_delitos_criticos', api_porcentaje_delitos_criticos, name='api_porcentaje_delitos_criticos'),
 path('api_eventos_hora_dia', api_eventos_hora_dia, name='api_eventos_hora_dia'),
 
+path('api/eventos/dia-vs-noche/', views.api_eventos_dia_vs_noche, name='api_eventos_dia_vs_noche'),
+path('api/estadisticas/tendencia-mensual/', views.api_tendencia_mensual, name='api_tendencia_mensual'),
+path('api/estadisticas/top-delitos-mes/', views.api_top_delitos_mes_actual, name='api_top_delitos_mes_actual'),
 
 ]
 
