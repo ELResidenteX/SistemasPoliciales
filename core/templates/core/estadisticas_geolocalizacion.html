@@ -1,123 +1,219 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>📍 Dashboard de Estadísticas - Carabineros de Chile</title>
+    <meta charset="UTF-8">
+    <title>📍 Dashboard de Estadísticas - Carabineros de Chile</title>
 
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    header {
-      background-color: #1b5e20;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    h2, h3 {
-      text-align: center;
-      color: #2e7d32;
-    }
-    #map { height: 60vh; width: 100%; }
-    .filtros-container {
-      display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-      background-color: #e8f5e9; padding: 15px 10px; margin-bottom: 10px;
-      border-bottom: 2px solid #2e7d32;
-    }
-    .filtros-container label {
-      margin: 5px 10px; font-weight: 600; color: #1b5e20;
-    }
-    .filtros-container select,
-    .filtros-container input[type="date"],
-    .filtros-container button {
-      margin: 5px 5px; padding: 6px 10px; border: 1px solid #ccc;
-      border-radius: 4px; font-size: 14px;
-    }
-    .filtros-container button {
-      background-color: #2e7d32; color: #fff; border: none;
-      cursor: pointer; font-weight: bold; transition: background-color 0.3s;
-    }
-    .filtros-container button:hover { background-color: #1b5e20; }
-    .kpi-container {
-      display: flex; justify-content: space-around; flex-wrap: wrap;
-      margin: 20px auto; max-width: 1100px; gap: 15px;
-    }
-    .kpi-card {
-      flex: 1; background-color: #e8f5e9; border-left: 5px solid #2e7d32;
-      padding: 15px 20px; text-align: center; border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); min-width: 200px;
-    }
-    .kpi-card h4 { color: #1b5e20; margin: 0; font-size: 16px; }
-    .kpi-card p { font-size: 24px; font-weight: bold; margin: 10px 0 0; color: #1b5e20; }
-    .charts {
-      display: flex; flex-wrap: wrap; justify-content: space-around;
-      margin: 20px auto; max-width: 1200px; gap: 30px;
-    }
-    .chart-container {
-      flex: 1; min-width: 380px; background: white; padding: 15px;
-      border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    }
-    .tabla-container {
-      max-width: 1000px; margin: 40px auto; background: white;
-      padding: 15px; border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    }
-    th { background-color: #1b5e20; color: white; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 10px; border-bottom: 1px solid #ccc; text-align: left; }
-    tr:hover { background-color: #f1f8e9; }
-    .export-buttons { text-align: center; margin: 15px 0; }
-    .export-buttons button {
-      background-color: #388e3c; color: white; padding: 8px 16px; margin: 5px;
-      border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
-    }
-    .export-buttons button:hover { background-color: #1b5e20; }
-  </style>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
-  <!-- Librerías -->
-  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+        header {
+            background-color: #1b5e20;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #2e7d32;
+        }
+
+        #map {
+            height: 60vh;
+            width: 100%;
+        }
+
+        .filtros-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8f5e9;
+            padding: 15px 10px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #2e7d32;
+        }
+
+        .filtros-container label {
+            margin: 5px 10px;
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .filtros-container select,
+        .filtros-container input[type="date"],
+        .filtros-container button {
+            margin: 5px 5px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filtros-container button {
+            background-color: #2e7d32;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .filtros-container button:hover {
+            background-color: #1b5e20;
+        }
+
+        .kpi-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px auto;
+            max-width: 1100px;
+            gap: 15px;
+        }
+
+        .kpi-card {
+            flex: 1;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 15px 20px;
+            text-align: center;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+
+        .kpi-card h4 {
+            color: #1b5e20;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .kpi-card p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0 0;
+            color: #1b5e20;
+        }
+
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px auto;
+            max-width: 1200px;
+            gap: 30px;
+        }
+
+        .chart-container {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+
+        .tabla-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background-color: #1b5e20;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #f1f8e9;
+        }
+
+        .export-buttons {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .export-buttons button {
+            background-color: #388e3c;
+            color: white;
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .export-buttons button:hover {
+            background-color: #1b5e20;
+        }
+    </style>
+
+    <!-- Librerías -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=visualization"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<header><h2>📍 Dashboard de Estadísticas - Carabineros de Chile</h2></header>
+<header>
+    <h2>📍 Dashboard de Estadísticas - Carabineros de Chile</h2>
+</header>
 
 <!-- KPIs -->
 <div class="kpi-container">
-  <div class="kpi-card"><h4>Total de denuncias</h4><p id="kpi-total">0</p></div>
-  <div class="kpi-card"><h4>Tipos de delitos</h4><p id="kpi-delitos">0</p></div>
-  <div class="kpi-card"><h4>Comuna seleccionada</h4><p id="kpi-comuna">Todas</p></div>
-  <div class="kpi-card"><h4>Rango de fechas</h4><p id="kpi-fechas">-</p></div>
+    <div class="kpi-card"><h4>Total de denuncias</h4><p id="kpi-total">0</p></div>
+    <div class="kpi-card"><h4>Tipos de delitos</h4><p id="kpi-delitos">0</p></div>
+    <div class="kpi-card"><h4>Comuna seleccionada</h4><p id="kpi-comuna">Todas</p></div>
+    <div class="kpi-card"><h4>Rango de fechas</h4><p id="kpi-fechas">-</p></div>
 </div>
 
 <!-- Filtros -->
 <div class="filtros-container">
-  <label>Comuna:</label>
-  <select id="comunaSelect">
-    <option value="">-- Ver todas --</option>
-    {% for comuna in comunas %}
-    <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>{{ comuna.nombre }}</option>
-    {% endfor %}
-  </select>
+    <label>Comuna:</label>
+    <select id="comunaSelect">
+        <option value="">-- Ver todas --</option>
+        {% for comuna in comunas %}
+        <option value="{{ comuna.nombre }}" {% if comuna.nombre == comuna_activa %}selected{% endif %}>{{ comuna.nombre }}</option>
+        {% endfor %}
+    </select>
 
-  <label>Delito:</label>
-  <select id="delitoSelect">
-    <option value="">-- Todos --</option>
-    {% for delito in delitos %}
-    <option value="{{ delito.id }}">{{ delito.nombre }}</option>
-    {% endfor %}
-  </select>
+    <label>Delito:</label>
+    <select id="delitoSelect">
+        <option value="">-- Todos --</option>
+        {% for delito in delitos %}
+        <option value="{{ delito.id }}">{{ delito.nombre }}</option>
+        {% endfor %}
+    </select>
 
-  <label>Desde:</label><input type="date" id="fechaDesde">
-  <label>Hasta:</label><input type="date" id="fechaHasta">
+    <label>Desde:</label><input type="date" id="fechaDesde">
+    <label>Hasta:</label><input type="date" id="fechaHasta">
 
-  <button onclick="aplicarFiltros()">Aplicar filtros</button>
+    <button onclick="aplicarFiltros()">Aplicar filtros</button>
 </div>
 
 <!-- Mapa -->
@@ -125,39 +221,59 @@
 
 <!-- Gráficos -->
 <div class="charts">
-  <div class="chart-container"><h3>📊 Delitos por tipo</h3><canvas id="graficoDelitos"></canvas></div>
-  <div class="chart-container"><h3>📈 Distribución porcentual</h3><canvas id="graficoTorta"></canvas></div>
-  <div class="chart-container"><h3>📅 Evolución temporal</h3><canvas id="graficoLinea"></canvas></div>
-  <div class="chart-container"><h3>🏆 Top 5 unidades policiales</h3><canvas id="graficoTopUnidades"></canvas></div>
-  <div class="chart-container"><h3>📍 Ranking comunas más conflictivas</h3><canvas id="graficoComunas"></canvas></div>
-  <div class="chart-container"><h3>⚠️ Porcentaje delitos críticos</h3><canvas id="graficoCriticos"></canvas></div>
+    <div class="chart-container">
+        <h3>📊 Delitos por tipo</h3>
+        <canvas id="graficoDelitos"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>📈 Distribución porcentual</h3>
+        <canvas id="graficoTorta"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>📅 Evolución temporal</h3>
+        <canvas id="graficoLinea"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>🏆 Top 5 unidades policiales</h3>
+        <canvas id="graficoTopUnidades"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>📍 Ranking comunas más conflictivas</h3>
+        <canvas id="graficoComunas"></canvas>
+    </div>
+    <div class="chart-container">
+        <h3>⚠️ Porcentaje delitos críticos</h3>
+        <canvas id="graficoCriticos"></canvas>
+    </div>
 </div>
 
-<!-- NUEVO: Gráfico profesional de delitos por hora -->
 <div class="chart-container">
-  <h3>🕒 Delitos por hora del día</h3>
-  <canvas id="graficoHoras"></canvas>
+    <h3>🕒 Delitos por hora del día</h3>
+    <canvas id="graficoHoras"></canvas>
 </div>
+
 
 <!-- Tabla -->
 <div class="tabla-container">
-  <h3>📋 Resumen por unidad policial</h3>
-  <table id="tablaUnidades">
-    <thead><tr><th>Unidad Policial</th><th>Comuna</th><th>Total Denuncias</th></tr></thead>
-    <tbody><tr><td colspan="3" style="text-align:center;">Sin datos disponibles</td></tr></tbody>
-  </table>
-  <div class="export-buttons">
-    <button onclick="exportarPDF()">📄 Exportar PDF</button>
-    <button onclick="exportarExcel()">📊 Exportar Excel</button>
-  </div>
+    <h3>📋 Resumen por unidad policial</h3>
+    <table id="tablaUnidades">
+        <thead><tr><th>Unidad Policial</th><th>Comuna</th><th>Total Denuncias</th></tr></thead>
+        <tbody><tr><td colspan="3" style="text-align:center;">Sin datos disponibles</td></tr></tbody>
+    </table>
+
+    <div class="export-buttons">
+        <button onclick="exportarPDF()">📄 Exportar PDF</button>
+        <button onclick="exportarExcel()">📊 Exportar Excel</button>
+    </div>
 </div>
 
 <script>
+/* ====== ESTADO GLOBAL ====== */
 let map, heatmap, poligonoComuna;
 let markers = [];
-let chartDelitos, chartTorta, chartLinea, chartUnidades, chartComunas, chartCriticos, chartHoras;
+let chartDelitos, chartTorta, chartLinea, chartUnidades, chartComunas, chartCriticos;
 
-/* Helpers */
+/* ====== HELPERS ====== */
 function getFiltros() {
   return {
     comuna: document.getElementById("comunaSelect")?.value || "",
@@ -170,37 +286,256 @@ function qs(params) {
   const p = new URLSearchParams();
   Object.entries(params).forEach(([k,v]) => { if (v) p.append(k,v); });
   const s = p.toString();
-  return s ? "?" + s : "";
+  return s ? ( "?" + s ) : "";
 }
 async function fetchJSON(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status} en ${url}`);
   return await res.json();
 }
-function safeDestroy(chartRef) { if (chartRef) chartRef.destroy(); }
+function safeDestroy(chartRef) {
+  if (chartRef) { chartRef.destroy(); }
+}
 
-/* ====== NUEVO GRÁFICO HORARIO ====== */
+/* ====== MAPA: HEATMAP Y POLÍGONO ====== */
+function construirURLHeatmap(comuna = "") {
+  const f = getFiltros();
+  // si hay comuna, usamos eventos_por_comuna; si no, todos geolocalizados
+  if (comuna) {
+    return "{% url 'api_eventos_por_comuna' %}" + qs({
+      comuna: comuna,
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+  }
+  return "{% url 'api_eventos_geolocalizados' %}" + qs({
+    delito: f.delito,
+    fecha_inicio: f.fecha_inicio,
+    fecha_fin: f.fecha_fin
+  });
+}
+
+async function cargarHeatmap(comuna = "") {
+  try {
+    if (heatmap) heatmap.setMap(null);
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+
+    const data = await fetchJSON(construirURLHeatmap(comuna));
+    document.getElementById("kpi-total").textContent = Array.isArray(data) ? data.length : 0;
+    document.getElementById("kpi-comuna").textContent = comuna || "Todas";
+
+    const heatmapData = data.map(e => new google.maps.LatLng(e.lat, e.lng));
+    // puntos transparentes para hover con InfoWindow
+    data.forEach(evento => {
+      const marker = new google.maps.Marker({
+        position: { lat: evento.lat, lng: evento.lng },
+        map,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 4, fillColor: "#ff0000", fillOpacity: 0.0, strokeWeight: 0 }
+      });
+      const infowindow = new google.maps.InfoWindow({
+        content: `<div style="font-size:14px;"><strong>Delito:</strong> ${evento.delito || "-"}<br><strong>Dirección:</strong> ${evento.direccion || "-"}<br><strong>Unidad:</strong> ${evento.unidad || "-"}</div>`
+      });
+      marker.addListener("mouseover", () => infowindow.open(map, marker));
+      marker.addListener("mouseout", () => infowindow.close());
+      markers.push(marker);
+    });
+
+    heatmap = new google.maps.visualization.HeatmapLayer({ data: heatmapData, radius: 25 });
+    heatmap.setMap(map);
+  } catch (e) {
+    console.error("Error en cargarHeatmap:", e);
+  }
+}
+
+
+
+async function cargarPoligono(comuna = "") {
+  try {
+    if (poligonoComuna) { poligonoComuna.setMap(null); poligonoComuna = null; }
+    if (!comuna) return;
+
+    // ✅ usar "comuna" (no "nombre")
+    const url = "{% url 'geojson_comuna_nombre' %}" + qs({ comuna: comuna });
+    const geojson = await fetchJSON(url);
+
+    // Compatibilidad con Polygon y MultiPolygon
+    const feature = geojson?.features?.[0];
+    if (!feature) return;
+
+    let coords = [];
+    if (feature.geometry?.type === "Polygon") {
+      coords = feature.geometry.coordinates[0];
+    } else if (feature.geometry?.type === "MultiPolygon") {
+      coords = feature.geometry.coordinates[0][0];
+    }
+
+    if (!coords.length) return;
+
+    const path = coords.map(pair => ({ lng: pair[0], lat: pair[1] }));
+
+    poligonoComuna = new google.maps.Polygon({
+      paths: path,
+      strokeColor: "#1b5e20",
+      strokeOpacity: 0.9,
+      strokeWeight: 2,
+      fillColor: "#66bb6a",
+      fillOpacity: 0.08
+    });
+    poligonoComuna.setMap(map);
+
+    // Ajustar vista al polígono
+    const bounds = new google.maps.LatLngBounds();
+    path.forEach(p => bounds.extend(p));
+    map.fitBounds(bounds);
+  } catch (e) {
+    console.error("Error en cargarPoligono:", e);
+  }
+}
+
+
+
+/* ====== GRÁFICOS ====== */
+async function cargarGraficoDelitos(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_estadisticas_por_delito' %}" + qs({
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+    document.getElementById("kpi-delitos").textContent = Array.isArray(data) ? data.length : 0;
+
+    const labels = data.map(d => d.nombre);
+    const valores = data.map(d => d.total);
+    const colores = data.map((_, i) => `hsl(${(i*57)%360},60%,60%)`);
+
+    const ctxBar = document.getElementById("graficoDelitos").getContext("2d");
+    const ctxPie = document.getElementById("graficoTorta").getContext("2d");
+    safeDestroy(chartDelitos); safeDestroy(chartTorta);
+
+    chartDelitos = new Chart(ctxBar, {
+      type: "bar",
+      data: { labels, datasets: [{ label: "Cantidad", data: valores, backgroundColor: "#66bb6a", borderColor: "#2e7d32" }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    chartTorta = new Chart(ctxPie, {
+      type: "pie",
+      data: { labels, datasets: [{ data: valores, backgroundColor: colores }] },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } catch (e) {
+    console.error("Error en cargarGraficoDelitos:", e);
+  }
+}
+
+async function cargarGraficoLinea(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_eventos_tiempo' %}" + qs({
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+    const ctx = document.getElementById("graficoLinea").getContext("2d");
+    safeDestroy(chartLinea);
+    chartLinea = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.fechas || [],
+        datasets: [{
+          label: "Delitos por día",
+          data: data.valores || [],
+          borderColor: "#2e7d32",
+          backgroundColor: "rgba(46,125,50,0.2)",
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+  } catch (e) {
+    console.error("Error en cargarGraficoLinea:", e);
+  }
+}
+
+async function cargarTopUnidades(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_top_unidades' %}" + qs({
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+    const labels = data.map(d => d.nombre_unidad);
+    const valores = data.map(d => d.total);
+
+    const ctx = document.getElementById("graficoTopUnidades").getContext("2d");
+    safeDestroy(chartUnidades);
+    chartUnidades = new Chart(ctx, {
+      type: "bar",
+      data: { labels, datasets: [{ label: "Delitos", data: valores, backgroundColor: "#81c784" }] },
+      options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+    });
+  } catch (e) { console.error("Error en cargarTopUnidades:", e); }
+}
+
+async function cargarComunas() {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_top_comunas' %}" + qs({
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+    const labels = data.map(c => c.nombre_comuna);
+    const valores = data.map(c => c.total);
+
+    const ctx = document.getElementById("graficoComunas").getContext("2d");
+    safeDestroy(chartComunas);
+    chartComunas = new Chart(ctx, {
+      type: "bar",
+      data: { labels, datasets: [{ label: "Cantidad de Delitos", data: valores, backgroundColor: "#a5d6a7", borderColor: "#2e7d32", borderWidth: 1 }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+  } catch (e) { console.error("Error en cargarComunas:", e); }
+}
+
 async function cargarGraficoHoras(comuna = "") {
   try {
     const f = getFiltros();
     const url = "{% url 'api_eventos_hora_dia' %}" + qs({
-      comuna: comuna || "", delito: f.delito,
-      fecha_inicio: f.fecha_inicio, fecha_fin: f.fecha_fin
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
     });
     const data = await fetchJSON(url);
+
     const ctx = document.getElementById("graficoHoras").getContext("2d");
-    safeDestroy(chartHoras);
-    chartHoras = new Chart(ctx, {
+    if (window.chartHoras) window.chartHoras.destroy();
+
+    window.chartHoras = new Chart(ctx, {
       type: "line",
       data: {
         labels: data.horas || [],
         datasets: [{
-          label: "Delitos por hora del día",
+          label: "Delitos registrados por hora",
           data: data.valores || [],
-          borderColor: "#2e7d32",
+          borderColor: "#1b5e20",
           backgroundColor: "rgba(46,125,50,0.2)",
-          pointBackgroundColor: "#1b5e20",
-          tension: 0.35,
+          pointBackgroundColor: "#2e7d32",
+          pointRadius: 4,
+          tension: 0.35, // suaviza la curva
           fill: true
         }]
       },
@@ -208,40 +543,112 @@ async function cargarGraficoHoras(comuna = "") {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: "Distribución Horaria de Delitos", color: "#1b5e20", font: { size: 16, weight: "bold" } },
+          title: {
+            display: true,
+            text: "📈 Distribución horaria de delitos",
+            color: "#1b5e20",
+            font: { size: 16, weight: "bold" }
+          },
           tooltip: {
             callbacks: {
               label: function(context) {
-                const cantidad = context.parsed.y;
-                return ` ${cantidad} delitos a las ${context.label}`;
+                return ` ${context.parsed.y} delitos a las ${context.label}`;
               }
             }
           }
         },
         scales: {
-          x: { title: { display: true, text: "Hora del día" }, ticks: { color: "#2e7d32" } },
-          y: { beginAtZero: true, title: { display: true, text: "Cantidad de delitos" }, ticks: { stepSize: 1, color: "#2e7d32" } }
+          x: {
+            title: { display: true, text: "Hora del día", color: "#1b5e20" },
+            ticks: { color: "#2e7d32" }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Cantidad de delitos", color: "#1b5e20" },
+            ticks: { stepSize: 1, color: "#2e7d32" },
+            grid: { color: "rgba(0,0,0,0.1)" }
+          }
         }
       }
     });
-  } catch (e) { console.error("Error en cargarGraficoHoras:", e); }
+  } catch (e) {
+    console.error("Error en cargarGraficoHoras:", e);
+  }
 }
 
-/* ====== RESTO DE FUNCIONES SE MANTIENEN ====== */
-/* No se modificó nada más del código ni los endpoints existentes */
 
-/* INIT */
+
+
+
+async function cargarCriticos(comuna = "") {
+  try {
+    const f = getFiltros();
+    const url = "{% url 'api_porcentaje_delitos_criticos' %}" + qs({
+      comuna: comuna || "",
+      delito: f.delito,
+      fecha_inicio: f.fecha_inicio,
+      fecha_fin: f.fecha_fin
+    });
+    const data = await fetchJSON(url);
+
+    const ctx = document.getElementById("graficoCriticos").getContext("2d");
+    safeDestroy(chartCriticos);
+    const crit = Number(data.porcentaje || 0);
+    chartCriticos = new Chart(ctx, {
+      type: "doughnut",
+      data: { labels: ["Críticos", "No críticos"], datasets: [{ data: [crit, Math.max(0, 100-crit)], backgroundColor: ["#d32f2f", "#81c784"] }] },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } catch (e) { console.error("Error en cargarCriticos:", e); }
+}
+
+/* ====== EXPORTACIONES ====== */
+function exportarPDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+  pdf.text("Reporte de Estadísticas", 10, 10);
+  pdf.text("Generado: " + new Date().toLocaleString(), 10, 20);
+  pdf.save("reporte_estadisticas.pdf");
+}
+function exportarExcel() {
+  const tabla = document.getElementById("tablaUnidades");
+  const wb = XLSX.utils.table_to_book(tabla, { sheet: "Resumen" });
+  XLSX.writeFile(wb, "reporte_estadisticas.xlsx");
+}
+
+/* ====== APLICAR FILTROS ====== */
+function aplicarFiltros() {
+  const { comuna, fecha_inicio, fecha_fin } = getFiltros();
+  // KPI de fechas
+  document.getElementById("kpi-fechas").textContent = (fecha_inicio || "—") + " a " + (fecha_fin || "—");
+  cargarPoligono(comuna);
+  cargarHeatmap(comuna);
+  cargarGraficoDelitos(comuna);
+  cargarGraficoLinea(comuna);
+  cargarTopUnidades(comuna);
+  cargarComunas();
+  cargarCriticos(comuna);
+    cargarGraficoHoras(comuna);
+}
+
+/* ====== INIT ====== */
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), { center: { lat: -33.45, lng: -70.66 }, zoom: 12 });
-  cargarHeatmap(); cargarGraficoDelitos(); cargarGraficoLinea();
-  cargarTopUnidades(); cargarComunas(); cargarCriticos(); cargarGraficoHoras();
+  // Carga inicial
+  cargarHeatmap();
+  cargarGraficoDelitos();
+  cargarGraficoLinea();
+  cargarTopUnidades();
+  cargarComunas();
+  cargarCriticos();
+  cargarGraficoHoras();
 }
 window.onload = initMap;
 </script>
 
+
 </body>
 </html>
-
 
 
 
