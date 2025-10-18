@@ -223,7 +223,8 @@
 async function cargarGraficoHorasDelito(comuna = "") {
   try {
     const f = getFiltros();
-    const url = "{% url 'api_eventos_hora_y_delito' %}" + qs({
+    const url = "{% url 'api_eventos_hora_dia' %}" + qs({
+
       comuna: comuna || "", delito: f.delito,
       fecha_inicio: f.fecha_inicio, fecha_fin: f.fecha_fin
     });
