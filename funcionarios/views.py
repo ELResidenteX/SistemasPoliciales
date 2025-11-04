@@ -14,7 +14,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
-from funcionarios.models import PerfilUsuario
+from funcionarios.models import PerfilUsuario, UnidadPolicial
 
 
 @login_required
@@ -117,8 +117,11 @@ def vista_inicio(request):
 
 @login_required
 def crear_usuario(request):
+    # 🔒 Verificación de permisos
     if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
         return redirect('inicio')
+
+    unidades = UnidadPolicial.objects.all().order_by("nombre_unidad")
 
     if request.method == 'POST':
         rut = request.POST.get('rut', '').strip()
@@ -126,17 +129,22 @@ def crear_usuario(request):
         last_name = request.POST.get('last_name', '').strip()
         password = request.POST.get('password', '')
         rol = request.POST.get('rol', '')
+        unidad_id = request.POST.get('unidad_policial')
 
+        # Validaciones básicas
         if not rut:
             return render(request, 'usuarios/crear_usuario.html', {
-                'error': 'El campo RUT es obligatorio.'
+                'error': 'El campo RUT es obligatorio.',
+                'unidades': unidades
             })
 
         if PerfilUsuario.objects.filter(rut=rut).exists() or User.objects.filter(username=rut).exists():
             return render(request, 'usuarios/crear_usuario.html', {
-                'error': 'Ya existe un usuario con ese RUT.'
+                'error': 'Ya existe un usuario con ese RUT.',
+                'unidades': unidades
             })
 
+        # Crear usuario base
         nuevo_usuario = User.objects.create_user(
             username=rut,
             password=password,
@@ -144,16 +152,22 @@ def crear_usuario(request):
             last_name=last_name
         )
 
+        # Asignar la unidad seleccionada
+        unidad = UnidadPolicial.objects.filter(id=unidad_id).first()
+
+        # Crear perfil asociado
         PerfilUsuario.objects.create(
             user=nuevo_usuario,
             rut=rut,
             rol=rol,
-            cambio_password_obligado=True  # 🔐 Forzamos cambio al inicio
+            unidad_policial=unidad,
+            cambio_password_obligado=True
         )
 
         return redirect('crear_usuario')
 
-    return render(request, 'usuarios/crear_usuario.html')
+    # GET → mostrar formulario
+    return render(request, 'usuarios/crear_usuario.html', {'unidades': unidades})
 
 
 @login_required
@@ -177,4 +191,23 @@ class CambioClaveView(LoginRequiredMixin, PasswordChangeView):
 
 class CambioClaveHechoView(LoginRequiredMixin, TemplateView):
     template_name = 'usuarios/cambio_clave_hecho.html'
+
+@login_required
+def lista_usuarios(request):
+    # Solo super_admin o administrador pueden acceder
+    if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
+        return redirect('inicio')
+
+    usuarios = PerfilUsuario.objects.select_related('user', 'unidad_policial').order_by('user__first_name')
+
+    if request.method == "POST":
+        # Eliminar usuario
+        usuario_id = request.POST.get("usuario_id")
+        perfil = PerfilUsuario.objects.filter(id=usuario_id).first()
+        if perfil:
+            perfil.user.delete()  # elimina también el User asociado
+        return redirect('lista_usuarios')
+
+    return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
+
 

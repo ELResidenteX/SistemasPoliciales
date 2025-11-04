@@ -46,6 +46,18 @@
         </select>
     </div>
 
+    <!-- 🔰 Unidad Policial -->
+    <div class="mb-3">
+        <label for="unidad_policial" class="form-label">Unidad Policial</label>
+        <select class="form-select" name="unidad_policial" id="unidad_policial" required>
+            <option value="" disabled selected>Seleccione una unidad</option>
+            {% for unidad in unidades %}
+                <option value="{{ unidad.id }}">{{ unidad.nombre_unidad }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-success">Crear Usuario</button>
 </form>
 {% endblock %}
+
