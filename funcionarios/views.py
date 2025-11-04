@@ -211,4 +211,34 @@ def lista_usuarios(request):
 
     return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
 
+#EDITAR USUARIOS
+
+@login_required
+def editar_usuario(request, usuario_id):
+    if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
+        return redirect('inicio')
+
+    perfil = PerfilUsuario.objects.select_related('user').filter(id=usuario_id).first()
+    if not perfil:
+        return redirect('lista_usuarios')
+
+    unidades = UnidadPolicial.objects.all().order_by("nombre")
+
+    if request.method == "POST":
+        perfil.user.first_name = request.POST.get("first_name", "").strip()
+        perfil.user.last_name = request.POST.get("last_name", "").strip()
+        perfil.rol = request.POST.get("rol", perfil.rol)
+        unidad_id = request.POST.get("unidad_policial")
+        perfil.unidad_policial = UnidadPolicial.objects.filter(id=unidad_id).first()
+        perfil.user.save()
+        perfil.save()
+        messages.success(request, "✅ Usuario actualizado correctamente.")
+        return redirect("lista_usuarios")
+
+    return render(request, "usuarios/editar_usuario.html", {
+        "perfil": perfil,
+        "unidades": unidades
+    })
+
+
 

@@ -4,48 +4,42 @@
 {% block content %}
 <h2 class="mb-4 text-center">👥 Gestión de Usuarios</h2>
 
-<table class="table table-striped table-bordered shadow-sm align-middle">
-  <thead class="table-success">
-    <tr>
-      <th>RUT</th>
-      <th>Nombre completo</th>
-      <th>Rol</th>
-      <th>Unidad policial</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for u in usuarios %}
-    <tr>
-      <td>{{ u.rut }}</td>
-      <td>{{ u.user.first_name }} {{ u.user.last_name }}</td>
-      <td>{{ u.get_rol_display }}</td>
-      <td>
-        {% if u.unidad_policial %}
-          {{ u.unidad_policial.nombre_unidad }}
-        {% else %}
-          <em>Sin asignar</em>
-        {% endif %}
-      </td>
-      <td>
-        <form method="post" style="display:inline;">
-          {% csrf_token %}
-          <input type="hidden" name="usuario_id" value="{{ u.id }}">
-          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?')">
-            🗑️ Eliminar
-          </button>
-        </form>
-      </td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="5" class="text-center text-muted">No hay usuarios registrados.</td>
-    </tr>
-    {% endfor %}
-  </tbody>
+{% if usuarios %}
+<table class="table table-hover shadow-sm bg-white rounded" style="max-width: 900px; margin: auto;">
+    <thead class="table-success">
+        <tr>
+            <th>RUT</th>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Unidad Policial</th>
+            <th style="width: 130px; text-align:center;">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.rut }}</td>
+            <td>{{ usuario.user.first_name }} {{ usuario.user.last_name }}</td>
+            <td>{{ usuario.get_rol_display }}</td>
+            <td>{{ usuario.unidad_policial.nombre if usuario.unidad_policial else "—" }}</td>
+            <td class="text-center">
+                <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?')">🗑️</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+{% else %}
+<div class="alert alert-info text-center">No hay usuarios registrados.</div>
+{% endif %}
 
-<div class="text-center mt-3">
-  <a href="{% url 'crear_usuario' %}" class="btn btn-success">➕ Crear nuevo usuario</a>
+<div class="text-center mt-4">
+    <a href="{% url 'crear_usuario' %}" class="btn btn-success">➕ Crear Nuevo Usuario</a>
 </div>
 {% endblock %}
+
