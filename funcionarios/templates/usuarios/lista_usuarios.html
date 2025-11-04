@@ -21,24 +21,13 @@
             <td>{{ usuario.rut }}</td>
             <td>{{ usuario.user.first_name }} {{ usuario.user.last_name }}</td>
             <td>{{ usuario.get_rol_display }}</td>
-            <td>
-                {% if usuario.unidad_policial %}
-                    {{ usuario.unidad_policial.nombre }}
-                {% else %}
-                    —
-                {% endif %}
-            </td>
+            <td>{{ usuario.unidad_policial.nombre if usuario.unidad_policial else "—" }}</td>
             <td class="text-center">
-                <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-warning btn-sm">
-                    ✏️ Editar
-                </a>
+                <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
                 <form method="post" style="display:inline;">
                     {% csrf_token %}
                     <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                    <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Seguro que deseas eliminar este usuario?');">
-                        🗑️
-                    </button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?')">🗑️</button>
                 </form>
             </td>
         </tr>
@@ -50,10 +39,7 @@
 {% endif %}
 
 <div class="text-center mt-4">
-    <a href="{% url 'crear_usuario' %}" class="btn btn-success">
-        ➕ Crear Nuevo Usuario
-    </a>
+    <a href="{% url 'crear_usuario' %}" class="btn btn-success">➕ Crear Nuevo Usuario</a>
 </div>
 {% endblock %}
-
 
