@@ -121,7 +121,8 @@ def crear_usuario(request):
     if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
         return redirect('inicio')
 
-    unidades = UnidadPolicial.objects.all().order_by("nombre_unidad")
+    unidades = UnidadPolicial.objects.all().order_by("nombre")
+
 
     if request.method == 'POST':
         rut = request.POST.get('rut', '').strip()
