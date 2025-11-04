@@ -14,8 +14,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
-from funcionarios.models import PerfilUsuario
-from core.models import UnidadPolicial
+from funcionarios.models import PerfilUsuario, UnidadPolicial
 
 
 @login_required

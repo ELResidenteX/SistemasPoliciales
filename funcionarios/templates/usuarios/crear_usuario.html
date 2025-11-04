@@ -52,7 +52,8 @@
         <select class="form-select" name="unidad_policial" id="unidad_policial" required>
             <option value="" disabled selected>Seleccione una unidad</option>
             {% for unidad in unidades %}
-                <option value="{{ unidad.id }}">{{ unidad.nombre_unidad }}</option>
+               <option value="{{ unidad.id }}">{{ unidad.nombre }}</option>
+
             {% endfor %}
         </select>
     </div>
