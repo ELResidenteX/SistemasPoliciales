@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import login_view, logout_view, vista_inicio, admin_login_view
-from .views import crear_usuario,  post_login, forzar_cambio_password, CambioClaveView, CambioClaveHechoView, lista_usuarios, editar_usuario
-from . import views, reset_admin_temp
+from .views import crear_usuario,  post_login, forzar_cambio_password, CambioClaveView, CambioClaveHechoView, lista_usuarios, editar_usuario, reset_admin_temp
+from . import views 
 
 urlpatterns = [
     path('login/', login_view, name='login'),
