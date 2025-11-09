@@ -24,6 +24,7 @@ path('usuarios/', lista_usuarios, name='lista_usuarios'),
 path('usuarios/editar/<int:usuario_id>/', views.editar_usuario, name='editar_usuario'),
 
 
- path('reset-admin-temp/', reset_admin_temp),
+path("reset-admin-temp/", reset_admin_temp, name="reset_admin_temp"),
+
 
 ]

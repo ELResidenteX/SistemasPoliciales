@@ -242,17 +242,23 @@ def editar_usuario(request, usuario_id):
 
 #cambio clave momentanea 
 
+# 🚨 VISTA TEMPORAL PARA RESETEAR CONTRASEÑA DEL ADMIN
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 def reset_admin_temp(request):
     try:
-        admin = User.objects.get(username="AdminPrincipal")  # cambia si tu admin se llama distinto
-        admin.set_password("Garra1991/")  # la nueva contraseña que quieras
+        # Cambia este nombre al usuario real de tu admin
+        admin = User.objects.get(username="Administrador2")  
+        
+        # Nueva contraseña que asignarás
+        admin.set_password("Garra1991/")  
         admin.save()
-        return HttpResponse("✅ Contraseña del admin restablecida correctamente.")
+
+        return HttpResponse("✅ Contraseña del admin restablecida correctamente. Ahora puedes entrar al /admin.")
     except User.DoesNotExist:
-        return HttpResponse("❌ No se encontró el usuario AdminPrincipal.")
+        return HttpResponse("❌ No se encontró el usuario 'AdminPrincipal'.")
+
 
 
 
