@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import login_view, logout_view, vista_inicio, admin_login_view
-from .views import crear_usuario,  post_login, forzar_cambio_password, CambioClaveView, CambioClaveHechoView, lista_usuarios, editar_usuario, reset_admin_temp
+from .views import crear_usuario,  post_login, forzar_cambio_password, CambioClaveView, CambioClaveHechoView, lista_usuarios, editar_usuario
 from . import views 
+from funcionarios.views import reset_admin_temp 
 
 urlpatterns = [
     path('login/', login_view, name='login'),
