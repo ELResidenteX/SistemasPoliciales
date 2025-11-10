@@ -231,18 +231,27 @@ def enviar_a_validacion(request, evento_id):
     return redirect('evento_en_validacion')
 
 # ✅ Vista de evento en validación (corregida)
+@login_required
 def evento_en_validacion(request):
     query = request.GET.get('query', '')
     fecha = request.GET.get('fecha', '')
     limpiar = request.GET.get('limpiar', '')
 
-    unidad = obtener_unidad_activa()  # 🔹 esta es la unidad activa definida en ConfiguracionSistema
+    perfil = getattr(request.user, "perfilusuario", None)
 
-    if limpiar or not unidad:
+    # Si el usuario tiene perfil, usamos su unidad
+    unidad_usuario = perfil.unidad_policial if perfil and perfil.unidad_policial else None
+
+    # 🔹 Si el usuario no tiene unidad asignada, no mostramos nada
+    if not unidad_usuario or limpiar:
         eventos = EventoPolicial.objects.none()
     else:
-        eventos = EventoPolicial.objects.filter(estado_validacion='en_validacion', unidad_policial=unidad)
+        eventos = EventoPolicial.objects.filter(
+            estado_validacion='en_validacion',
+            unidad_policial=unidad_usuario
+        )
 
+        # 🔍 Filtros opcionales
         if query:
             eventos = eventos.filter(numero_evento__icontains=query)
 
@@ -260,6 +269,7 @@ def evento_en_validacion(request):
         'query': query,
         'fecha': fecha,
     })
+
 
 # ✅ Validación de partes
 def validacion_partes(request):
