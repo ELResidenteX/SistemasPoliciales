@@ -215,52 +215,41 @@ def lista_usuarios(request):
 
 @login_required
 def editar_usuario(request, usuario_id):
+    # Solo administradores o superadmin pueden editar
     if request.user.perfilusuario.rol not in ['super_admin', 'administrador']:
         return redirect('inicio')
 
-    perfil = PerfilUsuario.objects.select_related('user').filter(id=usuario_id).first()
-    if not perfil:
+    usuario = PerfilUsuario.objects.select_related('user').filter(id=usuario_id).first()
+    if not usuario:
+        messages.error(request, "❌ Usuario no encontrado.")
         return redirect('lista_usuarios')
 
     unidades = UnidadPolicial.objects.all().order_by("nombre")
 
     if request.method == "POST":
-        perfil.user.first_name = request.POST.get("first_name", "").strip()
-        perfil.user.last_name = request.POST.get("last_name", "").strip()
-        perfil.rol = request.POST.get("rol", perfil.rol)
+        usuario.user.first_name = request.POST.get("first_name", "").strip()
+        usuario.user.last_name = request.POST.get("last_name", "").strip()
+        usuario.rol = request.POST.get("rol", usuario.rol)
+
         unidad_id = request.POST.get("unidad_policial")
-        perfil.unidad_policial = UnidadPolicial.objects.filter(id=unidad_id).first()
-        perfil.user.save()
-        perfil.save()
+        usuario.unidad_policial = UnidadPolicial.objects.filter(id=unidad_id).first()
+
+        usuario.user.save()
+        usuario.save()
+
         messages.success(request, "✅ Usuario actualizado correctamente.")
         return redirect("lista_usuarios")
 
+    # Render del formulario
     return render(request, "usuarios/editar_usuario.html", {
-        "perfil": perfil,
+        "usuario": usuario,
         "unidades": unidades
     })
 
-#cambio clave momentanea 
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse
 
-def reset_admin_temp(request):
-    try:
-        # cambia aquí por el nombre exacto del usuario que quieres habilitar
-        admin = User.objects.get(username="Administrador2")
 
-        # cambia la contraseña
-        admin.set_password("Garra1991/")
 
-        # aseguramos que tenga acceso al panel admin
-        admin.is_staff = True
-        admin.is_superuser = True
-        admin.save()
-
-        return HttpResponse("✅ Usuario 'Administrador2' ahora tiene acceso al panel admin con la contraseña 'Garra1991/'.")
-    except User.DoesNotExist:
-        return HttpResponse("❌ No se encontró el usuario 'Administrador2'.")
 
 
 

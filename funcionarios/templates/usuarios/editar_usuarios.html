@@ -4,47 +4,61 @@
 {% block content %}
 <h2 class="mb-4 text-center">✏️ Editar Usuario</h2>
 
-<form method="post" class="card p-4 shadow-sm" style="max-width: 500px; margin:auto;">
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success text-center">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post" class="card p-4 shadow-sm" style="max-width: 500px; margin: auto;">
     {% csrf_token %}
-    
+
+    <!-- RUT (no editable) -->
     <div class="mb-3">
-        <label class="form-label">RUT</label>
-        <input type="text" class="form-control" value="{{ perfil.rut }}" disabled>
+        <label for="rut" class="form-label">RUT</label>
+        <input type="text" class="form-control" name="rut" id="rut" value="{{ usuario.rut }}" readonly>
     </div>
 
+    <!-- Nombres -->
     <div class="mb-3">
-        <label class="form-label">Nombres</label>
-        <input type="text" class="form-control" name="first_name" value="{{ perfil.user.first_name }}" required>
+        <label for="first_name" class="form-label">Nombres</label>
+        <input type="text" class="form-control" name="first_name" id="first_name"
+               value="{{ usuario.user.first_name }}" required>
     </div>
 
+    <!-- Apellidos -->
     <div class="mb-3">
-        <label class="form-label">Apellidos</label>
-        <input type="text" class="form-control" name="last_name" value="{{ perfil.user.last_name }}" required>
+        <label for="last_name" class="form-label">Apellidos</label>
+        <input type="text" class="form-control" name="last_name" id="last_name"
+               value="{{ usuario.user.last_name }}" required>
     </div>
 
+    <!-- Rol -->
     <div class="mb-3">
-        <label class="form-label">Rol</label>
-        <select class="form-select" name="rol" required>
-            {% for value, label in perfil.ROLES %}
-                <option value="{{ value }}" {% if perfil.rol == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
+        <label for="rol" class="form-label">Rol</label>
+        <select class="form-select" name="rol" id="rol" required>
+            <option value="administrador" {% if usuario.rol == "administrador" %}selected{% endif %}>Administrador</option>
+            <option value="oficial_guardia" {% if usuario.rol == "oficial_guardia" %}selected{% endif %}>Oficial de Guardia</option>
+            <option value="funcionario" {% if usuario.rol == "funcionario" %}selected{% endif %}>Funcionario</option>
         </select>
     </div>
 
+    <!-- Unidad Policial -->
     <div class="mb-3">
-        <label class="form-label">Unidad Policial</label>
-        <select class="form-select" name="unidad_policial" required>
+        <label for="unidad_policial" class="form-label">Unidad Policial</label>
+        <select class="form-select" name="unidad_policial" id="unidad_policial" required>
             {% for unidad in unidades %}
-                <option value="{{ unidad.id }}" {% if perfil.unidad_policial and perfil.unidad_policial.id == unidad.id %}selected{% endif %}>
+                <option value="{{ unidad.id }}" {% if usuario.unidad_policial and usuario.unidad_policial.id == unidad.id %}selected{% endif %}>
                     {{ unidad.nombre }}
                 </option>
             {% endfor %}
         </select>
     </div>
 
-    <div class="text-center">
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+    <div class="text-center mt-3">
+        <button type="submit" class="btn btn-success">💾 Guardar Cambios</button>
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">⬅️ Volver</a>
     </div>
 </form>
 {% endblock %}
+
