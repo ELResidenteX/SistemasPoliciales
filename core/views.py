@@ -33,6 +33,7 @@ from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.utils.dateparse import parse_date
 from rest_framework.permissions import IsAuthenticated
+from core.utils import obtener_unidad_activa
 
 # ✅ Home
 def home(request):
@@ -534,32 +535,39 @@ def editar_evento(request, evento_id):
 #Aca comienzan las vistas relacionadas a la creacion de la app movil
 
 class CrearEventoDesdeAppAPIView(APIView):
-    permission_classes = [IsAuthenticated]  # 🔒 Requiere autenticación JWT
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        perfil = getattr(request.user, "perfilusuario", None)
         data = request.data.copy()
 
-        # ✅ Forzar la unidad del evento según el usuario logeado
+        # 🔹 Intentar obtener la unidad desde el perfil del usuario logeado
+        perfil = getattr(request.user, "perfilusuario", None)
         if perfil and perfil.unidad_policial:
-            data["unidad_policial"] = perfil.unidad_policial.id
+            unidad = perfil.unidad_policial
         else:
-            return Response({"error": "Usuario sin unidad asignada."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            # 🔹 En caso extremo, usar la unidad activa global como respaldo
+            unidad = obtener_unidad_activa()
+
+        if not unidad:
+            return Response(
+                {"error": "No se pudo determinar la unidad policial del usuario."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        data["unidad_policial"] = unidad.id
 
         serializer = EventoPolicialAppSerializer(data=data)
 
         if serializer.is_valid():
             evento = serializer.save()
             return Response({
-                "message": "Evento creado correctamente",
+                "message": f"Evento creado correctamente en {unidad.nombre}",
                 "evento_id": evento.id,
                 "numero_evento": evento.numero_evento,
-                "unidad": perfil.unidad_policial.nombre
+                "unidad": unidad.nombre
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 # Vista delitos en hosting temporal para cargar
 
