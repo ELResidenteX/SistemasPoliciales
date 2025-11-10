@@ -32,6 +32,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.utils.dateparse import parse_date
+from rest_framework.permissions import IsAuthenticated
 
 # ✅ Home
 def home(request):
@@ -533,8 +534,19 @@ def editar_evento(request, evento_id):
 #Aca comienzan las vistas relacionadas a la creacion de la app movil
 
 class CrearEventoDesdeAppAPIView(APIView):
+    permission_classes = [IsAuthenticated]  # 🔒 Requiere autenticación JWT
+
     def post(self, request):
+        perfil = getattr(request.user, "perfilusuario", None)
         data = request.data.copy()
+
+        # ✅ Forzar la unidad del evento según el usuario logeado
+        if perfil and perfil.unidad_policial:
+            data["unidad_policial"] = perfil.unidad_policial.id
+        else:
+            return Response({"error": "Usuario sin unidad asignada."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         serializer = EventoPolicialAppSerializer(data=data)
 
         if serializer.is_valid():
@@ -542,7 +554,8 @@ class CrearEventoDesdeAppAPIView(APIView):
             return Response({
                 "message": "Evento creado correctamente",
                 "evento_id": evento.id,
-                "numero_evento": evento.numero_evento
+                "numero_evento": evento.numero_evento,
+                "unidad": perfil.unidad_policial.nombre
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
