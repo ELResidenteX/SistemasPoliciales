@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import EventoPolicial, Participante, LugarProcedimiento, TipoLugar
 from drf_extra_fields.fields import Base64ImageField
+from core.models import UnidadPolicial
 #crear evento policial desde app
 
 class EventoPolicialAppSerializer(serializers.ModelSerializer):
