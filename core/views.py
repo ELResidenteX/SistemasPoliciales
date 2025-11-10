@@ -535,36 +535,24 @@ def editar_evento(request, evento_id):
 #Aca comienzan las vistas relacionadas a la creacion de la app movil
 
 class CrearEventoDesdeAppAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def post(self, request):
         data = request.data.copy()
-
-        # 🔹 Intentar obtener la unidad desde el perfil del usuario logeado
-        perfil = getattr(request.user, "perfilusuario", None)
-        if perfil and perfil.unidad_policial:
-            unidad = perfil.unidad_policial
-        else:
-            # 🔹 En caso extremo, usar la unidad activa global como respaldo
-            unidad = obtener_unidad_activa()
-
-        if not unidad:
-            return Response(
-                {"error": "No se pudo determinar la unidad policial del usuario."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        data["unidad_policial"] = unidad.id
-
         serializer = EventoPolicialAppSerializer(data=data)
 
         if serializer.is_valid():
             evento = serializer.save()
+
+            # ✅ Asignar la unidad activa automáticamente
+            unidad = obtener_unidad_activa()
+            if unidad:
+                evento.unidad_policial = unidad
+                evento.save()
+
             return Response({
-                "message": f"Evento creado correctamente en {unidad.nombre}",
+                "message": "Evento creado correctamente",
                 "evento_id": evento.id,
                 "numero_evento": evento.numero_evento,
-                "unidad": unidad.nombre
+                "unidad": unidad.nombre if unidad else "Sin unidad asignada"
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
