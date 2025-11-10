@@ -138,11 +138,18 @@
     <div class="main flex-grow-1 p-4">
 
         {% if request.user.is_authenticated and request.user.perfilusuario %}
-        <div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
-            <strong>Usuario:</strong> {{ request.user.username }} &nbsp; | &nbsp;
-            <strong>Rol:</strong> {{ request.user.perfilusuario.rol|title }}
-        </div>
-        {% endif %}
+<div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
+    <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
+    <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
+    <strong>Unidad:</strong>
+    {% if unidad_usuario %}
+        {{ unidad_usuario }}
+    {% else %}
+        <span class="text-muted fst-italic">Sin unidad asignada</span>
+    {% endif %}
+</div>
+{% endif %}
+
 
         {% block content %}
         {% include "core/presentacion.html" %}
