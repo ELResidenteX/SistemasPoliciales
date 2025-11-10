@@ -4,23 +4,24 @@ from drf_extra_fields.fields import Base64ImageField
 #crear evento policial desde app
 
 class EventoPolicialAppSerializer(serializers.ModelSerializer):
-    origen = serializers.CharField(default='app')  # Se fija automáticamente
+    origen = serializers.CharField(default='app')
 
-    # Claves foráneas
     lugar_procedimiento = serializers.PrimaryKeyRelatedField(queryset=LugarProcedimiento.objects.all())
     tipo_lugar = serializers.PrimaryKeyRelatedField(queryset=TipoLugar.objects.all())
 
-    # 🔹 Agregamos unidad_policial (clave foránea)
-    unidad_policial = serializers.PrimaryKeyRelatedField(read_only=False, queryset=None)
+    # ✅ Definición correcta
+    unidad_policial = serializers.PrimaryKeyRelatedField(
+        queryset=UnidadPolicial.objects.all(),   # <--- NO None
+        required=False, allow_null=True
+    )
 
-    # Firmas base64
     firma_funcionario = Base64ImageField(required=False, allow_null=True)
     firma_denunciante = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = EventoPolicial
         fields = [
-            'unidad_policial',              # ← agregado
+            'unidad_policial',  # ✅ ya validado correctamente
             'lugar_procedimiento',
             'fecha_ocurrencia',
             'hora_ocurrencia',
@@ -51,14 +52,7 @@ class EventoPolicialAppSerializer(serializers.ModelSerializer):
             'origen',
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # ✅ Evitamos errores circulares importando aquí
-        from core.models import UnidadPolicial
-        self.fields['unidad_policial'].queryset = UnidadPolicial.objects.all()
-
     def create(self, validated_data):
-        # Fuerza el estado a 'en_validacion' cada vez que se crea por la app
         validated_data['estado_validacion'] = 'en_validacion'
         return super().create(validated_data)
 
