@@ -161,6 +161,13 @@ path('api/eventos/dia-vs-noche/', views.api_eventos_dia_vs_noche, name='api_even
 path('api/estadisticas/tendencia-mensual/', views.api_tendencia_mensual, name='api_tendencia_mensual'),
 path('api/estadisticas/top-delitos-mes/', views.api_top_delitos_mes_actual, name='api_top_delitos_mes_actual'),
 
+
+#ELIMINAR EVENTOS DESDE EVENTOS EN VALIDACION
+
+path('evento/<int:evento_id>/eliminar/', views.eliminar_evento, name='eliminar_evento'),
+
+
+
 ]
 
 

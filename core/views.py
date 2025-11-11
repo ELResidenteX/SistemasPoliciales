@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 from .forms import EventoPolicialForm, ParticipanteForm, EspecieForm
 from .models import EventoPolicial, Participante, Especie, PartePolicial
 from datetime import datetime, time
@@ -1151,3 +1151,26 @@ def api_top_delitos_mes_actual(request):
         "labels": [d["delito_tipificado__nombre"] for d in data],
         "valores": [d["total"] for d in data]
     })
+
+#OPCION DE ELIMINAR EVENTOS DESDE VALIDACION EVENTOS
+
+
+@login_required
+def eliminar_evento(request, evento_id):
+    """
+    Elimina un evento policial (solo roles: super_admin o administrador).
+    """
+    perfil = request.user.perfilusuario
+
+    if perfil.rol not in ['super_admin', 'administrador']:
+        return HttpResponseForbidden("No tienes permisos para eliminar eventos.")
+
+    evento = EventoPolicial.objects.filter(id=evento_id).first()
+    if not evento:
+        messages.error(request, "❌ El evento no existe o ya fue eliminado.")
+        return redirect('evento_en_validacion')
+
+    # Eliminar
+    evento.delete()
+    messages.success(request, f"✅ Evento {evento.numero_evento} eliminado correctamente.")
+    return redirect('evento_en_validacion')
