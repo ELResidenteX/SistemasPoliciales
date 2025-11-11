@@ -11,33 +11,34 @@ from core.utils import obtener_unidad_activa
 class CrearEventoDesdeAppAPIView(APIView):
     """
     Crea un evento policial desde la app móvil, asignando automáticamente
-    la unidad activa configurada en el sistema (Railway o entorno local).
+    la unidad activa configurada en el sistema.
     """
     def post(self, request):
         data = request.data.copy()
         serializer = EventoPolicialAppSerializer(data=data)
 
         if serializer.is_valid():
+            # Crear evento y forzar campos base
             evento = serializer.save(
-                estado_validacion='en_validacion',  # se marca automáticamente
-                origen='app'                        # origen definido
+                estado_validacion='en_validacion',
+                origen='app'
             )
 
-            # 🔹 Asignar unidad policial activa (de ConfiguracionSistema)
+            # Asignar unidad activa
             unidad = obtener_unidad_activa()
             if unidad:
                 evento.unidad_policial = unidad
                 evento.save(update_fields=["unidad_policial"])
-            else:
-                # Fallback para evitar NULL
-                print("⚠️ No hay unidad activa configurada, evento sin unidad asignada.")
 
+            # 🔹 Respuesta completa con los campos que la app necesita
             return Response({
                 "message": "✅ Evento creado correctamente",
+                "evento_id": evento.id,
                 "numero_evento": evento.numero_evento,
                 "unidad": unidad.nombre if unidad else "Sin unidad asignada"
             }, status=status.HTTP_201_CREATED)
 
+        # Si falla la validación
         return Response({
             "message": "❌ Error al crear evento",
             "errors": serializer.errors
