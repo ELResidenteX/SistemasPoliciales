@@ -34,6 +34,9 @@ from django.conf import settings
 from django.utils.dateparse import parse_date
 from rest_framework.permissions import IsAuthenticated
 from core.utils import obtener_unidad_activa
+from django.core.mail import EmailMessage
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 
 # ✅ Home
 def home(request):
@@ -383,18 +386,99 @@ def guardar_edicion_evento(request, evento_id):
 
 # ASIGNAR FISCALIA AL PARTE
 def asignar_fiscalia_parte(request, parte_id):
+    """
+    Envía el parte policial a la fiscalía seleccionada,
+    generando un PDF adjunto y enviándolo por correo Gmail SMTP.
+    """
     parte = get_object_or_404(PartePolicial, id=parte_id)
-    fiscalia = request.POST.get("fiscalia")
+    fiscalia_nombre = request.POST.get("fiscalia")
 
-    if fiscalia:
-        parte.fiscalia = fiscalia
+    if not fiscalia_nombre:
+        messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
+        return redirect('vista_busqueda_partes')
+
+    # Cargar JSON de fiscalías con correos
+    ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
+    try:
+        with open(ruta_json, "r", encoding="utf-8") as f:
+            fiscalias = json.load(f)
+    except Exception as e:
+        messages.error(request, f"Error al leer fiscalías: {e}")
+        return redirect('vista_busqueda_partes')
+
+    # Buscar correo correspondiente
+    correo_fiscalia = None
+    for f in fiscalias:
+        if f.get("nombre") == fiscalia_nombre:
+            correo_fiscalia = f.get("correo")
+            break
+
+    if not correo_fiscalia:
+        messages.error(request, f"No se encontró correo para la fiscalía '{fiscalia_nombre}'.")
+        return redirect('vista_busqueda_partes')
+
+    # Generar PDF temporal del parte policial
+    evento = parte.evento
+    pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
+    c = canvas.Canvas(pdf_path, pagesize=A4)
+    c.setTitle(f"Parte Policial {parte.numero_parte}")
+
+    c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
+    c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
+    c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
+    c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
+    c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
+    c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
+    c.drawString(100, 680, f"Hora Ocurrencia: {evento.hora_ocurrencia}")
+    c.drawString(100, 660, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
+    c.drawString(100, 640, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
+    c.drawString(100, 620, "Narración de los Hechos:")
+    text_obj = c.beginText(100, 600)
+    text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
+    c.drawText(text_obj)
+    c.showPage()
+    c.save()
+
+    # Enviar correo con PDF adjunto
+    try:
+        asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre if evento.unidad_policial else ''}"
+        mensaje = f"""
+Estimados:
+
+Se remite el Parte Policial {parte.numero_parte}, correspondiente al evento {evento.numero_evento},
+emitido por la unidad {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}.
+
+Fiscalía de destino: {fiscalia_nombre}
+
+Atentamente,
+Sistema GEODEPOL
+        """
+
+        email = EmailMessage(
+            subject=asunto,
+            body=mensaje,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[correo_fiscalia],
+        )
+        email.attach_file(pdf_path)
+        email.send()
+
+        # Eliminar PDF temporal
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+
+        # Actualizar parte y evento
+        parte.fiscalia = fiscalia_nombre
         parte.save()
-
-        evento = parte.evento
         evento.estado_validacion = 'enviado_fiscalia'
         evento.save()
 
-    return redirect('evento_en_validacion')
+        messages.success(request, f"✅ Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
+        return redirect('vista_busqueda_partes')
+
+    except Exception as e:
+        messages.error(request, f"Error al enviar el correo: {e}")
+        return redirect('vista_busqueda_partes')
 
 ####VER PARTE POLICIAL
 
@@ -439,22 +523,121 @@ def vista_previa_parte_modal(request, parte_id):
 
 #Asignar fiscalia al parte
 
+from django.core.mail import EmailMessage
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
 def asignar_fiscalia_parte(request, parte_id):
+    """
+    Envía el parte policial a la fiscalía seleccionada,
+    generando un PDF adjunto y enviándolo por correo Gmail SMTP.
+    """
     parte = get_object_or_404(PartePolicial, id=parte_id)
-    fiscalia = request.POST.get("fiscalia")
+    fiscalia_nombre = request.POST.get("fiscalia")
 
-    if fiscalia:
-        parte.fiscalia = fiscalia
+    if not fiscalia_nombre:
+        messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
+        return redirect('vista_busqueda_partes')
+
+    # --- Leer JSON de fiscalías ---
+    ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
+    correo_fiscalia = None
+
+    try:
+        with open(ruta_json, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Buscar fiscalía dentro de todas las regiones del JSON
+        for region in data.get("Regiones", []):
+            for f_item in region.get("Fiscalias", []):
+                nombre = f_item.get("Nombre")
+                if nombre == fiscalia_nombre:
+                    # Crear correo dinámico (simulado)
+                    nombre_simple = (
+                        fiscalia_nombre.lower()
+                        .replace("fiscalía local de", "")
+                        .replace("fiscalía regional de", "")
+                        .replace(" ", "")
+                        .replace("í", "i")
+                        .replace("á", "a")
+                        .replace("é", "e")
+                        .replace("ó", "o")
+                        .replace("ú", "u")
+                    )
+                    correo_fiscalia = f"fiscalia.{nombre_simple}@gmail.com"
+                    break
+            if correo_fiscalia:
+                break
+    except Exception as e:
+        messages.error(request, f"Error al procesar fiscalías: {e}")
+        return redirect('vista_busqueda_partes')
+
+    if not correo_fiscalia:
+        messages.error(request, f"No se encontró correo para la fiscalía '{fiscalia_nombre}'.")
+        return redirect('vista_busqueda_partes')
+
+    # --- Generar PDF temporal del parte policial ---
+    evento = parte.evento
+    pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
+    c = canvas.Canvas(pdf_path, pagesize=A4)
+    c.setTitle(f"Parte Policial {parte.numero_parte}")
+
+    c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
+    c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
+    c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
+    c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
+    c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
+    c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
+    c.drawString(100, 680, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
+    c.drawString(100, 660, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
+    c.drawString(100, 640, "Narración de los Hechos:")
+    text_obj = c.beginText(100, 620)
+    text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
+    c.drawText(text_obj)
+    c.showPage()
+    c.save()
+
+    # --- Enviar correo con PDF adjunto ---
+    try:
+        asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre if evento.unidad_policial else ''}"
+        mensaje = f"""
+Estimados:
+
+Se remite el Parte Policial {parte.numero_parte}, correspondiente al evento {evento.numero_evento},
+emitido por la unidad {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}.
+
+Fiscalía de destino: {fiscalia_nombre}
+
+Atentamente,
+Sistema GEODEPOL
+"""
+
+        email = EmailMessage(
+            subject=asunto,
+            body=mensaje,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[correo_fiscalia],
+        )
+        email.attach_file(pdf_path)
+        email.send()
+
+        # Limpiar archivo temporal
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+
+        # Actualizar estado y registrar fiscalía
+        parte.fiscalia = fiscalia_nombre
         parte.save()
-
-        evento = parte.evento
         evento.estado_validacion = 'enviado_fiscalia'
         evento.save()
 
-        # Mensaje de éxito
-        messages.success(request, f"Parte enviado a la fiscalía: {fiscalia}")
+        messages.success(request, f"✅ Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
+        return redirect('vista_busqueda_partes')
 
-    return redirect('vista_busqueda_partes')
+    except Exception as e:
+        messages.error(request, f"Error al enviar el correo: {e}")
+        return redirect('vista_busqueda_partes')
+
 
 #busqueda de partes
 
@@ -1174,3 +1357,5 @@ def eliminar_evento(request, evento_id):
     evento.delete()
     messages.success(request, f"✅ Evento {evento.numero_evento} eliminado correctamente.")
     return redirect('evento_en_validacion')
+
+
