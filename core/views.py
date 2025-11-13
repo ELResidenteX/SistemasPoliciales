@@ -549,9 +549,7 @@ def vista_previa_parte_modal(request, parte_id):
 
 #Asignar fiscalia al parte
 
-from django.core.mail import EmailMessage
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
+
 
 def asignar_fiscalia_parte(request, parte_id):
     """
