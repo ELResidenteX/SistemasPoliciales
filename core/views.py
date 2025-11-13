@@ -559,7 +559,7 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
         return redirect('vista_busqueda_partes')
 
-    # Cargar JSON fiscalías
+    # Cargar JSON fiscalíass
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
 
