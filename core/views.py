@@ -639,7 +639,7 @@ Sistema GEODEPOL
         email = EmailMessage(
             subject=asunto,
             body=mensaje,
-            from_email=settings.EMAIL_HOST_USER,
+            from_email=settings.EMAIL_HOST_EMAIL,
             to=[correo_fiscalia],
         )
         email.attach_file(pdf_path)
