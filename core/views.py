@@ -1383,7 +1383,7 @@ def test_sendgrid(request):
             subject="Test SendGrid GEODEPOL",
             message="Este mensaje confirma que SendGrid funciona en Railway.",
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=["TU_CORREO@gmail.com"],
+            recipient_list=["geodepolplataform@gmail.com"],
         )
         return HttpResponse("OK: correo enviado")
     except Exception as e:
