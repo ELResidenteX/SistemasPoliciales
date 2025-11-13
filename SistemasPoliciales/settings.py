@@ -158,17 +158,9 @@ AWS_S3_OBJECT_PARAMETERS = {
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.sendgrid.net"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = "apikey"  # Esto SIEMPRE se deja así
-
-EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
-
-DEFAULT_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL")
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL")
+
 
 
 
