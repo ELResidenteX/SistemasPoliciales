@@ -158,13 +158,14 @@ AWS_S3_OBJECT_PARAMETERS = {
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+# --- ENVÍO DE CORREO SOLO CON SendGrid API ---
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# No se usa SMTP, pero Django pide algún valor mínimo
+DEFAULT_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "geodepolplataform@gmail.com")
 
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-
-DEFAULT_FROM_EMAIL = "geodepolplataform@gmail.com"
+SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "geodepolplataform@gmail.com")
 
 
 

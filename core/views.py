@@ -552,10 +552,6 @@ def vista_previa_parte_modal(request, parte_id):
 
 
 def asignar_fiscalia_parte(request, parte_id):
-    """
-    Envía el parte policial a la fiscalía seleccionada,
-    generando un PDF adjunto y enviándolo por correo Gmail SMTP.
-    """
     parte = get_object_or_404(PartePolicial, id=parte_id)
     fiscalia_nombre = request.POST.get("fiscalia")
 
@@ -563,32 +559,17 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
         return redirect('vista_busqueda_partes')
 
-    # --- Leer JSON de fiscalías ---
+    # Cargar JSON fiscalías
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
 
     try:
         with open(ruta_json, "r", encoding="utf-8") as f:
             data = json.load(f)
-
-        # Buscar fiscalía dentro de todas las regiones del JSON
         for region in data.get("Regiones", []):
             for f_item in region.get("Fiscalias", []):
-                nombre = f_item.get("Nombre")
-                if nombre == fiscalia_nombre:
-                    # Crear correo dinámico (simulado)
-                    nombre_simple = (
-                        fiscalia_nombre.lower()
-                        .replace("fiscalía local de", "")
-                        .replace("fiscalía regional de", "")
-                        .replace(" ", "")
-                        .replace("í", "i")
-                        .replace("á", "a")
-                        .replace("é", "e")
-                        .replace("ó", "o")
-                        .replace("ú", "u")
-                    )
-                    correo_fiscalia = f"fiscalia.{nombre_simple}@gmail.com"
+                if f_item.get("Nombre") == fiscalia_nombre:
+                    correo_fiscalia = f_item.get("Correo")
                     break
             if correo_fiscalia:
                 break
@@ -597,70 +578,63 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     if not correo_fiscalia:
-        messages.error(request, f"No se encontró correo para la fiscalía '{fiscalia_nombre}'.")
+        messages.error(request, f"No se encontró correo para la fiscalía.")
         return redirect('vista_busqueda_partes')
 
-    # --- Generar PDF temporal del parte policial ---
+    # Generar PDF
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
-    c = canvas.Canvas(pdf_path, pagesize=A4)
-    c.setTitle(f"Parte Policial {parte.numero_parte}")
 
+    c = canvas.Canvas(pdf_path, pagesize=A4)
     c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
     c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
     c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
-    c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
-    c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
-    c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
-    c.drawString(100, 680, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
-    c.drawString(100, 660, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
-    c.drawString(100, 640, "Narración de los Hechos:")
-    text_obj = c.beginText(100, 620)
-    text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
-    c.drawText(text_obj)
+    c.drawString(100, 740, f"Unidad: {evento.unidad_policial.nombre}")
     c.showPage()
     c.save()
 
-    # --- Enviar correo con PDF adjunto ---
+    # Convertir PDF a base64
+    with open(pdf_path, "rb") as f:
+        pdf_base64 = base64.b64encode(f.read()).decode()
+
+    attachment = Attachment(
+        FileContent(pdf_base64),
+        FileName(f"parte_{parte.numero_parte}.pdf"),
+        FileType("application/pdf"),
+        Disposition("attachment")
+    )
+
+    subject = f"Parte Policial {parte.numero_parte}"
+    html = f"""
+        <p>Se remite el Parte Policial <strong>{parte.numero_parte}</strong>.</p>
+        <p>Fiscalía de destino: {fiscalia_nombre}</p>
+    """
+
+    message = Mail(
+        from_email=settings.SENDGRID_FROM_EMAIL,
+        to_emails=correo_fiscalia,
+        subject=subject,
+        html_content=html
+    )
+    message.attachment = attachment
+
     try:
-        asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre if evento.unidad_policial else ''}"
-        mensaje = f"""
-Estimados:
-
-Se remite el Parte Policial {parte.numero_parte}, correspondiente al evento {evento.numero_evento},
-emitido por la unidad {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}.
-
-Fiscalía de destino: {fiscalia_nombre}
-
-Atentamente,
-Sistema GEODEPOL
-"""
-
-        email = EmailMessage(
-            subject=asunto,
-            body=mensaje,
-            from_email=settings.EMAIL_HOST_EMAIL,
-            to=[correo_fiscalia],
-        )
-        email.attach_file(pdf_path)
-        email.send()
-
-        # Limpiar archivo temporal
-        if os.path.exists(pdf_path):
-            os.remove(pdf_path)
-
-        # Actualizar estado y registrar fiscalía
-        parte.fiscalia = fiscalia_nombre
-        parte.save()
-        evento.estado_validacion = 'enviado_fiscalia'
-        evento.save()
-
-        messages.success(request, f"✅ Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
-        return redirect('vista_busqueda_partes')
-
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
     except Exception as e:
-        messages.error(request, f"Error al enviar el correo: {e}")
+        messages.error(request, f"Error al enviar correo: {e}")
         return redirect('vista_busqueda_partes')
+
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
+
+    parte.fiscalia = fiscalia_nombre
+    parte.save()
+    evento.estado_validacion = 'enviado_fiscalia'
+    evento.save()
+
+    messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
+    return redirect('vista_busqueda_partes')
 
 
 #busqueda de partes
