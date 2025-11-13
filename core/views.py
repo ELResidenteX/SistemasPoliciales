@@ -37,7 +37,11 @@ from core.utils import obtener_unidad_activa
 from django.core.mail import EmailMessage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Attachment
+from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
+import base64
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -387,8 +391,8 @@ def guardar_edicion_evento(request, evento_id):
 # ASIGNAR FISCALIA AL PARTE
 def asignar_fiscalia_parte(request, parte_id):
     """
-    Envía el parte policial a la fiscalía seleccionada,
-    generando un PDF adjunto y enviándolo por correo Gmail SMTP.
+    Envía el parte policial a la fiscalía seleccionada usando SendGrid API
+    con un PDF adjunto generado dinámicamente.
     """
     parte = get_object_or_404(PartePolicial, id=parte_id)
     fiscalia_nombre = request.POST.get("fiscalia")
@@ -406,7 +410,7 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, f"Error al leer fiscalías: {e}")
         return redirect('vista_busqueda_partes')
 
-    # Buscar correo correspondiente
+    # Buscar correo
     correo_fiscalia = None
     for f in fiscalias:
         if f.get("nombre") == fiscalia_nombre:
@@ -417,68 +421,90 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, f"No se encontró correo para la fiscalía '{fiscalia_nombre}'.")
         return redirect('vista_busqueda_partes')
 
-    # Generar PDF temporal del parte policial
+    # Generar PDF temporal
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
-    c = canvas.Canvas(pdf_path, pagesize=A4)
-    c.setTitle(f"Parte Policial {parte.numero_parte}")
 
-    c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
-    c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
-    c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
-    c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
-    c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
-    c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
-    c.drawString(100, 680, f"Hora Ocurrencia: {evento.hora_ocurrencia}")
-    c.drawString(100, 660, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
-    c.drawString(100, 640, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
-    c.drawString(100, 620, "Narración de los Hechos:")
-    text_obj = c.beginText(100, 600)
-    text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
-    c.drawText(text_obj)
-    c.showPage()
-    c.save()
-
-    # Enviar correo con PDF adjunto
     try:
-        asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre if evento.unidad_policial else ''}"
-        mensaje = f"""
-Estimados:
+        c = canvas.Canvas(pdf_path, pagesize=A4)
+        c.setTitle(f"Parte Policial {parte.numero_parte}")
 
-Se remite el Parte Policial {parte.numero_parte}, correspondiente al evento {evento.numero_evento},
-emitido por la unidad {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}.
-
-Fiscalía de destino: {fiscalia_nombre}
-
-Atentamente,
-Sistema GEODEPOL
-        """
-
-        email = EmailMessage(
-            subject=asunto,
-            body=mensaje,
-            from_email=settings.EMAIL_HOST_USER,
-            to=[correo_fiscalia],
-        )
-        email.attach_file(pdf_path)
-        email.send()
-
-        # Eliminar PDF temporal
-        if os.path.exists(pdf_path):
-            os.remove(pdf_path)
-
-        # Actualizar parte y evento
-        parte.fiscalia = fiscalia_nombre
-        parte.save()
-        evento.estado_validacion = 'enviado_fiscalia'
-        evento.save()
-
-        messages.success(request, f"✅ Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
-        return redirect('vista_busqueda_partes')
-
+        c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
+        c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
+        c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
+        c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
+        c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
+        c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
+        c.drawString(100, 680, f"Hora Ocurrencia: {evento.hora_ocurrencia}")
+        c.drawString(100, 660, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
+        c.drawString(100, 640, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
+        c.drawString(100, 620, "Narración de los Hechos:")
+        text_obj = c.beginText(100, 600)
+        text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
+        c.drawText(text_obj)
+        c.showPage()
+        c.save()
     except Exception as e:
-        messages.error(request, f"Error al enviar el correo: {e}")
+        messages.error(request, f"Error al generar el PDF: {e}")
         return redirect('vista_busqueda_partes')
+
+    # Convertir PDF a Base64
+    try:
+        with open(pdf_path, "rb") as f:
+            pdf_content = f.read()
+
+        pdf_base64 = base64.b64encode(pdf_content).decode()
+    except Exception as e:
+        messages.error(request, f"Error al preparar adjunto PDF: {e}")
+        return redirect('vista_busqueda_partes')
+
+    # Crear adjunto SendGrid
+    attachment = Attachment(
+        FileContent(pdf_base64),
+        FileName(f"parte_{parte.numero_parte}.pdf"),
+        FileType("application/pdf"),
+        Disposition("attachment")
+    )
+
+    # Construcción del correo
+    asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre}"
+    contenido_html = f"""
+        <p>Estimados:</p>
+        <p>Se remite el Parte Policial <strong>{parte.numero_parte}</strong>, 
+        correspondiente al evento <strong>{evento.numero_evento}</strong>.</p>
+        <p>Fiscalía de destino: <strong>{fiscalia_nombre}</strong></p>
+        <p><br>Atentamente,<br>Sistema GEODEPOL</p>
+    """
+
+    message = Mail(
+        from_email=settings.SENDGRID_FROM_EMAIL,
+        to_emails=correo_fiscalia,
+        subject=asunto,
+        html_content=contenido_html,
+    )
+
+    message.attachment = attachment
+
+    # Enviar usando SendGrid API
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(message)
+    except Exception as e:
+        messages.error(request, f"Error al enviar el correo mediante SendGrid: {e}")
+        return redirect('vista_busqueda_partes')
+
+    # Eliminar PDF temporal
+    if os.path.exists(pdf_path):
+        os.remove(pdf_path)
+
+    # Actualizar BD
+    parte.fiscalia = fiscalia_nombre
+    parte.save()
+    evento.estado_validacion = 'enviado_fiscalia'
+    evento.save()
+
+    messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
+    return redirect('vista_busqueda_partes')
 
 ####VER PARTE POLICIAL
 
@@ -1357,5 +1383,22 @@ def eliminar_evento(request, evento_id):
     evento.delete()
     messages.success(request, f"✅ Evento {evento.numero_evento} eliminado correctamente.")
     return redirect('evento_en_validacion')
+
+#envio correo desde sengrid
+
+def enviar_correo_sendgrid(destinatario, asunto, contenido_html, contenido_texto=None, archivos_adjuntos=None):
+
+    message = Mail(
+        from_email=os.getenv("SENDGRID_FROM_EMAIL"),
+        to_emails=destinatario,
+        subject=asunto,
+        html_content=contenido_html,
+        plain_text_content=contenido_texto,
+    )
+
+    sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
+    response = sg.send(message)
+
+    return response.status_code
 
 

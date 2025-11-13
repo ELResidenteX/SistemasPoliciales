@@ -168,6 +168,7 @@ EMAIL_HOST_USER = "apikey"  # Esto SIEMPRE se deja así
 EMAIL_HOST_PASSWORD = os.getenv("SENDGRID_API_KEY")
 
 DEFAULT_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 
 
