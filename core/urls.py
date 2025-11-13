@@ -11,7 +11,7 @@ from rest_framework_simplejwt.views import (
 
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal, vista_mapa_geolocalizacion, eventos_geolocalizados_json, vista_mapa_geolocalizacion, geojson_comuna_activa, api_eventos_tiempo, api_top_unidades, api_top_comunas, api_porcentaje_delitos_criticos, api_eventos_hora_dia
+from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_desde_login, crear_configuracion_temporal, vista_mapa_geolocalizacion, eventos_geolocalizados_json, vista_mapa_geolocalizacion, geojson_comuna_activa, api_eventos_tiempo, api_top_unidades, api_top_comunas, api_porcentaje_delitos_criticos, api_eventos_hora_dia, test_sendgrid
 
 
 
@@ -165,6 +165,10 @@ path('api/estadisticas/top-delitos-mes/', views.api_top_delitos_mes_actual, name
 #ELIMINAR EVENTOS DESDE EVENTOS EN VALIDACION
 
 path('evento/<int:evento_id>/eliminar/', views.eliminar_evento, name='eliminar_evento'),
+
+
+path("test-sendgrid/", test_sendgrid),
+
 
 
 
