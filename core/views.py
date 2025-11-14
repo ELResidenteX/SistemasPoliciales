@@ -53,6 +53,9 @@ from core.utils.email_oauth import enviar_correo_oauth
 
 
 
+
+
+
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
