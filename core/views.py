@@ -1471,3 +1471,11 @@ def debug_sendgrid(request):
 
 
 
+from django.http import HttpResponse
+from django.conf import settings
+
+def debug_env(request):
+    return HttpResponse(f"""
+        SENDGRID_API_KEY: {settings.SENDGRID_API_KEY}<br>
+        SENDGRID_FROM_EMAIL: {settings.SENDGRID_FROM_EMAIL}
+    """)
