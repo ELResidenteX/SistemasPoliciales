@@ -552,6 +552,9 @@ def vista_previa_parte_modal(request, parte_id):
 
 
 def asignar_fiscalia_parte(request, parte_id):
+    import logging
+    logger = logging.getLogger(__name__)
+
     parte = get_object_or_404(PartePolicial, id=parte_id)
     fiscalia_nombre = request.POST.get("fiscalia")
 
@@ -559,7 +562,20 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
         return redirect('vista_busqueda_partes')
 
-    # Cargar JSON fiscalíass
+    # ================================
+    # 1. VERIFICAR API KEY
+    # ================================
+    api_key = settings.SENDGRID_API_KEY
+    if not api_key or len(api_key) < 20:
+        messages.error(request, "ERROR: La API KEY de SendGrid no está configurada en Railway.")
+        logger.error("SENDGRID_API_KEY está vacía o inválida.")
+        return redirect('vista_busqueda_partes')
+
+    logger.info(f"SendGrid API KEY cargada (solo primeros 10 chars): {api_key[:10]}**********")
+
+    # ================================
+    # 2. Cargar correo de fiscalía
+    # ================================
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
 
@@ -574,6 +590,7 @@ def asignar_fiscalia_parte(request, parte_id):
             if correo_fiscalia:
                 break
     except Exception as e:
+        logger.error(f"Error leyendo fiscalias.json: {e}")
         messages.error(request, f"Error al procesar fiscalías: {e}")
         return redirect('vista_busqueda_partes')
 
@@ -581,21 +598,38 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, f"No se encontró correo para la fiscalía.")
         return redirect('vista_busqueda_partes')
 
-    # Generar PDF
+    logger.info(f"Correo fiscalía destino: {correo_fiscalia}")
+
+    # ================================
+    # 3. Generar PDF
+    # ================================
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
 
-    c = canvas.Canvas(pdf_path, pagesize=A4)
-    c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
-    c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
-    c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
-    c.drawString(100, 740, f"Unidad: {evento.unidad_policial.nombre}")
-    c.showPage()
-    c.save()
+    try:
+        c = canvas.Canvas(pdf_path, pagesize=A4)
+        c.drawString(100, 800, "PARTE POLICIAL – SISTEMA GEODEPOL")
+        c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
+        c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
+        c.drawString(100, 740, f"Unidad: {evento.unidad_policial.nombre}")
+        c.showPage()
+        c.save()
+        logger.info(f"PDF generado en: {pdf_path}")
+    except Exception as e:
+        logger.error(f"Error generando PDF: {e}")
+        messages.error(request, f"Error al generar el PDF: {e}")
+        return redirect('vista_busqueda_partes')
 
-    # Convertir PDF a base64
-    with open(pdf_path, "rb") as f:
-        pdf_base64 = base64.b64encode(f.read()).decode()
+    # ================================
+    # 4. Convertir PDF a Base64
+    # ================================
+    try:
+        with open(pdf_path, "rb") as f:
+            pdf_base64 = base64.b64encode(f.read()).decode()
+    except Exception as e:
+        logger.error(f"Error convirtiendo PDF a Base64: {e}")
+        messages.error(request, f"Error al preparar adjunto PDF: {e}")
+        return redirect('vista_busqueda_partes')
 
     attachment = Attachment(
         FileContent(pdf_base64),
@@ -604,6 +638,9 @@ def asignar_fiscalia_parte(request, parte_id):
         Disposition("attachment")
     )
 
+    # ================================
+    # 5. Construcción del correo
+    # ================================
     subject = f"Parte Policial {parte.numero_parte}"
     html = f"""
         <p>Se remite el Parte Policial <strong>{parte.numero_parte}</strong>.</p>
@@ -616,24 +653,41 @@ def asignar_fiscalia_parte(request, parte_id):
         subject=subject,
         html_content=html
     )
+
     message.attachment = attachment
 
+    # ================================
+    # 6. ENVÍO FINAL CON LOGS
+    # ================================
     try:
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-        sg.send(message)
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(message)
+
+        logger.info(f"SendGrid Response Code: {response.status_code}")
+        logger.info(f"SendGrid Body: {response.body}")
+        logger.info(f"SendGrid Headers: {response.headers}")
+
+        if response.status_code >= 200 and response.status_code < 300:
+            messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
+        else:
+            messages.error(request, f"Error de SendGrid: código {response.status_code}")
+            return redirect('vista_busqueda_partes')
+
     except Exception as e:
+        logger.error(f"EXCEPCIÓN EN SENDGRID: {e}")
         messages.error(request, f"Error al enviar correo: {e}")
         return redirect('vista_busqueda_partes')
 
-    if os.path.exists(pdf_path):
-        os.remove(pdf_path)
+    finally:
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+            logger.info("PDF temporal eliminado.")
 
     parte.fiscalia = fiscalia_nombre
     parte.save()
     evento.estado_validacion = 'enviado_fiscalia'
     evento.save()
 
-    messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
     return redirect('vista_busqueda_partes')
 
 
