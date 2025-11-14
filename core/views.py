@@ -39,7 +39,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import os
 import base64
-from core.utils.utils import obtener_unidad_activa
+from core.utils import obtener_unidad_activa
+
 
 from core.utils.email_oauth import enviar_correo_oauth
 
