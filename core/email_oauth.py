@@ -16,7 +16,8 @@ from google.auth.transport.requests import Request
 CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 REFRESH_TOKEN = os.getenv("GOOGLE_REFRESH_TOKEN")
-EMAIL = os.getenv("GOOGLE_EMAIL_SENDER")
+EMAIL = os.getenv("GOOGLE_OAUTH_EMAIL")
+
 
 
 
