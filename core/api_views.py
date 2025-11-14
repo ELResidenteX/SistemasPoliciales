@@ -7,7 +7,7 @@ from core.serializers import EventoPolicialAppSerializer, ParticipanteAppSeriali
 from rest_framework.permissions import IsAuthenticated
 from core.utils import obtener_unidad_activa
 
-#vista crear evento app
+#vista crear evento apP
 class CrearEventoDesdeAppAPIView(APIView):
     """
     Crea un evento policial desde la app móvil, asignando automáticamente
