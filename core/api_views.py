@@ -5,7 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from core.models import EventoPolicial
 from core.serializers import EventoPolicialAppSerializer, ParticipanteAppSerializer
 from rest_framework.permissions import IsAuthenticated
-from core.helpers import obtener_unidad_activa
+from core.utils import obtener_unidad_activa
 
 #vista crear evento app
 class CrearEventoDesdeAppAPIView(APIView):
