@@ -159,7 +159,8 @@ GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 
 # --- ENVÍO DE CORREO SOLO CON SendGrid API ---
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+
 
 # No se usa SMTP, pero Django pide algún valor mínimo
 DEFAULT_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL", "geodepolplataform@gmail.com")
