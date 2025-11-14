@@ -38,10 +38,19 @@ from django.core.mail import EmailMessage
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Attachment
-from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileType, Disposition
 import base64
+from core.utils.email_oauth import enviar_correo_oauth
+
+
+
+
+
+
+
+
+
+
+
 # ✅ Home
 def home(request):
     return render(request, 'core/home.html')
@@ -388,12 +397,12 @@ def guardar_edicion_evento(request, evento_id):
 
 
 
-# ASIGNAR FISCALIA AL PARTE
+# ASIGNAR FISCALIA AL PARTE (GMAIL OAUTH)
 def asignar_fiscalia_parte(request, parte_id):
-    """
-    Envía el parte policial a la fiscalía seleccionada usando SendGrid API
-    con un PDF adjunto generado dinámicamente.
-    """
+    from core.utils.email_oauth import enviar_correo_oauth
+    import logging
+    logger = logging.getLogger(__name__)
+
     parte = get_object_or_404(PartePolicial, id=parte_id)
     fiscalia_nombre = request.POST.get("fiscalia")
 
@@ -401,27 +410,36 @@ def asignar_fiscalia_parte(request, parte_id):
         messages.error(request, "Debe seleccionar una fiscalía antes de enviar.")
         return redirect('vista_busqueda_partes')
 
-    # Cargar JSON de fiscalías con correos
+    # ================================
+    # 1. Cargar correo de fiscalía
+    # ================================
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
+    correo_fiscalia = None
+
     try:
         with open(ruta_json, "r", encoding="utf-8") as f:
-            fiscalias = json.load(f)
-    except Exception as e:
-        messages.error(request, f"Error al leer fiscalías: {e}")
-        return redirect('vista_busqueda_partes')
+            data = json.load(f)
 
-    # Buscar correo
-    correo_fiscalia = None
-    for f in fiscalias:
-        if f.get("nombre") == fiscalia_nombre:
-            correo_fiscalia = f.get("correo")
-            break
+        for region in data.get("Regiones", []):
+            for f_item in region.get("Fiscalias", []):
+                if f_item.get("Nombre") == fiscalia_nombre:
+                    correo_fiscalia = f_item.get("Correo")
+                    break
+            if correo_fiscalia:
+                break
+
+    except Exception as e:
+        logger.error(f"Error leyendo fiscalias.json: {e}")
+        messages.error(request, f"Error al procesar fiscalías: {e}")
+        return redirect('vista_busqueda_partes')
 
     if not correo_fiscalia:
-        messages.error(request, f"No se encontró correo para la fiscalía '{fiscalia_nombre}'.")
+        messages.error(request, "No se encontró correo para la fiscalía.")
         return redirect('vista_busqueda_partes')
 
-    # Generar PDF temporal
+    # ================================
+    # 2. Generar PDF temporal
+    # ================================
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
 
@@ -433,42 +451,32 @@ def asignar_fiscalia_parte(request, parte_id):
         c.drawString(100, 780, f"N° Parte: {parte.numero_parte}")
         c.drawString(100, 760, f"N° Evento: {evento.numero_evento}")
         c.drawString(100, 740, f"Unidad Policial: {evento.unidad_policial.nombre if evento.unidad_policial else 'No asignada'}")
+
         c.drawString(100, 720, f"Delito: {evento.delito_tipificado.nombre if evento.delito_tipificado else 'No tipificado'}")
         c.drawString(100, 700, f"Fecha Ocurrencia: {evento.fecha_ocurrencia}")
         c.drawString(100, 680, f"Hora Ocurrencia: {evento.hora_ocurrencia}")
+
         c.drawString(100, 660, f"Funcionario Responsable: {evento.funcionaria_codigo or 'N/D'}")
         c.drawString(100, 640, f"RUT Funcionario: {evento.funcionaria_rut or 'N/D'}")
+
         c.drawString(100, 620, "Narración de los Hechos:")
         text_obj = c.beginText(100, 600)
         text_obj.textLines(evento.narracion_hechos or "Sin descripción disponible.")
         c.drawText(text_obj)
+
         c.showPage()
         c.save()
+
     except Exception as e:
+        logger.error(f"Error generando PDF: {e}")
         messages.error(request, f"Error al generar el PDF: {e}")
         return redirect('vista_busqueda_partes')
 
-    # Convertir PDF a Base64
-    try:
-        with open(pdf_path, "rb") as f:
-            pdf_content = f.read()
-
-        pdf_base64 = base64.b64encode(pdf_content).decode()
-    except Exception as e:
-        messages.error(request, f"Error al preparar adjunto PDF: {e}")
-        return redirect('vista_busqueda_partes')
-
-    # Crear adjunto SendGrid
-    attachment = Attachment(
-        FileContent(pdf_base64),
-        FileName(f"parte_{parte.numero_parte}.pdf"),
-        FileType("application/pdf"),
-        Disposition("attachment")
-    )
-
-    # Construcción del correo
-    asunto = f"Parte Policial {parte.numero_parte} – {evento.unidad_policial.nombre}"
-    contenido_html = f"""
+    # ================================
+    # 3. Construcción del correo
+    # ================================
+    asunto = f"Parte Policial {parte.numero_parte}"
+    html = f"""
         <p>Estimados:</p>
         <p>Se remite el Parte Policial <strong>{parte.numero_parte}</strong>, 
         correspondiente al evento <strong>{evento.numero_evento}</strong>.</p>
@@ -476,35 +484,35 @@ def asignar_fiscalia_parte(request, parte_id):
         <p><br>Atentamente,<br>Sistema GEODEPOL</p>
     """
 
-    message = Mail(
-        from_email=settings.SENDGRID_FROM_EMAIL,
-        to_emails=correo_fiscalia,
-        subject=asunto,
-        html_content=contenido_html,
-    )
-
-    message.attachment = attachment
-
-    # Enviar usando SendGrid API
+    # ================================
+    # 4. Envío con GMAIL OAUTH
+    # ================================
     try:
-        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
-        sg.send(message)
+        enviar_correo_oauth(
+            destinatario=correo_fiscalia,
+            asunto=asunto,
+            mensaje_html=html,
+            ruta_adjunto=pdf_path
+        )
+
+        messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
+
     except Exception as e:
-        messages.error(request, f"Error al enviar el correo mediante SendGrid: {e}")
+        logger.error(f"Error al enviar correo con Gmail OAuth: {e}")
+        messages.error(request, f"Error al enviar correo: {e}")
         return redirect('vista_busqueda_partes')
 
-    # Eliminar PDF temporal
-    if os.path.exists(pdf_path):
-        os.remove(pdf_path)
+    finally:
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
 
-    # Actualizar BD
     parte.fiscalia = fiscalia_nombre
     parte.save()
     evento.estado_validacion = 'enviado_fiscalia'
     evento.save()
 
-    messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre} ({correo_fiscalia}).")
     return redirect('vista_busqueda_partes')
+
 
 ####VER PARTE POLICIAL
 
@@ -563,18 +571,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 1. VERIFICAR API KEY
-    # ================================
-    api_key = settings.SENDGRID_API_KEY
-    if not api_key or len(api_key) < 20:
-        messages.error(request, "ERROR: La API KEY de SendGrid no está configurada en Railway.")
-        logger.error("SENDGRID_API_KEY está vacía o inválida.")
-        return redirect('vista_busqueda_partes')
-
-    logger.info(f"SendGrid API KEY cargada (solo primeros 10 chars): {api_key[:10]}**********")
-
-    # ================================
-    # 2. Cargar correo de fiscalía
+    # 1. Cargar correo de fiscalía
     # ================================
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
@@ -601,7 +598,7 @@ def asignar_fiscalia_parte(request, parte_id):
     logger.info(f"Correo fiscalía destino: {correo_fiscalia}")
 
     # ================================
-    # 3. Generar PDF
+    # 2. Generar PDF
     # ================================
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
@@ -621,25 +618,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 4. Convertir PDF a Base64
-    # ================================
-    try:
-        with open(pdf_path, "rb") as f:
-            pdf_base64 = base64.b64encode(f.read()).decode()
-    except Exception as e:
-        logger.error(f"Error convirtiendo PDF a Base64: {e}")
-        messages.error(request, f"Error al preparar adjunto PDF: {e}")
-        return redirect('vista_busqueda_partes')
-
-    attachment = Attachment(
-        FileContent(pdf_base64),
-        FileName(f"parte_{parte.numero_parte}.pdf"),
-        FileType("application/pdf"),
-        Disposition("attachment")
-    )
-
-    # ================================
-    # 5. Construcción del correo
+    # 3. Construcción del correo
     # ================================
     subject = f"Parte Policial {parte.numero_parte}"
     html = f"""
@@ -647,34 +626,23 @@ def asignar_fiscalia_parte(request, parte_id):
         <p>Fiscalía de destino: {fiscalia_nombre}</p>
     """
 
-    message = Mail(
-        from_email=settings.SENDGRID_FROM_EMAIL,
-        to_emails=correo_fiscalia,
-        subject=subject,
-        html_content=html
-    )
-
-    message.attachment = attachment
-
     # ================================
-    # 6. ENVÍO FINAL CON LOGS
+    # 4. Envío con GMAIL OAUTH
     # ================================
     try:
-        sg = SendGridAPIClient(api_key)
-        response = sg.send(message)
+        
 
-        logger.info(f"SendGrid Response Code: {response.status_code}")
-        logger.info(f"SendGrid Body: {response.body}")
-        logger.info(f"SendGrid Headers: {response.headers}")
+        enviar_correo_oauth(
+            destinatario=correo_fiscalia,
+            asunto=subject,
+            mensaje_html=html,
+            ruta_adjunto=pdf_path
+        )
 
-        if response.status_code >= 200 and response.status_code < 300:
-            messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
-        else:
-            messages.error(request, f"Error de SendGrid: código {response.status_code}")
-            return redirect('vista_busqueda_partes')
+        messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
 
     except Exception as e:
-        logger.error(f"EXCEPCIÓN EN SENDGRID: {e}")
+        logger.error(f"Error al enviar correo con Gmail OAuth: {e}")
         messages.error(request, f"Error al enviar correo: {e}")
         return redirect('vista_busqueda_partes')
 
@@ -1410,72 +1378,10 @@ def eliminar_evento(request, evento_id):
     messages.success(request, f"✅ Evento {evento.numero_evento} eliminado correctamente.")
     return redirect('evento_en_validacion')
 
-#envio correo desde sengrid
-
-def enviar_correo_sendgrid(destinatario, asunto, contenido_html, contenido_texto=None, archivos_adjuntos=None):
-
-    message = Mail(
-        from_email=os.getenv("SENDGRID_FROM_EMAIL"),
-        to_emails=destinatario,
-        subject=asunto,
-        html_content=contenido_html,
-        plain_text_content=contenido_texto,
-    )
-
-    sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))
-    response = sg.send(message)
-
-    return response.status_code
 
 
 
 
 
 
-from django.http import HttpResponse
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
-def debug_sendgrid(request):
-    """
-    Prueba directa de SendGrid desde Railway.
-    Envía un correo simple a tu email para confirmar que funciona.
-    """
-
-    api_key = settings.SENDGRID_API_KEY
-    from_email = settings.SENDGRID_FROM_EMAIL
-
-    if not api_key:
-        return HttpResponse("ERROR: SENDGRID_API_KEY no está configurada en Railway.")
-
-    # Cambia este correo por donde quieras recibir la prueba
-    destinatario = "geodepolplataform@gmail.com"
-
-    mensaje = Mail(
-        from_email=from_email,
-        to_emails=destinatario,
-        subject="TEST DIRECTO SendGrid desde GEODEPOL",
-        html_content="<h3>Prueba directa de SendGrid funcionando en Railway</h3>",
-    )
-
-    try:
-        sg = SendGridAPIClient(api_key)
-        response = sg.send(mensaje)
-
-        return HttpResponse(
-            f"OK:<br>status={response.status_code}<br>body={response.body}<br>headers={response.headers}"
-        )
-    except Exception as e:
-        return HttpResponse(f"ERROR al enviar: {e}")
-
-
-
-
-from django.http import HttpResponse
-from django.conf import settings
-
-def debug_env(request):
-    return HttpResponse(f"""
-        SENDGRID_API_KEY: {settings.SENDGRID_API_KEY}<br>
-        SENDGRID_FROM_EMAIL: {settings.SENDGRID_FROM_EMAIL}
-    """)
