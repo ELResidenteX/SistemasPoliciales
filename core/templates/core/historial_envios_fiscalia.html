@@ -25,10 +25,8 @@
             <th>Estado</th>
             <th>Mensaje</th>
             <th>Enviado por</th>
-            <th>Código Auditoría</th>
         </tr>
     </thead>
-
     <tbody>
     {% for item in historial %}
         <tr>
@@ -36,31 +34,26 @@
             <td>{{ item.parte.numero_parte }}</td>
             <td>{{ item.fiscalia_nombre }}</td>
             <td>{{ item.fiscalia_correo }}</td>
-
             <td>
                 {% if item.estado == "enviado" %}
                     <span style="color:green;">Enviado</span>
                 {% else %}
-                    <span style="color:#cc0000;">Error</span>
+                    <span style="color:#ffff00;">Error</span>
                 {% endif %}
             </td>
-
             <td>{{ item.mensaje_respuesta }}</td>
-
             <td>
-                {% if item.enviado_por %}
-                    {{ item.enviado_por.username }}
-                {% else %}
-                    Sistema
-                {% endif %}
-            </td>
+    {% if item.enviado_por %}
+        {{ item.enviado_por.username }}
+    {% else %}
+        Sistema
+    {% endif %}
+</td>
 
-            <td><strong>{{ item.codigo_auditoria }}</strong></td>
         </tr>
-
     {% empty %}
         <tr>
-            <td colspan="8">No hay registros.</td>
+            <td colspan="7">No hay registros.</td>
         </tr>
     {% endfor %}
     </tbody>
