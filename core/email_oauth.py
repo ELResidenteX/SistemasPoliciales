@@ -1,30 +1,25 @@
 import base64
-import smtplib
 import os
+import json
+import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
-
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 
-
-# ================================
-# CONFIGURACIÓN OAUTH – GMAIL
-# *** Cambia estos valores luego del deploy ***
-# ================================
+# ===============================
+# VARIABLES DESDE .env
+# ===============================
 CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 REFRESH_TOKEN = os.getenv("GOOGLE_REFRESH_TOKEN")
-EMAIL = os.getenv("GOOGLE_OAUTH_EMAIL")
+EMAIL = os.getenv("GOOGLE_EMAIL_SENDER")
 
-
-
-
-# ================================
-# 1. Generar TOKEN OAUTH2
-# ================================
-def generate_oauth2_token():
+# ===============================
+# 1. Obtener token de acceso
+# ===============================
+def obtener_access_token():
     creds = Credentials(
         None,
         refresh_token=REFRESH_TOKEN,
@@ -34,49 +29,55 @@ def generate_oauth2_token():
     )
 
     creds.refresh(Request())
-    access_token = creds.token
+    return creds.token
 
-    auth_string = f"user={EMAIL}\1auth=Bearer {access_token}\1\1"
-    return base64.b64encode(auth_string.encode()).decode()
-
-
-# ================================
-# 2. Enviar correo usando SMTP con OAUTH2
-# ================================
+# ===============================
+# 2. Enviar correo usando Gmail API
+# ===============================
 def enviar_correo_oauth(destinatario, asunto, mensaje_html, ruta_adjunto=None):
-    auth_token = generate_oauth2_token()
+    # Crear el correo MIME
+    message = MIMEMultipart()
+    message["To"] = destinatario
+    message["From"] = EMAIL
+    message["Subject"] = asunto
 
-    msg = MIMEMultipart()
-    msg["Subject"] = asunto
-    msg["From"] = EMAIL
-    msg["To"] = destinatario
+    # Cuerpo HTML
+    message.attach(MIMEText(mensaje_html, "html"))
 
-    # Contenido HTML
-    msg.attach(MIMEText(mensaje_html, "html"))
-
-    # Adjunto opcional
+    # Adjuntar PDF si existe
     if ruta_adjunto:
-        try:
-            with open(ruta_adjunto, "rb") as f:
-                adj = MIMEApplication(f.read(), _subtype="pdf")
-                adj.add_header(
-                    "Content-Disposition",
-                    "attachment",
-                    filename=ruta_adjunto.split("/")[-1]
-                )
-                msg.attach(adj)
-        except Exception as e:
-            raise Exception(f"Error al adjuntar archivo PDF: {e}")
+        with open(ruta_adjunto, "rb") as f:
+            adj = MIMEApplication(f.read(), _subtype="pdf")
+            adj.add_header(
+                "Content-Disposition",
+                "attachment",
+                filename=os.path.basename(ruta_adjunto)
+            )
+            message.attach(adj)
 
-    # Conectar a Gmail SMTP con OAuth2
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.docmd("AUTH", "XOAUTH2 " + auth_token)
+    # Codificar mensaje completo a base64 "URL-safe"
+    raw_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-        server.sendmail(EMAIL, [destinatario], msg.as_string())
-        server.quit()
+    # Construir payload para Gmail API
+    payload = {
+        "raw": raw_message
+    }
 
-    except Exception as e:
-        raise Exception(f"Error al enviar correo mediante OAuth2: {e}")
+    # Token de acceso válido
+    access_token = obtener_access_token()
+
+    # Llamada HTTPS a Gmail API
+    url = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+    if response.status_code not in [200, 202]:
+        raise Exception(f"Error Gmail API: {response.status_code} - {response.text}")
+
+    return True
+
 
