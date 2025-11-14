@@ -405,7 +405,7 @@ def guardar_edicion_evento(request, evento_id):
 
 
 
-# ASIGNAR FISCALIA AL PARTE (GMAIL API + AUDITORÍA) FUNCIONANDO
+# ASIGNAR FISCALIA AL PARTE (GMAIL API + AUDITORÍA)
 def asignar_fiscalia_parte(request, parte_id):
     from core.email_oauth import enviar_correo_oauth
     from core.models import HistorialEnvioFiscalia
