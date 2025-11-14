@@ -42,7 +42,14 @@
                 {% endif %}
             </td>
             <td>{{ item.mensaje_respuesta }}</td>
-            <td>{{ item.enviado_por.username if item.enviado_por else "Sistema" }}</td>
+            <td>
+    {% if item.enviado_por %}
+        {{ item.enviado_por.username }}
+    {% else %}
+        Sistema
+    {% endif %}
+</td>
+
         </tr>
     {% empty %}
         <tr>
