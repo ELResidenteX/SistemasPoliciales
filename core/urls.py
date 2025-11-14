@@ -162,7 +162,7 @@ path('api/estadisticas/tendencia-mensual/', views.api_tendencia_mensual, name='a
 path('api/estadisticas/top-delitos-mes/', views.api_top_delitos_mes_actual, name='api_top_delitos_mes_actual'),
 
 
-#ELIMINAR EVENTOS DESDE EVENTOS EN VALIDACION
+#ELIMINAR EVENTOS DESDE EVENTOS EN VALIDACIón
 
 path('evento/<int:evento_id>/eliminar/', views.eliminar_evento, name='eliminar_evento'),
 
