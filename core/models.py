@@ -243,18 +243,27 @@ class HistorialEnvioFiscalia(models.Model):
     parte = models.ForeignKey("PartePolicial", on_delete=models.CASCADE)
     fiscalia_nombre = models.CharField(max_length=255)
     fiscalia_correo = models.EmailField()
+
     estado = models.CharField(max_length=20, choices=ESTADOS)
     mensaje_respuesta = models.TextField(blank=True, null=True)
+
     gmail_message_id = models.CharField(max_length=255, blank=True, null=True)
 
     enviado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
     fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    # NUEVO: código único para auditoría
+    codigo_auditoria = models.CharField(max_length=12, unique=True, editable=False)
 
     class Meta:
         ordering = ["-fecha_envio"]
+        verbose_name = "Historial de Envío a Fiscalía"
+        verbose_name_plural = "Historial de Envíos a Fiscalía"
 
     def __str__(self):
         return f"{self.parte.numero_parte} - {self.estado}"
+
 
 
 

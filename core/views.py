@@ -405,13 +405,12 @@ def guardar_edicion_evento(request, evento_id):
 
 
 
-# ASIGNAR FISCALIA AL PARTE (GMAIL OAUTH + AUDITORÍA)
+# ASIGNAR FISCALIA AL PARTE (GMAIL API + AUDITORÍA)
 def asignar_fiscalia_parte(request, parte_id):
     from core.email_oauth import enviar_correo_oauth
     from core.models import HistorialEnvioFiscalia
 
-
-    import logging
+    import logging, secrets, string
     logger = logging.getLogger(__name__)
 
     parte = get_object_or_404(PartePolicial, id=parte_id)
@@ -422,7 +421,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 1. Obtener correo desde JSON
+    # 1. Leer correo desde JSON
     # ================================
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
@@ -449,7 +448,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 2. Crear PDF
+    # 2. Generar PDF
     # ================================
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
@@ -496,7 +495,13 @@ def asignar_fiscalia_parte(request, parte_id):
     """
 
     # ================================
-    # 4. Envío con Gmail API + Auditoría
+    # 4. Generar Código de Auditoría
+    # ================================
+    caracteres = string.ascii_uppercase + string.digits
+    codigo_auditoria = ''.join(secrets.choice(caracteres) for _ in range(10))
+
+    # ================================
+    # 5. Envío con Gmail API + Auditoría
     # ================================
     resultado_envio = None
 
@@ -508,7 +513,7 @@ def asignar_fiscalia_parte(request, parte_id):
             ruta_adjunto=pdf_path
         )
 
-        # Registrar auditoría (éxito)
+        # Guardar historial (éxito)
         HistorialEnvioFiscalia.objects.create(
             parte=parte,
             fiscalia_nombre=fiscalia_nombre,
@@ -517,13 +522,13 @@ def asignar_fiscalia_parte(request, parte_id):
             mensaje_respuesta="Correo enviado correctamente.",
             gmail_message_id=resultado_envio.get("id") if isinstance(resultado_envio, dict) else None,
             enviado_por=request.user if request.user.is_authenticated else None,
+            codigo_auditoria=codigo_auditoria
         )
 
-        messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
+        messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}. Código auditoría: {codigo_auditoria}")
 
     except Exception as e:
-
-        # Registrar auditoría (error)
+        # Guardar historial (error)
         HistorialEnvioFiscalia.objects.create(
             parte=parte,
             fiscalia_nombre=fiscalia_nombre,
@@ -531,10 +536,11 @@ def asignar_fiscalia_parte(request, parte_id):
             estado="error",
             mensaje_respuesta=str(e),
             enviado_por=request.user if request.user.is_authenticated else None,
+            codigo_auditoria=codigo_auditoria
         )
 
         logger.error(f"Error al enviar correo con Gmail OAuth: {e}")
-        messages.error(request, f"Error al enviar correo: {e}")
+        messages.error(request, f"Error al enviar correo: {e}. Código auditoría: {codigo_auditoria}")
         return redirect('vista_busqueda_partes')
 
     finally:
@@ -542,7 +548,7 @@ def asignar_fiscalia_parte(request, parte_id):
             os.remove(pdf_path)
 
     # ================================
-    # 5. Actualización del estado del evento
+    # 6. Actualizar estado del evento
     # ================================
     parte.fiscalia = fiscalia_nombre
     parte.save()
