@@ -1374,19 +1374,13 @@ def enviar_correo_sendgrid(destinatario, asunto, contenido_html, contenido_texto
     return response.status_code
 
 
-def test_sendgrid(request):
-    try:
-        from django.core.mail import send_mail
-        from django.conf import settings
 
-        send_mail(
-            subject="Test SendGrid GEODEPOL",
-            message="Este mensaje confirma que SendGrid funciona en Railway.",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=["geodepolplataform@gmail.com"],
-        )
-        return HttpResponse("OK: correo enviado")
-    except Exception as e:
-        return HttpResponse(f"ERROR: {e}")
+
+
+
+def test_sendgrid(request):
+    from django.conf import settings
+    return HttpResponse(f"API KEY: {settings.SENDGRID_API_KEY}")
+
 
 
