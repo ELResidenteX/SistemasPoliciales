@@ -168,6 +168,8 @@ path('evento/<int:evento_id>/eliminar/', views.eliminar_evento, name='eliminar_e
 
 
 path("test-sendgrid/", test_sendgrid),
+path("debug-sendgrid/", views.debug_sendgrid),
+
 
 
 
