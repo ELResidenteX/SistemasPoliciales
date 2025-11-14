@@ -5,11 +5,13 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Arica",
-          "Comuna": "Arica"
+          "Comuna": "Arica",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Putre",
-          "Comuna": "Putre"
+          "Comuna": "Putre",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -18,15 +20,18 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Iquique",
-          "Comuna": "Iquique"
+          "Comuna": "Iquique",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Alto Hospicio",
-          "Comuna": "Alto Hospicio"
+          "Comuna": "Alto Hospicio",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Pozo Almonte",
-          "Comuna": "Pozo Almonte"
+          "Comuna": "Pozo Almonte",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -35,19 +40,23 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Antofagasta",
-          "Comuna": "Antofagasta"
+          "Comuna": "Antofagasta",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Calama",
-          "Comuna": "Calama"
+          "Comuna": "Calama",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Tocopilla",
-          "Comuna": "Tocopilla"
+          "Comuna": "Tocopilla",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Taltal",
-          "Comuna": "Taltal"
+          "Comuna": "Taltal",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -56,19 +65,23 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Copiapó",
-          "Comuna": "Copiapó"
+          "Comuna": "Copiapó",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Caldera",
-          "Comuna": "Caldera"
+          "Comuna": "Caldera",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Vallenar",
-          "Comuna": "Vallenar"
+          "Comuna": "Vallenar",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Chañaral",
-          "Comuna": "Chañaral"
+          "Comuna": "Chañaral",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -77,35 +90,43 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de La Serena",
-          "Comuna": "La Serena"
+          "Comuna": "La Serena",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Coquimbo",
-          "Comuna": "Coquimbo"
+          "Comuna": "Coquimbo",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Ovalle",
-          "Comuna": "Ovalle"
+          "Comuna": "Ovalle",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Illapel",
-          "Comuna": "Illapel"
+          "Comuna": "Illapel",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Los Vilos",
-          "Comuna": "Los Vilos"
+          "Comuna": "Los Vilos",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Vicuña",
-          "Comuna": "Vicuña"
+          "Comuna": "Vicuña",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Combarbalá",
-          "Comuna": "Combarbalá"
+          "Comuna": "Combarbalá",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Andacollo",
-          "Comuna": "Andacollo"
+          "Comuna": "Andacollo",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -114,35 +135,43 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Valparaíso",
-          "Comuna": "Valparaíso"
+          "Comuna": "Valparaíso",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Viña del Mar",
-          "Comuna": "Viña del Mar"
+          "Comuna": "Viña del Mar",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Quilpué",
-          "Comuna": "Quilpué"
+          "Comuna": "Quilpué",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de San Antonio",
-          "Comuna": "San Antonio"
+          "Comuna": "San Antonio",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de San Felipe",
-          "Comuna": "San Felipe"
+          "Comuna": "San Felipe",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Los Andes",
-          "Comuna": "Los Andes"
+          "Comuna": "Los Andes",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de La Ligua",
-          "Comuna": "La Ligua"
+          "Comuna": "La Ligua",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Quillota",
-          "Comuna": "Quillota"
+          "Comuna": "Quillota",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -166,7 +195,8 @@
             "Colina",
             "Lampa",
             "Tiltil"
-          ]
+          ],
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Regional Metropolitana Oriente",
@@ -180,7 +210,8 @@
             "La Florida",
             "Peñalolén",
             "Macul"
-          ]
+          ],
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Regional Metropolitana Occidente",
@@ -202,7 +233,8 @@
             "Alhué",
             "Curacaví",
             "María Pinto"
-          ]
+          ],
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Regional Metropolitana Sur",
@@ -219,7 +251,8 @@
             "San Joaquín",
             "San Miguel",
             "San Ramón"
-          ]
+          ],
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     },
@@ -228,15 +261,18 @@
       "Fiscalias": [
         {
           "Nombre": "Fiscalía Local de Rancagua",
-          "Comuna": "Rancagua"
+          "Comuna": "Rancagua",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de San Fernando",
-          "Comuna": "San Fernando"
+          "Comuna": "San Fernando",
+          "Correo": "geodepolplataform@gmail.com"
         },
         {
           "Nombre": "Fiscalía Local de Santa Cruz",
-          "Comuna": "Santa Cruz"
+          "Comuna": "Santa Cruz",
+          "Correo": "geodepolplataform@gmail.com"
         }
       ]
     }
