@@ -39,7 +39,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import os
 import base64
-from core.utils.email_oauth import enviar_correo_oauth
+from core.email_oauth import enviar_correo_oauth
 
 
 
@@ -399,7 +399,7 @@ def guardar_edicion_evento(request, evento_id):
 
 # ASIGNAR FISCALIA AL PARTE (GMAIL OAUTH)
 def asignar_fiscalia_parte(request, parte_id):
-    from core.utils.email_oauth import enviar_correo_oauth
+    from core.email_oauth import enviar_correo_oauth
     import logging
     logger = logging.getLogger(__name__)
 
