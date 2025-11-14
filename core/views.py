@@ -44,8 +44,8 @@ from core.utils import obtener_unidad_activa
 
 
 from core.email_oauth import enviar_correo_oauth
-
-
+from core.models import HistorialEnvioFiscalia
+from django.core.paginator import Paginator
 
 
 
@@ -405,9 +405,12 @@ def guardar_edicion_evento(request, evento_id):
 
 
 
-# ASIGNAR FISCALIA AL PARTE (GMAIL OAUTH)
+# ASIGNAR FISCALIA AL PARTE (GMAIL OAUTH + AUDITORÍA)
 def asignar_fiscalia_parte(request, parte_id):
     from core.email_oauth import enviar_correo_oauth
+    from core.models import HistorialEnvioFiscalia
+
+
     import logging
     logger = logging.getLogger(__name__)
 
@@ -419,7 +422,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 1. Cargar correo de fiscalía
+    # 1. Obtener correo desde JSON
     # ================================
     ruta_json = os.path.join(settings.BASE_DIR, "core", "static", "core", "json", "fiscalias.json")
     correo_fiscalia = None
@@ -446,7 +449,7 @@ def asignar_fiscalia_parte(request, parte_id):
         return redirect('vista_busqueda_partes')
 
     # ================================
-    # 2. Generar PDF temporal
+    # 2. Crear PDF
     # ================================
     evento = parte.evento
     pdf_path = os.path.join(settings.BASE_DIR, f"parte_{parte.numero_parte}.pdf")
@@ -493,19 +496,43 @@ def asignar_fiscalia_parte(request, parte_id):
     """
 
     # ================================
-    # 4. Envío con GMAIL OAUTH
+    # 4. Envío con Gmail API + Auditoría
     # ================================
+    resultado_envio = None
+
     try:
-        enviar_correo_oauth(
+        resultado_envio = enviar_correo_oauth(
             destinatario=correo_fiscalia,
             asunto=asunto,
             mensaje_html=html,
             ruta_adjunto=pdf_path
         )
 
+        # Registrar auditoría (éxito)
+        HistorialEnvioFiscalia.objects.create(
+            parte=parte,
+            fiscalia_nombre=fiscalia_nombre,
+            fiscalia_correo=correo_fiscalia,
+            estado="enviado",
+            mensaje_respuesta="Correo enviado correctamente.",
+            gmail_message_id=resultado_envio.get("id") if isinstance(resultado_envio, dict) else None,
+            enviado_por=request.user if request.user.is_authenticated else None,
+        )
+
         messages.success(request, f"Parte enviado correctamente a {fiscalia_nombre}.")
 
     except Exception as e:
+
+        # Registrar auditoría (error)
+        HistorialEnvioFiscalia.objects.create(
+            parte=parte,
+            fiscalia_nombre=fiscalia_nombre,
+            fiscalia_correo=correo_fiscalia,
+            estado="error",
+            mensaje_respuesta=str(e),
+            enviado_por=request.user if request.user.is_authenticated else None,
+        )
+
         logger.error(f"Error al enviar correo con Gmail OAuth: {e}")
         messages.error(request, f"Error al enviar correo: {e}")
         return redirect('vista_busqueda_partes')
@@ -514,12 +541,16 @@ def asignar_fiscalia_parte(request, parte_id):
         if os.path.exists(pdf_path):
             os.remove(pdf_path)
 
+    # ================================
+    # 5. Actualización del estado del evento
+    # ================================
     parte.fiscalia = fiscalia_nombre
     parte.save()
     evento.estado_validacion = 'enviado_fiscalia'
     evento.save()
 
     return redirect('vista_busqueda_partes')
+
 
 
 ####VER PARTE POLICIAL
@@ -1288,6 +1319,37 @@ def eliminar_evento(request, evento_id):
     messages.success(request, f"✅ Evento {evento.numero_evento} eliminado correctamente.")
     return redirect('evento_en_validacion')
 
+
+#VER HISTORIAL EMAIL
+
+@login_required
+def historial_envios_fiscalia(request):
+    query = request.GET.get("q", "")
+    estado = request.GET.get("estado", "")
+    pagina = request.GET.get("page", 1)
+
+    historial = HistorialEnvioFiscalia.objects.all().order_by("-fecha_envio")
+
+    # Filtro por texto (parte, fiscalia o correo)
+    if query:
+        historial = historial.filter(
+            Q(parte__numero_parte__icontains=query) |
+            Q(fiscalia_nombre__icontains=query) |
+            Q(fiscalia_correo__icontains=query)
+        )
+
+    # Filtro por estado
+    if estado in ["enviado", "error"]:
+        historial = historial.filter(estado=estado)
+
+    paginator = Paginator(historial, 15)
+    pagina_obj = paginator.get_page(pagina)
+
+    return render(request, "core/historial_envios_fiscalia.html", {
+        "historial": pagina_obj,
+        "query": query,
+        "estado": estado,
+    })
 
 
 

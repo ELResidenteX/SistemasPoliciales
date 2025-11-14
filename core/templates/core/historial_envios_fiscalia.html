@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Historial de Envíos a Fiscalía</h2>
+
+<form method="GET" class="mb-3">
+    <input type="text" name="q" placeholder="Buscar..." value="{{ query }}">
+    
+    <select name="estado">
+        <option value="">Todos</option>
+        <option value="enviado" {% if estado == "enviado" %}selected{% endif %}>Enviado</option>
+        <option value="error" {% if estado == "error" %}selected{% endif %}>Error</option>
+    </select>
+
+    <button type="submit">Filtrar</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>N° Parte</th>
+            <th>Fiscalía</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Mensaje</th>
+            <th>Enviado por</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in historial %}
+        <tr>
+            <td>{{ item.fecha_envio|date:"Y-m-d H:i" }}</td>
+            <td>{{ item.parte.numero_parte }}</td>
+            <td>{{ item.fiscalia_nombre }}</td>
+            <td>{{ item.fiscalia_correo }}</td>
+            <td>
+                {% if item.estado == "enviado" %}
+                    <span style="color:green;">Enviado</span>
+                {% else %}
+                    <span style="color:red;">Error</span>
+                {% endif %}
+            </td>
+            <td>{{ item.mensaje_respuesta }}</td>
+            <td>{{ item.enviado_por.username if item.enviado_por else "Sistema" }}</td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="7">No hay registros.</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    {% if historial.has_previous %}
+        <a href="?page={{ historial.previous_page_number }}&q={{ query }}&estado={{ estado }}">Anterior</a>
+    {% endif %}
+
+    Página {{ historial.number }} de {{ historial.paginator.num_pages }}
+
+    {% if historial.has_next %}
+        <a href="?page={{ historial.next_page_number }}&q={{ query }}&estado={{ estado }}">Siguiente</a>
+    {% endif %}
+</div>
+
+{% endblock %}

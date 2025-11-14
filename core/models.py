@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # 🔹 Modelo de Delito
 class Delito(models.Model):
@@ -231,6 +231,32 @@ class Fiscalia(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+#AUDITORIA EMAIL ENVIADOS FISCALIA
+
+class HistorialEnvioFiscalia(models.Model):
+    ESTADOS = [
+        ("enviado", "Enviado correctamente"),
+        ("error", "Error en envío"),
+    ]
+
+    parte = models.ForeignKey("PartePolicial", on_delete=models.CASCADE)
+    fiscalia_nombre = models.CharField(max_length=255)
+    fiscalia_correo = models.EmailField()
+    estado = models.CharField(max_length=20, choices=ESTADOS)
+    mensaje_respuesta = models.TextField(blank=True, null=True)
+    gmail_message_id = models.CharField(max_length=255, blank=True, null=True)
+
+    enviado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    fecha_envio = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-fecha_envio"]
+
+    def __str__(self):
+        return f"{self.parte.numero_parte} - {self.estado}"
+
+
 
 
 
