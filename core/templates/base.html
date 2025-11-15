@@ -5,27 +5,131 @@
     <meta charset="UTF-8">
     <title>{% block title %}Sistema Policial{% endblock %}</title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: "Inter", "Segoe UI", sans-serif;
+        }
+
+        .sidebar {
+            width: 270px;
+            min-height: 100vh;
+            background: #1f3b57;
+            padding: 20px 15px;
+            color: #ffffff;
+            box-shadow: 3px 0 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar h3 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 1.2rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .accordion-button {
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: #0f6b3e !important;
+            color: #fff !important;
+            box-shadow: none;
+        }
+
+        .accordion-button.collapsed {
+            background-color: #144f37 !important;
+            color: #ffffff !important;
+        }
+
+        .accordion-body ul li a {
+            font-size: 0.85rem;
+            padding-left: 5px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .accordion-body ul li a:hover {
+            background: rgba(255,255,255,0.15);
+            padding-left: 10px;
+        }
+
+        .main {
+            padding: 40px;
+        }
+
+        .top-alert {
+            background: linear-gradient(90deg, #2d8a44, #237a3a);
+            color: white;
+            border-left: 6px solid #0f5f29;
+            padding: 10px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            font-size: 0.92rem;
+        }
+
+        .content-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+            margin-top: 20px;
+        }
+
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Links */
+        a {
+            text-decoration: none;
+        }
+
+        /* Mejoras responsive */
+        @media (max-width: 992px) {
+            .d-flex {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                position: relative;
+            }
+        }
+    </style>
+
     <link rel="stylesheet" href="{% static 'core/styles.css' %}">
 </head>
+
 <body>
 <div class="d-flex">
 
-    <!-- Sidebar fija -->
+    <!-- Sidebar -->
     <div class="sidebar">
-        <h3>MENÚ</h3>
+
+        <h3>Menú</h3>
 
         <div class="accordion" id="menuAcordeon">
 
             <!-- EVENTOS POLICIALES -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#eventos">
-                        EVENTOS POLICIALES
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#eventos">
+                        Eventos Policiales
                     </button>
                 </h2>
-                <div id="eventos" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                <div id="eventos" class="accordion-collapse collapse">
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="{% url 'nuevo_evento' %}" class="text-white d-block py-1">Nuevo</a></li>
@@ -39,14 +143,14 @@
                 </div>
             </div>
 
-            <!-- INFRACCIÓN AL TRÁNSITO -->
+            <!-- INFRACCIONES TRÁNSITO -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#transito">
-                        INFRACCIÓN AL TRÁNSITO
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#transito">
+                        Infracción al Tránsito
                     </button>
                 </h2>
-                <div id="transito" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                <div id="transito" class="accordion-collapse collapse">
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="{% url 'nueva_infraccion' %}" class="text-white d-block py-1">Nueva Infracción</a></li>
@@ -59,11 +163,11 @@
             <!-- CONSTANCIAS -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#constancias">
-                        CONSTANCIAS
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#constancias">
+                        Constancias
                     </button>
                 </h2>
-                <div id="constancias" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                <div id="constancias" class="accordion-collapse collapse">
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="#" class="text-white d-block py-1">Nueva</a></li>
@@ -76,11 +180,11 @@
             <!-- OTRAS INFRACCIONES -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otras">
-                        OTRAS INFRACCIONES
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#otras">
+                        Otras Infracciones
                     </button>
                 </h2>
-                <div id="otras" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                <div id="otras" class="accordion-collapse collapse">
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="#" class="text-white d-block py-1">Control vehicular</a></li>
@@ -91,38 +195,37 @@
                 </div>
             </div>
 
-           <!-- ✅ ESTADÍSTICAS -->
-<div class="accordion-item bg-transparent border-0">
-    <h2 class="accordion-header">
-        <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#estadisticas">
-            ESTADÍSTICAS
-        </button>
-    </h2>
-    <div id="estadisticas" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
-        <div class="accordion-body p-2">
-            <ul class="list-unstyled">
-                <li><a href="{% url 'estadisticas_geolocalizacion' %}" class="text-white d-block py-1">Mapa de geolocalización</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+            <!-- ESTADÍSTICAS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#estadisticas">
+                        Estadísticas
+                    </button>
+                </h2>
+                <div id="estadisticas" class="accordion-collapse collapse">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'estadisticas_geolocalizacion' %}" class="text-white d-block py-1">Mapa de geolocalización</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
             <!-- OTROS -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otros">
-                        OTROS
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#otros">
+                        Otros
                     </button>
                 </h2>
-                <div id="otros" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                <div id="otros" class="accordion-collapse collapse">
                     <div class="accordion-body p-2">
                         <ul class="list-unstyled">
                             <li><a href="{% url 'cambio_clave' %}" class="text-white d-block py-1">Cambio de clave</a></li>
                             <li><a href="{% url 'manuales_usuario' %}" class="text-white d-block py-1">Manuales</a></li>
 
                             {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                                <li><a href="{% url 'crear_usuario' %}" class="text-white d-block py-1">Configuración de usuarios</a></li>
+                            <li><a href="{% url 'crear_usuario' %}" class="text-white d-block py-1">Configuración de usuarios</a></li>
                             {% endif %}
 
                             <li><a href="{% url 'logout' %}" class="text-white d-block py-1">Salir</a></li>
@@ -134,30 +237,32 @@
         </div>
     </div>
 
-    <!-- Panel principal de contenido -->
-    <div class="main flex-grow-1 p-4">
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main flex-grow-1">
 
         {% if request.user.is_authenticated and request.user.perfilusuario %}
-<div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
-    <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
-    <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
-    <strong>Unidad:</strong>
-    {% if unidad_usuario %}
-        {{ unidad_usuario }}
-    {% else %}
-        <span class="text-muted fst-italic">Sin unidad asignada</span>
-    {% endif %}
-</div>
-{% endif %}
+        <div class="top-alert mb-4">
+            <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
+            <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
+            <strong>Unidad:</strong>
+            {% if unidad_usuario %}
+                {{ unidad_usuario }}
+            {% else %}
+                <span class="text-light">Sin unidad asignada</span>
+            {% endif %}
+        </div>
+        {% endif %}
 
+        <div class="content-container">
+            {% block content %}
+            {% include "core/presentacion.html" %}
+            {% endblock %}
+        </div>
 
-        {% block content %}
-        {% include "core/presentacion.html" %}
-        {% endblock %}
     </div>
-
 </div>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block script %}{% endblock %}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
