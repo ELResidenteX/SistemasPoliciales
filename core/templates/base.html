@@ -14,9 +14,6 @@
 
     <style>
 
-        /* ==========================
-           ESTILO GLOBAL
-        ========================== */
         body {
             background: #0d1117;
             font-family: "Inter", sans-serif;
@@ -42,9 +39,6 @@
             margin-bottom: 10px;
         }
 
-        /* ==========================
-           HERO
-        ========================== */
         .hero-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(12px);
@@ -77,11 +71,6 @@
             font-weight: 500;
         }
 
-        /* ==========================
-           TARJETAS DE MÓDULOS
-           (expansibles tipo acordeón)
-        ========================== */
-
         .module-card {
             background: rgba(255,255,255,0.04);
             backdrop-filter: blur(14px);
@@ -99,28 +88,24 @@
             transform: translateY(-3px);
         }
 
-        /* Título centrado */
         .module-title {
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 6px;
         }
 
-        /* Subtítulo centrado */
         .module-subtitle {
             font-size: 0.9rem;
             color: #9ca3af;
             margin-bottom: 15px;
         }
 
-        /* Contenedor escondido */
         .module-content {
             display: none;
             margin-top: 20px;
             text-align: left;
         }
 
-        /* Animación suave al expandir */
         .module-card.open .module-content {
             animation: fadeIn 0.25s ease;
         }
@@ -130,7 +115,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Opciones internas clickeables */
         .module-option {
             display: block;
             padding: 12px 14px;
@@ -145,35 +129,6 @@
             transform: translateX(3px);
         }
 
-        .option-title {
-            font-size: 0.97rem;
-            font-weight: 500;
-        }
-
-        .option-desc {
-            font-size: 0.82rem;
-            color: #9ca3af;
-        }
-
-        /* ==========================
-           PANELS INFERIORES
-        ========================== */
-
-        .panel-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 18px;
-            padding: 28px;
-            backdrop-filter: blur(12px);
-            margin-bottom: 35px;
-        }
-
-        .panel-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
     </style>
 
 </head>
@@ -181,9 +136,6 @@
 
 <div class="container-dashboard">
 
-    <!-- ==========================
-         HERO
-    ========================== -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
 
@@ -196,17 +148,9 @@
         <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
     </div>
 
-
-    <!-- ==========================
-         MÓDULOS COMO CUADROS GRANDES
-         (expansibles)
-    ========================== -->
-
     <div class="row">
 
-        <!-- ==========================
-             MÓDULO 1 - EVENTOS POLICIALES
-        ========================== -->
+        <!-- Módulo 1 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Eventos Policiales</div>
@@ -226,17 +170,7 @@
 
                     <a href="{% url 'evento_en_validacion' %}" class="module-option">
                         <div class="option-title">Eventos en validación</div>
-                        <div class="option-desc">Revisa los procedimientos pendientes.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Repositorio de partes</div>
-                        <div class="option-desc">Histórico de partes registrados.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Actas del detenido</div>
-                        <div class="option-desc">Consulta las actas asociadas.</div>
+                        <div class="option-desc">Revisa procedimientos pendientes.</div>
                     </a>
 
                     <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
@@ -248,9 +182,7 @@
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 2 - INFRACCIÓN AL TRÁNSITO
-        ========================== -->
+        <!-- Módulo 2 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Infracción al Tránsito</div>
@@ -260,21 +192,19 @@
 
                     <a href="{% url 'nueva_infraccion' %}" class="module-option">
                         <div class="option-title">Nueva infracción</div>
-                        <div class="option-desc">Registrar una infracción vehicular.</div>
+                        <div class="option-desc">Registrar infracción vehicular.</div>
                     </a>
 
                     <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
                         <div class="option-title">Buscar infracción</div>
-                        <div class="option-desc">Consultar por fecha, patente o número.</div>
+                        <div class="option-desc">Consulta por fecha, patente o número.</div>
                     </a>
 
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 3 - CONSTANCIAS
-        ========================== -->
+        <!-- Módulo 3 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Constancias</div>
@@ -296,38 +226,29 @@
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 4 - OTRAS INFRACCIONES
-        ========================== -->
+        <!-- Módulo 4 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otras Infracciones</div>
-                <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
+                <div class="module-subtitle">Controles especiales</div>
 
                 <div class="module-content">
 
                     <a href="#" class="module-option">
                         <div class="option-title">Control vehicular</div>
-                        <div class="option-desc">Registra fiscalizaciones en ruta.</div>
+                        <div class="option-desc">Registra fiscalización vehicular.</div>
                     </a>
 
                     <a href="#" class="module-option">
                         <div class="option-title">Control entidades financieras</div>
-                        <div class="option-desc">Registra fiscalizaciones bancarias.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Fiscalización de alcoholes</div>
-                        <div class="option-desc">Control de expendio de alcoholes.</div>
+                        <div class="option-desc">Registra fiscalización bancaria.</div>
                     </a>
 
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 5 - ESTADÍSTICAS
-        ========================== -->
+        <!-- Módulo 5 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Estadísticas</div>
@@ -337,20 +258,18 @@
 
                     <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
                         <div class="option-title">Mapa de geolocalización</div>
-                        <div class="option-desc">Visualiza eventos sobre el mapa.</div>
+                        <div class="option-desc">Visualiza eventos en mapa.</div>
                     </a>
 
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 6 - OTROS
-        ========================== -->
+        <!-- Módulo 6 -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otros</div>
-                <div class="module-subtitle">Accesos de cuenta y administración</div>
+                <div class="module-subtitle">Accesos y administración</div>
 
                 <div class="module-content">
 
@@ -366,14 +285,14 @@
 
                     {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
                     <a href="{% url 'crear_usuario' %}" class="module-option">
-                        <div class="option-title">Configuración de usuarios</div>
-                        <div class="option-desc">Administración de cuentas del sistema.</div>
+                        <div class="option-title">Usuarios</div>
+                        <div class="option-desc">Administración del sistema.</div>
                     </a>
                     {% endif %}
 
                     <a href="{% url 'logout' %}" class="module-option">
                         <div class="option-title">Salir</div>
-                        <div class="option-desc">Cerrar sesión de forma segura.</div>
+                        <div class="option-desc">Cerrar sesión.</div>
                     </a>
 
                 </div>
@@ -382,43 +301,27 @@
 
     </div>
 
-
-    <!-- ==========================
-         PANEL INFERIOR
-    ========================== -->
-    <!-- ==========================
-     PANEL INFERIOR
-     Solo se mostrará cuando una vista lo use
-========================== -->
-
-{% block content %}{% endblock %}
-
-
-    </div>
+    <!-- MOSTRAR FORMULARIOS SOLO SI NO ES INICIO -->
+    {% if request.path != '/' %}
+        {% block content %}{% endblock %}
+    {% endif %}
 
 </div>
 
-
-<!-- ==========================
-     JS PARA EXPANSIÓN DE TARJETAS
-========================== -->
 <script>
 function toggleModule(card) {
 
-    // Si ya está abierta, se cierra
     if (card.classList.contains("open")) {
         card.classList.remove("open");
         card.querySelector(".module-content").style.display = "none";
         return;
     }
 
-    // Cerrar cualquier otra tarjeta abierta
     document.querySelectorAll(".module-card.open").forEach(c => {
         c.classList.remove("open");
         c.querySelector(".module-content").style.display = "none";
     });
 
-    // Abrir esta tarjeta
     card.classList.add("open");
     card.querySelector(".module-content").style.display = "block";
 }
