@@ -6,16 +6,26 @@
 
     <title>{% block title %}GeoDepol{% endblock %}</title>
 
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fuente moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-
+        /* ==========================
+           ESTILO GLOBAL
+        ========================== */
         body {
-            background: #0d1117;
+            background: #0d1117;              /* Fondo dark */
             font-family: "Inter", sans-serif;
             color: #e5e7eb;
             overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
         .container-dashboard {
@@ -24,9 +34,9 @@
             padding: 40px 30px;
         }
 
-        a { text-decoration: none; color: inherit; }
-
-        /* --- HERO --- */
+        /* ==========================
+           HERO SUPERIOR
+        ========================== */
         .hero-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(12px);
@@ -60,6 +70,10 @@
             margin-right: 10px;
         }
 
+        .btn-blue:hover {
+            background: #2563eb;
+        }
+
         .btn-secondary-modern {
             background: #1f2937;
             color: #d1d5db;
@@ -69,7 +83,23 @@
             font-weight: 500;
         }
 
-        /* --- MÉTRICAS --- */
+        .btn-secondary-modern:hover {
+            background: #111827;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.12);
+            color: #d1d5db;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        /* ==========================
+           MÉTRICAS LATERALES
+        ========================== */
         .metric-box {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
@@ -89,50 +119,65 @@
             color: #9ca3af;
         }
 
-        /* --- MÓDULOS --- */
+        /* ==========================
+           BARRA DE INFO DE USUARIO
+        ========================== */
+        .user-info-bar {
+            background: rgba(34,197,94,0.10);
+            border-left: 4px solid #22c55e;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            color: #bbf7d0;
+        }
+
+        /* ==========================
+           TARJETAS DE MÓDULOS GRANDES
+        ========================== */
         .module-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 18px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 24px 24px 20px;
             backdrop-filter: blur(12px);
             box-shadow: 0 0 45px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
-        .module-btn {
-            width: 100%;
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #e5e7eb;
-            padding: 14px;
-            border-radius: 10px;
-            text-align: left;
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 12px;
-            cursor: pointer;
-        }
-
-        .module-btn:hover {
-            background: rgba(255,255,255,0.11);
-        }
-
-        .module-content {
-            display: none;
-            padding-left: 10px;
-            padding-bottom: 10px;
-        }
-
-        .module-content a {
-            display: block;
-            padding: 6px 0;
-            font-size: 0.92rem;
+        .module-header-label {
+            font-size: 0.76rem;
+            text-transform: uppercase;
             color: #9ca3af;
+            margin-bottom: 6px;
         }
 
-        .module-content a:hover {
-            color: white;
+        .module-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .module-subtitle {
+            color: #9ca3af;
+            font-size: 0.86rem;
+            margin-bottom: 16px;
+        }
+
+        /* Bloque clickeable por opción */
+        .module-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: background 0.18s ease, transform 0.18s ease;
+        }
+
+        .module-option:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-1px);
         }
 
         .bullet {
@@ -140,28 +185,35 @@
             height: 8px;
             background: #3b82f6;
             border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
+            margin-top: 7px;
+            flex-shrink: 0;
         }
 
-        /* --- PANELS BELOW --- */
+        .option-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-title {
+            font-size: 0.96rem;
+            font-weight: 500;
+        }
+
+        .option-desc {
+            font-size: 0.82rem;
+            color: #9ca3af;
+        }
+
+        /* ==========================
+           PANELS INFERIORES
+        ========================== */
         .panel-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 18px;
-            padding: 30px;
+            padding: 28px;
             backdrop-filter: blur(12px);
             margin-bottom: 35px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.12);
-            color: #d1d5db;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
         }
 
         .panel-title {
@@ -183,6 +235,12 @@
             color: #9ca3af;
         }
 
+        /* Responsive básico */
+        @media (max-width: 991px) {
+            .hero-card {
+                padding: 30px 24px;
+            }
+        }
     </style>
 
 </head>
@@ -190,19 +248,25 @@
 
 <div class="container-dashboard">
 
-    <!-- HERO -->
+    <!-- ==========================
+         HERO PRINCIPAL
+         (título, texto, CTA y métricas)
+    ========================== -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
 
         <h1 class="hero-title">Gestión integral de eventos y partes en tiempo real</h1>
 
         <p class="hero-sub">
-            Coordina eventos policiales, valida reportes, partes y registros operativos sin perder trazabilidad.
+            Coordina eventos policiales, valida reportes, gestiona partes e información operativa
+            manteniendo trazabilidad completa de cada procedimiento.
         </p>
 
+        <!-- Botones de acción principal -->
         <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
         <a href="{% url 'manuales_usuario' %}" class="btn-secondary-modern">Manual del sistema</a>
 
+        <!-- Métricas del lado derecho -->
         <div class="row mt-4">
             <div class="col-md-3 offset-md-9">
                 <div class="metric-box">
@@ -215,103 +279,259 @@
                 </div>
                 <div class="metric-box">
                     <div class="metric-number">12</div>
-                    <div class="metric-label">Partes hoy</div>
+                    <div class="metric-label">Partes registrados hoy</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- USER INFO -->
+    <!-- ==========================
+         INFO DEL USUARIO LOGUEADO
+    ========================== -->
     {% if request.user.is_authenticated and request.user.perfilusuario %}
-    <div class="tag">
-        Usuario: {{ nombre_usuario }} · {{ rol_usuario }} — Unidad:
-        {% if unidad_usuario %}{{ unidad_usuario }}{% else %}No asignada{% endif %}
+    <div class="user-info-bar">
+        Usuario: {{ nombre_usuario }} · Rol: {{ rol_usuario }} · Unidad:
+        {% if unidad_usuario %}
+            {{ unidad_usuario }}
+        {% else %}
+            No asignada
+        {% endif %}
     </div>
     {% endif %}
 
-    <!-- MÓDULOS -->
+    <!-- ==========================
+         MÓDULOS PRINCIPALES COMO CUADRADOS GRANDES
+         (Eventos, Tránsito, Constancias, etc.)
+    ========================== -->
     <div class="row">
 
-        <!-- Eventos Policiales -->
+        <!-- Módulo: Eventos Policiales -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod1')">Eventos Policiales ↓</button>
-                <div id="mod1" class="module-content">
-                    <a href="{% url 'nuevo_evento' %}"><span class="bullet"></span> Nuevo evento policial</a>
-                    <a href="{% url 'buscar_evento' %}"><span class="bullet"></span> Buscar evento</a>
-                    <a href="{% url 'evento_en_validacion' %}"><span class="bullet"></span> Eventos en validación</a>
-                    <a href="#"><span class="bullet"></span> Repositorio de partes</a>
-                    <a href="#"><span class="bullet"></span> Actas del detenido</a>
-                    <a href="{% url 'vista_busqueda_partes' %}"><span class="bullet"></span> Búsqueda de partes</a>
+                <!-- Cabecera del módulo -->
+                <div class="module-header-label">Módulo</div>
+                <div class="module-title">Eventos Policiales</div>
+                <div class="module-subtitle">
+                    Registro, consulta y validación de eventos y partes policiales.
                 </div>
+
+                <!-- Opción: Nuevo evento -->
+                <a href="{% url 'nuevo_evento' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Nuevo evento policial</span>
+                        <span class="option-desc">Crear un nuevo registro de incidente con sus datos operativos.</span>
+                    </div>
+                </a>
+
+                <!-- Opción: Buscar evento -->
+                <a href="{% url 'buscar_evento' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Buscar evento</span>
+                        <span class="option-desc">Consultar eventos por número, fecha, lugar o unidad responsable.</span>
+                    </div>
+                </a>
+
+                <!-- Opción: Eventos en validación -->
+                <a href="{% url 'evento_en_validacion' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Eventos en validación</span>
+                        <span class="option-desc">Revisar procedimientos pendientes de validación y cierre.</span>
+                    </div>
+                </a>
+
+                <!-- Opción: Repositorio de partes -->
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Repositorio de partes</span>
+                        <span class="option-desc">Acceso al histórico de partes policiales registrados en la unidad.</span>
+                    </div>
+                </a>
+
+                <!-- Opción: Actas del detenido -->
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Actas del detenido</span>
+                        <span class="option-desc">Registro y consulta de actas asociadas a detenidos.</span>
+                    </div>
+                </a>
+
+                <!-- Opción: Búsqueda de partes -->
+                <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Búsqueda de partes</span>
+                        <span class="option-desc">Localizar partes por número, fecha, denunciante o funcionario.</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Infracción al tránsito -->
+        <!-- Módulo: Infracción al Tránsito -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod2')">Infracción al Tránsito ↓</button>
-                <div id="mod2" class="module-content">
-                    <a href="{% url 'nueva_infraccion' %}"><span class="bullet"></span> Nueva infracción</a>
-                    <a href="{% url 'vista_busqueda_partes_infracciones' %}"><span class="bullet"></span> Buscar infracción</a>
+                <div class="module-header-label">Módulo</div>
+                <div class="module-title">Infracción al Tránsito</div>
+                <div class="module-subtitle">
+                    Gestión de infracciones de tránsito y partes asociados.
                 </div>
+
+                <a href="{% url 'nueva_infraccion' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Nueva infracción</span>
+                        <span class="option-desc">Registrar una nueva infracción de tránsito con todos sus antecedentes.</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Buscar infracción</span>
+                        <span class="option-desc">Consultar infracciones emitidas según número, patente o fecha.</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Constancias -->
+        <!-- Módulo: Constancias -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod3')">Constancias ↓</button>
-                <div id="mod3" class="module-content">
-                    <a href="#"><span class="bullet"></span> Nueva constancia</a>
-                    <a href="#"><span class="bullet"></span> Buscar constancia</a>
+                <div class="module-header-label">Módulo</div>
+                <div class="module-title">Constancias</div>
+                <div class="module-subtitle">
+                    Registro de constancias y certificados solicitados por la comunidad.
                 </div>
+
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Nueva constancia</span>
+                        <span class="option-desc">Ingresar una nueva constancia con los datos del solicitante.</span>
+                    </div>
+                </a>
+
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Buscar constancia</span>
+                        <span class="option-desc">Buscar constancias emitidas según fecha, motivo o persona.</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Otras Infracciones -->
+        <!-- Módulo: Otras Infracciones -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod4')">Otras Infracciones ↓</button>
-                <div id="mod4" class="module-content">
-                    <a href="#"><span class="bullet"></span> Control vehicular</a>
-                    <a href="#"><span class="bullet"></span> Control entidades financieras</a>
-                    <a href="#"><span class="bullet"></span> Fiscalización de alcoholes</a>
+                <div class="module-header-label">Módulo</div>
+                <div class="module-title">Otras Infracciones</div>
+                <div class="module-subtitle">
+                    Controles y fiscalizaciones especiales de apoyo a la gestión.
                 </div>
+
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Control vehicular</span>
+                        <span class="option-desc">Registrar controles vehiculares y sus resultados.</span>
+                    </div>
+                </a>
+
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Control entidades financieras</span>
+                        <span class="option-desc">Registrar fiscalizaciones en bancos y entidades financieras.</span>
+                    </div>
+                </a>
+
+                <a href="#" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Fiscalización de alcoholes</span>
+                        <span class="option-desc">Controlar cumplimiento de normativa de expendio de alcoholes.</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Estadísticas -->
+        <!-- Módulo: Estadísticas -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod5')">Estadísticas ↓</button>
-                <div id="mod5" class="module-content">
-                    <a href="{% url 'estadisticas_geolocalizacion' %}"><span class="bullet"></span> Mapa de geolocalización</a>
+                <div class="module-header-label">Módulo</div>
+                <div class="module-title">Estadísticas</div>
+                <div class="module-subtitle">
+                    Visualización geográfica y análisis de eventos registrados.
                 </div>
+
+                <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Mapa de geolocalización</span>
+                        <span class="option-desc">Visualizar eventos sobre el mapa para identificar patrones y zonas críticas.</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Otros -->
+        <!-- Módulo: Otros / Configuración -->
         <div class="col-md-4">
             <div class="module-card">
-                <button class="module-btn" onclick="toggleModule('mod6')">Otros ↓</button>
-                <div id="mod6" class="module-content">
-                    <a href="{% url 'cambio_clave' %}"><span class="bullet"></span> Cambio de clave</a>
-                    <a href="{% url 'manuales_usuario' %}"><span class="bullet"></span> Manuales de usuario</a>
-
-                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                    <a href="{% url 'crear_usuario' %}"><span class="bullet"></span> Configuración de usuarios</a>
-                    {% endif %}
-
-                    <a href="{% url 'logout' %}"><span class="bullet"></span> Salir</a>
+                <div class="module-header-label">Configuración</div>
+                <div class="module-title">Otros</div>
+                <div class="module-subtitle">
+                    Opciones de cuenta, soporte y administración del sistema.
                 </div>
+
+                <a href="{% url 'cambio_clave' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Cambio de clave</span>
+                        <span class="option-desc">Actualizar la contraseña de acceso al sistema.</span>
+                    </div>
+                </a>
+
+                <a href="{% url 'manuales_usuario' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Manuales de usuario</span>
+                        <span class="option-desc">Descargar o revisar documentos de ayuda y procedimientos.</span>
+                    </div>
+                </a>
+
+                {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                <a href="{% url 'crear_usuario' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Configuración de usuarios</span>
+                        <span class="option-desc">Crear, modificar y administrar cuentas de usuarios del sistema.</span>
+                    </div>
+                </a>
+                {% endif %}
+
+                <a href="{% url 'logout' %}" class="module-option">
+                    <span class="bullet"></span>
+                    <div class="option-text">
+                        <span class="option-title">Salir del sistema</span>
+                        <span class="option-desc">Cerrar sesión de GeoDepol de forma segura.</span>
+                    </div>
+                </a>
             </div>
         </div>
+
     </div>
 
-    <!-- PANEL INFERIOR -->
+    <!-- ==========================
+         PANEL INFERIOR: CONTENIDO + BITÁCORA
+    ========================== -->
     <div class="row mt-3">
 
+        <!-- Panel: Eventos en validación (usa tu block content habitual) -->
         <div class="col-md-8">
             <div class="panel-card">
                 <div class="tag">Eventos · Validación</div>
@@ -323,25 +543,28 @@
             </div>
         </div>
 
+        <!-- Panel: Bitácora en vivo -->
         <div class="col-md-4">
             <div class="panel-card">
                 <div class="tag">Bitácora · Operativa</div>
                 <div class="panel-title">Bitácora en vivo</div>
+                <p class="hero-sub" style="font-size:0.86rem; margin-bottom:12px;">
+                    Últimas actualizaciones registradas en el sistema.
+                </p>
 
                 <div class="list-item">
                     <div class="list-item-title">Evento EVT-221 actualizado</div>
                     <small>Comando Central · hace 5 min</small>
                 </div>
-
                 <div class="list-item">
                     <div class="list-item-title">Parte PAR-441 ingresado</div>
                     <small>Unidad Sur · hace 12 min</small>
                 </div>
-
                 <div class="list-item">
                     <div class="list-item-title">Validación completada en EVT-200</div>
                     <small>Fiscalía · hace 28 min</small>
                 </div>
+
             </div>
         </div>
 
@@ -349,18 +572,12 @@
 
 </div>
 
-<script>
-function toggleModule(id) {
-    let box = document.getElementById(id);
-    box.style.display = (box.style.display === "block") ? "none" : "block";
-}
-</script>
-
+<!-- ==========================
+     SCRIPTS
+========================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block script %}{% endblock %}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 
 </body>
 </html>
-
-
