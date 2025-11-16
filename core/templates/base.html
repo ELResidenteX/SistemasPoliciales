@@ -386,36 +386,13 @@
     <!-- ==========================
          PANEL INFERIOR
     ========================== -->
-    <div class="row mt-3">
+    <!-- ==========================
+     PANEL INFERIOR
+     Solo se mostrará cuando una vista lo use
+========================== -->
 
-        <div class="col-md-8">
-            <div class="panel-card">
-                <div class="tag">Eventos · Validación</div>
-                <div class="panel-title">Eventos en validación</div>
+{% block content %}{% endblock %}
 
-                {% block content %}
-                {% include "core/presentacion.html" %}
-                {% endblock %}
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="panel-card">
-                <div class="tag">Bitácora · Operativa</div>
-                <div class="panel-title">Bitácora en vivo</div>
-
-                <div class="list-item">
-                    <div class="list-item-title">Evento EVT-221 actualizado</div>
-                    <small>Comando Central · hace 5 min</small>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-item-title">Parte PAR-441 ingresado</div>
-                    <small>Unidad Sur · hace 12 min</small>
-                </div>
-
-            </div>
-        </div>
 
     </div>
 
