@@ -87,7 +87,9 @@
             backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,0.07);
             border-radius: 20px;
-            padding: 20px 20px 18px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
             transition: all 0.25s ease;
             margin-bottom: 25px;
         }
@@ -95,12 +97,6 @@
         .module-card:hover {
             background: rgba(255,255,255,0.07);
             transform: translateY(-3px);
-        }
-
-        .module-header {
-            text-align: center;
-            cursor: pointer;
-            padding-bottom: 5px;
         }
 
         /* Título centrado */
@@ -114,16 +110,17 @@
         .module-subtitle {
             font-size: 0.9rem;
             color: #9ca3af;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
         }
 
         /* Contenedor escondido */
         .module-content {
             display: none;
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: left;
         }
 
+        /* Animación suave al expandir */
         .module-card.open .module-content {
             animation: fadeIn 0.25s ease;
         }
@@ -158,25 +155,29 @@
             color: #9ca3af;
         }
 
-        /* Panel interno donde se incrusta el formulario/contenido */
-        .module-form-panel {
-            margin-top: 18px;
-            padding: 18px 16px;
-            border-radius: 14px;
-            background: rgba(15,23,42,0.75);
-            border: 1px solid rgba(148,163,184,0.35);
+        /* ==========================
+           PANELS INFERIORES
+        ========================== */
+
+        .panel-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 35px;
         }
 
-        /* Panel genérico (fallback, si no se mapea a un módulo) */
-        #page-content-container {
-            margin-top: 30px;
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
     </style>
 
 </head>
-
-<body data-url-name="{{ request.resolver_match.url_name|default_if_none:'' }}">
+<body>
 
 <div class="container-dashboard">
 
@@ -207,15 +208,12 @@
              MÓDULO 1 - EVENTOS POLICIALES
         ========================== -->
         <div class="col-md-4">
-            <div class="module-card" id="mod-eventos">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Eventos Policiales</div>
-                    <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
-                </div>
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Eventos Policiales</div>
+                <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
 
                 <div class="module-content">
 
-                    <!-- Opciones estándar del módulo -->
                     <a href="{% url 'nuevo_evento' %}" class="module-option">
                         <div class="option-title">Nuevo evento policial</div>
                         <div class="option-desc">Crear un nuevo registro de incidente.</div>
@@ -231,13 +229,20 @@
                         <div class="option-desc">Revisa los procedimientos pendientes.</div>
                     </a>
 
-                    <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
-                        <div class="option-title">Búsqueda de partes enviados</div>
-                        <div class="option-desc">Consulta partes derivados a Fiscalía.</div>
+                    <a href="#" class="module-option">
+                        <div class="option-title">Repositorio de partes</div>
+                        <div class="option-desc">Histórico de partes registrados.</div>
                     </a>
 
-                    <!-- Slot dinámico: aquí se incrustará el contenido de las vistas relacionadas -->
-                    <div class="module-dynamic-slot" data-module="eventos"></div>
+                    <a href="#" class="module-option">
+                        <div class="option-title">Actas del detenido</div>
+                        <div class="option-desc">Consulta las actas asociadas.</div>
+                    </a>
+
+                    <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
+                        <div class="option-title">Búsqueda de partes</div>
+                        <div class="option-desc">Consulta por número o funcionario.</div>
+                    </a>
 
                 </div>
             </div>
@@ -247,11 +252,9 @@
              MÓDULO 2 - INFRACCIÓN AL TRÁNSITO
         ========================== -->
         <div class="col-md-4">
-            <div class="module-card" id="mod-infracciones">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Infracciones al Tránsito</div>
-                    <div class="module-subtitle">Gestión de infracciones y partes</div>
-                </div>
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Infracción al Tránsito</div>
+                <div class="module-subtitle">Gestión de infracciones y partes</div>
 
                 <div class="module-content">
 
@@ -260,69 +263,63 @@
                         <div class="option-desc">Registrar una infracción vehicular.</div>
                     </a>
 
-                    {% comment %} Ajusta este name si es distinto en urls de infracciones {% endcomment %}
                     <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
-                        <div class="option-title">Búsqueda de partes</div>
-                        <div class="option-desc">Buscar actas de infracción emitidas.</div>
+                        <div class="option-title">Buscar infracción</div>
+                        <div class="option-desc">Consultar por fecha, patente o número.</div>
                     </a>
 
-                    <div class="module-dynamic-slot" data-module="infracciones"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================
+             MÓDULO 3 - CONSTANCIAS
+        ========================== -->
+        <div class="col-md-4">
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Constancias</div>
+                <div class="module-subtitle">Registro de constancias de ciudadanos</div>
+
+                <div class="module-content">
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Nueva constancia</div>
+                        <div class="option-desc">Ingreso de constancias generales.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Buscar constancia</div>
+                        <div class="option-desc">Consulta por fecha o motivo.</div>
+                    </a>
 
                 </div>
             </div>
         </div>
 
         <!-- ==========================
-             MÓDULO 3 - CONSTANCIAS (inactivo por ahora)
+             MÓDULO 4 - OTRAS INFRACCIONES
         ========================== -->
         <div class="col-md-4">
-            <div class="module-card" id="mod-constancias">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Constancias</div>
-                    <div class="module-subtitle">Registro de constancias ciudadanas</div>
-                </div>
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Otras Infracciones</div>
+                <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
 
                 <div class="module-content">
 
-                    <div class="module-option">
-                        <div class="option-title">Próximamente</div>
-                        <div class="option-desc">Módulo en desarrollo.</div>
-                    </div>
-
-                    <div class="module-dynamic-slot" data-module="constancias"></div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- ==========================
-             MÓDULO 4 - OTRAS INFRACCIONES (placeholder)
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" id="mod-otras">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Otras Infracciones</div>
-                    <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
-                </div>
-
-                <div class="module-content">
-
-                    <div class="module-option">
+                    <a href="#" class="module-option">
                         <div class="option-title">Control vehicular</div>
                         <div class="option-desc">Registra fiscalizaciones en ruta.</div>
-                    </div>
+                    </a>
 
-                    <div class="module-option">
+                    <a href="#" class="module-option">
                         <div class="option-title">Control entidades financieras</div>
-                        <div class="option-desc">Fiscalización en instituciones financieras.</div>
-                    </div>
+                        <div class="option-desc">Registra fiscalizaciones bancarias.</div>
+                    </a>
 
-                    <div class="module-option">
+                    <a href="#" class="module-option">
                         <div class="option-title">Fiscalización de alcoholes</div>
-                        <div class="option-desc">Control de expendio de bebidas alcohólicas.</div>
-                    </div>
-
-                    <div class="module-dynamic-slot" data-module="otras"></div>
+                        <div class="option-desc">Control de expendio de alcoholes.</div>
+                    </a>
 
                 </div>
             </div>
@@ -332,20 +329,16 @@
              MÓDULO 5 - ESTADÍSTICAS
         ========================== -->
         <div class="col-md-4">
-            <div class="module-card" id="mod-estadisticas">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Estadísticas</div>
-                    <div class="module-subtitle">Análisis geográfico y operacional</div>
-                </div>
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Estadísticas</div>
+                <div class="module-subtitle">Análisis geográfico y operacional</div>
 
                 <div class="module-content">
 
                     <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
                         <div class="option-title">Mapa de geolocalización</div>
-                        <div class="option-desc">Visualiza eventos en el mapa por filtros.</div>
+                        <div class="option-desc">Visualiza eventos sobre el mapa.</div>
                     </a>
-
-                    <div class="module-dynamic-slot" data-module="estadisticas"></div>
 
                 </div>
             </div>
@@ -355,33 +348,26 @@
              MÓDULO 6 - OTROS
         ========================== -->
         <div class="col-md-4">
-            <div class="module-card" id="mod-otros">
-                <div class="module-header" onclick="toggleModule(this.parentElement)">
-                    <div class="module-title">Otros</div>
-                    <div class="module-subtitle">Cuenta, manuales y administración</div>
-                </div>
+            <div class="module-card" onclick="toggleModule(this)">
+                <div class="module-title">Otros</div>
+                <div class="module-subtitle">Accesos de cuenta y administración</div>
 
                 <div class="module-content">
 
                     <a href="{% url 'cambio_clave' %}" class="module-option">
                         <div class="option-title">Cambio de clave</div>
-                        <div class="option-desc">Actualizar contraseña de usuario.</div>
+                        <div class="option-desc">Actualizar contraseña.</div>
                     </a>
 
                     <a href="{% url 'manuales_usuario' %}" class="module-option">
                         <div class="option-title">Manuales</div>
-                        <div class="option-desc">Guías de uso del sistema GeoDepol.</div>
+                        <div class="option-desc">Documentos de apoyo.</div>
                     </a>
 
                     {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
                     <a href="{% url 'crear_usuario' %}" class="module-option">
-                        <div class="option-title">Crear usuarios</div>
-                        <div class="option-desc">Administración de cuentas y perfiles.</div>
-                    </a>
-
-                    <a href="{% url 'lista_usuarios' %}" class="module-option">
-                        <div class="option-title">Lista de usuarios</div>
-                        <div class="option-desc">Visualizar y editar perfiles registrados.</div>
+                        <div class="option-title">Configuración de usuarios</div>
+                        <div class="option-desc">Administración de cuentas del sistema.</div>
                     </a>
                     {% endif %}
 
@@ -390,21 +376,24 @@
                         <div class="option-desc">Cerrar sesión de forma segura.</div>
                     </a>
 
-                    <div class="module-dynamic-slot" data-module="otros"></div>
-
                 </div>
             </div>
         </div>
 
     </div>
 
+
     <!-- ==========================
-         CONTENIDO DINÁMICO
-         (Se incrusta dentro del módulo correspondiente
-          o se muestra aquí si no está mapeado)
+         PANEL INFERIOR
     ========================== -->
-    <div id="page-content-container">
-        {% block content %}{% endblock %}
+    <!-- ==========================
+     PANEL INFERIOR
+     Solo se mostrará cuando una vista lo use
+========================== -->
+
+{% block content %}{% endblock %}
+
+
     </div>
 
 </div>
@@ -414,126 +403,26 @@
      JS PARA EXPANSIÓN DE TARJETAS
 ========================== -->
 <script>
-function toggleModule(card, forceOpen = false) {
-
-    // Apertura forzada (cuando viene desde JS automático)
-    if (forceOpen) {
-        card.classList.add("open");
-        const content = card.querySelector(".module-content");
-        if (content) {
-            content.style.display = "block";
-        }
-        return;
-    }
-
-    const content = card.querySelector(".module-content");
-    if (!content) return;
+function toggleModule(card) {
 
     // Si ya está abierta, se cierra
     if (card.classList.contains("open")) {
         card.classList.remove("open");
-        content.style.display = "none";
+        card.querySelector(".module-content").style.display = "none";
         return;
     }
 
     // Cerrar cualquier otra tarjeta abierta
     document.querySelectorAll(".module-card.open").forEach(c => {
         c.classList.remove("open");
-        const mc = c.querySelector(".module-content");
-        if (mc) mc.style.display = "none";
+        c.querySelector(".module-content").style.display = "none";
     });
 
     // Abrir esta tarjeta
     card.classList.add("open");
-    content.style.display = "block";
+    card.querySelector(".module-content").style.display = "block";
 }
-
-// Auto-asignar contenido al módulo correcto según la vista
-document.addEventListener("DOMContentLoaded", function () {
-    const urlName = document.body.dataset.urlName || "";
-    const contentContainer = document.getElementById("page-content-container");
-
-    // Si no hay contenido en el bloque, no hacemos nada
-    if (!contentContainer || contentContainer.innerHTML.trim() === "") {
-        return;
-    }
-
-    // Mapeo de vistas -> módulos
-    const map = {
-        "eventos": [
-            "nuevo_evento",
-            "buscar_evento",
-            "evento_en_validacion",
-            "validacion_partes",
-            "detalle_parte_policial",
-            "ver_parte_policial",
-            "vista_previa_parte_modal",
-            "vista_busqueda_partes",
-            "vista_previa_evento",
-            "editar_evento",
-            "eliminar_evento",
-            "asignar_fiscalia_parte",
-            "historial_envios_fiscalia"
-        ],
-        "infracciones": [
-            "nueva_infraccion",
-            "vista_busqueda_partes_infracciones"
-        ],
-        "estadisticas": [
-            "estadisticas_geolocalizacion"
-        ],
-        "otros": [
-            "manuales_usuario",
-            "cambio_clave",
-            "cambio_clave_hecho",
-            "crear_usuario",
-            "lista_usuarios",
-            "editar_usuario"
-        ]
-        // constancias / otras aún sin vistas específicas
-    };
-
-    let targetModuleKey = null;
-    for (const [mod, names] of Object.entries(map)) {
-        if (names.includes(urlName)) {
-            targetModuleKey = mod;
-            break;
-        }
-    }
-
-    if (!targetModuleKey) {
-        // No está mapeado: mostramos el contenido abajo como siempre
-        return;
-    }
-
-    const slot = document.querySelector('.module-dynamic-slot[data-module="' + targetModuleKey + '"]');
-    if (!slot) {
-        return;
-    }
-
-    // Crear un panel interno bonito y mover el contenido ahí
-    const panel = document.createElement("div");
-    panel.className = "module-form-panel";
-    panel.innerHTML = contentContainer.innerHTML;
-
-    slot.appendChild(panel);
-
-    // Ocultar contenedor original
-    contentContainer.style.display = "none";
-
-    // Abrir el módulo correspondiente
-    const card = slot.closest(".module-card");
-    if (card) {
-        toggleModule(card, true);
-    }
-});
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-{% block script %}{% endblock %}
-{% if google_maps_api_key %}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
-{% endif %}
 
 </body>
 </html>
