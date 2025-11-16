@@ -13,20 +13,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
+
         /* ==========================
            ESTILO GLOBAL
         ========================== */
         body {
-            background: #0d1117;              /* Fondo dark */
+            background: #0d1117;
             font-family: "Inter", sans-serif;
             color: #e5e7eb;
             overflow-x: hidden;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+        a { text-decoration: none; color: inherit; }
 
         .container-dashboard {
             max-width: 1500px;
@@ -34,8 +32,18 @@
             padding: 40px 30px;
         }
 
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.12);
+            color: #d1d5db;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
         /* ==========================
-           HERO SUPERIOR
+           HERO
         ========================== */
         .hero-card {
             background: rgba(255,255,255,0.03);
@@ -67,135 +75,78 @@
             padding: 10px 26px;
             border-radius: 7px;
             font-weight: 500;
-            margin-right: 10px;
-        }
-
-        .btn-blue:hover {
-            background: #2563eb;
-        }
-
-        .btn-secondary-modern {
-            background: #1f2937;
-            color: #d1d5db;
-            border: 1px solid #374151;
-            padding: 10px 26px;
-            border-radius: 7px;
-            font-weight: 500;
-        }
-
-        .btn-secondary-modern:hover {
-            background: #111827;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.12);
-            color: #d1d5db;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
         }
 
         /* ==========================
-           MÉTRICAS LATERALES
+           TARJETAS DE MÓDULOS
+           (expansibles tipo acordeón)
         ========================== */
-        .metric-box {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 18px 22px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-        }
 
-        .metric-number {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #3b82f6;
-        }
-
-        .metric-label {
-            font-size: 0.86rem;
-            color: #9ca3af;
-        }
-
-        /* ==========================
-           BARRA DE INFO DE USUARIO
-        ========================== */
-        .user-info-bar {
-            background: rgba(34,197,94,0.10);
-            border-left: 4px solid #22c55e;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            color: #bbf7d0;
-        }
-
-        /* ==========================
-           TARJETAS DE MÓDULOS GRANDES
-        ========================== */
         .module-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.07);
             border-radius: 20px;
-            padding: 24px 24px 20px;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 0 45px rgba(0,0,0,0.3);
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
             margin-bottom: 25px;
         }
 
-        .module-header-label {
-            font-size: 0.76rem;
-            text-transform: uppercase;
-            color: #9ca3af;
-            margin-bottom: 6px;
+        .module-card:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateY(-3px);
         }
 
+        /* Título centrado */
         .module-title {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .module-subtitle {
-            color: #9ca3af;
-            font-size: 0.86rem;
-            margin-bottom: 16px;
-        }
-
-        /* Bloque clickeable por opción */
-        .module-option {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 10px 10px;
-            border-radius: 10px;
             margin-bottom: 6px;
-            transition: background 0.18s ease, transform 0.18s ease;
+        }
+
+        /* Subtítulo centrado */
+        .module-subtitle {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        /* Contenedor escondido */
+        .module-content {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        /* Animación suave al expandir */
+        .module-card.open .module-content {
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Opciones internas clickeables */
+        .module-option {
+            display: block;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            transition: background 0.2s ease, transform 0.15s ease;
         }
 
         .module-option:hover {
-            background: rgba(255,255,255,0.08);
-            transform: translateY(-1px);
-        }
-
-        .bullet {
-            width: 8px;
-            height: 8px;
-            background: #3b82f6;
-            border-radius: 50%;
-            margin-top: 7px;
-            flex-shrink: 0;
-        }
-
-        .option-text {
-            display: flex;
-            flex-direction: column;
+            background: rgba(255,255,255,0.10);
+            transform: translateX(3px);
         }
 
         .option-title {
-            font-size: 0.96rem;
+            font-size: 0.97rem;
             font-weight: 500;
         }
 
@@ -207,6 +158,7 @@
         /* ==========================
            PANELS INFERIORES
         ========================== */
+
         .panel-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
@@ -222,25 +174,6 @@
             margin-bottom: 10px;
         }
 
-        .list-item {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .list-item-title {
-            font-weight: 500;
-        }
-
-        .list-item small {
-            color: #9ca3af;
-        }
-
-        /* Responsive básico */
-        @media (max-width: 991px) {
-            .hero-card {
-                padding: 30px 24px;
-            }
-        }
     </style>
 
 </head>
@@ -249,8 +182,7 @@
 <div class="container-dashboard">
 
     <!-- ==========================
-         HERO PRINCIPAL
-         (título, texto, CTA y métricas)
+         HERO
     ========================== -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
@@ -258,280 +190,204 @@
         <h1 class="hero-title">Gestión integral de eventos y partes en tiempo real</h1>
 
         <p class="hero-sub">
-            Coordina eventos policiales, valida reportes, gestiona partes e información operativa
-            manteniendo trazabilidad completa de cada procedimiento.
+            Coordina eventos policiales, valida reportes, gestiona partes e información operativa con trazabilidad completa.
         </p>
 
-        <!-- Botones de acción principal -->
         <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
-        <a href="{% url 'manuales_usuario' %}" class="btn-secondary-modern">Manual del sistema</a>
-
-        <!-- Métricas del lado derecho -->
-        <div class="row mt-4">
-            <div class="col-md-3 offset-md-9">
-                <div class="metric-box">
-                    <div class="metric-number">24</div>
-                    <div class="metric-label">Eventos activos</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-number">8</div>
-                    <div class="metric-label">En validación</div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-number">12</div>
-                    <div class="metric-label">Partes registrados hoy</div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- ==========================
-         INFO DEL USUARIO LOGUEADO
-    ========================== -->
-    {% if request.user.is_authenticated and request.user.perfilusuario %}
-    <div class="user-info-bar">
-        Usuario: {{ nombre_usuario }} · Rol: {{ rol_usuario }} · Unidad:
-        {% if unidad_usuario %}
-            {{ unidad_usuario }}
-        {% else %}
-            No asignada
-        {% endif %}
-    </div>
-    {% endif %}
 
     <!-- ==========================
-         MÓDULOS PRINCIPALES COMO CUADRADOS GRANDES
-         (Eventos, Tránsito, Constancias, etc.)
+         MÓDULOS COMO CUADROS GRANDES
+         (expansibles)
     ========================== -->
+
     <div class="row">
 
-        <!-- Módulo: Eventos Policiales -->
+        <!-- ==========================
+             MÓDULO 1 - EVENTOS POLICIALES
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <!-- Cabecera del módulo -->
-                <div class="module-header-label">Módulo</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Eventos Policiales</div>
-                <div class="module-subtitle">
-                    Registro, consulta y validación de eventos y partes policiales.
+                <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
+
+                <div class="module-content">
+
+                    <a href="{% url 'nuevo_evento' %}" class="module-option">
+                        <div class="option-title">Nuevo evento policial</div>
+                        <div class="option-desc">Crear un nuevo registro de incidente.</div>
+                    </a>
+
+                    <a href="{% url 'buscar_evento' %}" class="module-option">
+                        <div class="option-title">Buscar evento</div>
+                        <div class="option-desc">Consultar por número, fecha o zona.</div>
+                    </a>
+
+                    <a href="{% url 'evento_en_validacion' %}" class="module-option">
+                        <div class="option-title">Eventos en validación</div>
+                        <div class="option-desc">Revisa los procedimientos pendientes.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Repositorio de partes</div>
+                        <div class="option-desc">Histórico de partes registrados.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Actas del detenido</div>
+                        <div class="option-desc">Consulta las actas asociadas.</div>
+                    </a>
+
+                    <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
+                        <div class="option-title">Búsqueda de partes</div>
+                        <div class="option-desc">Consulta por número o funcionario.</div>
+                    </a>
+
                 </div>
-
-                <!-- Opción: Nuevo evento -->
-                <a href="{% url 'nuevo_evento' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Nuevo evento policial</span>
-                        <span class="option-desc">Crear un nuevo registro de incidente con sus datos operativos.</span>
-                    </div>
-                </a>
-
-                <!-- Opción: Buscar evento -->
-                <a href="{% url 'buscar_evento' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Buscar evento</span>
-                        <span class="option-desc">Consultar eventos por número, fecha, lugar o unidad responsable.</span>
-                    </div>
-                </a>
-
-                <!-- Opción: Eventos en validación -->
-                <a href="{% url 'evento_en_validacion' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Eventos en validación</span>
-                        <span class="option-desc">Revisar procedimientos pendientes de validación y cierre.</span>
-                    </div>
-                </a>
-
-                <!-- Opción: Repositorio de partes -->
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Repositorio de partes</span>
-                        <span class="option-desc">Acceso al histórico de partes policiales registrados en la unidad.</span>
-                    </div>
-                </a>
-
-                <!-- Opción: Actas del detenido -->
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Actas del detenido</span>
-                        <span class="option-desc">Registro y consulta de actas asociadas a detenidos.</span>
-                    </div>
-                </a>
-
-                <!-- Opción: Búsqueda de partes -->
-                <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Búsqueda de partes</span>
-                        <span class="option-desc">Localizar partes por número, fecha, denunciante o funcionario.</span>
-                    </div>
-                </a>
             </div>
         </div>
 
-        <!-- Módulo: Infracción al Tránsito -->
+        <!-- ==========================
+             MÓDULO 2 - INFRACCIÓN AL TRÁNSITO
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-header-label">Módulo</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Infracción al Tránsito</div>
-                <div class="module-subtitle">
-                    Gestión de infracciones de tránsito y partes asociados.
+                <div class="module-subtitle">Gestión de infracciones y partes</div>
+
+                <div class="module-content">
+
+                    <a href="{% url 'nueva_infraccion' %}" class="module-option">
+                        <div class="option-title">Nueva infracción</div>
+                        <div class="option-desc">Registrar una infracción vehicular.</div>
+                    </a>
+
+                    <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
+                        <div class="option-title">Buscar infracción</div>
+                        <div class="option-desc">Consultar por fecha, patente o número.</div>
+                    </a>
+
                 </div>
-
-                <a href="{% url 'nueva_infraccion' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Nueva infracción</span>
-                        <span class="option-desc">Registrar una nueva infracción de tránsito con todos sus antecedentes.</span>
-                    </div>
-                </a>
-
-                <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Buscar infracción</span>
-                        <span class="option-desc">Consultar infracciones emitidas según número, patente o fecha.</span>
-                    </div>
-                </a>
             </div>
         </div>
 
-        <!-- Módulo: Constancias -->
+        <!-- ==========================
+             MÓDULO 3 - CONSTANCIAS
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-header-label">Módulo</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Constancias</div>
-                <div class="module-subtitle">
-                    Registro de constancias y certificados solicitados por la comunidad.
+                <div class="module-subtitle">Registro de constancias de ciudadanos</div>
+
+                <div class="module-content">
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Nueva constancia</div>
+                        <div class="option-desc">Ingreso de constancias generales.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Buscar constancia</div>
+                        <div class="option-desc">Consulta por fecha o motivo.</div>
+                    </a>
+
                 </div>
-
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Nueva constancia</span>
-                        <span class="option-desc">Ingresar una nueva constancia con los datos del solicitante.</span>
-                    </div>
-                </a>
-
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Buscar constancia</span>
-                        <span class="option-desc">Buscar constancias emitidas según fecha, motivo o persona.</span>
-                    </div>
-                </a>
             </div>
         </div>
 
-        <!-- Módulo: Otras Infracciones -->
+        <!-- ==========================
+             MÓDULO 4 - OTRAS INFRACCIONES
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-header-label">Módulo</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otras Infracciones</div>
-                <div class="module-subtitle">
-                    Controles y fiscalizaciones especiales de apoyo a la gestión.
+                <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
+
+                <div class="module-content">
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Control vehicular</div>
+                        <div class="option-desc">Registra fiscalizaciones en ruta.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Control entidades financieras</div>
+                        <div class="option-desc">Registra fiscalizaciones bancarias.</div>
+                    </a>
+
+                    <a href="#" class="module-option">
+                        <div class="option-title">Fiscalización de alcoholes</div>
+                        <div class="option-desc">Control de expendio de alcoholes.</div>
+                    </a>
+
                 </div>
-
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Control vehicular</span>
-                        <span class="option-desc">Registrar controles vehiculares y sus resultados.</span>
-                    </div>
-                </a>
-
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Control entidades financieras</span>
-                        <span class="option-desc">Registrar fiscalizaciones en bancos y entidades financieras.</span>
-                    </div>
-                </a>
-
-                <a href="#" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Fiscalización de alcoholes</span>
-                        <span class="option-desc">Controlar cumplimiento de normativa de expendio de alcoholes.</span>
-                    </div>
-                </a>
             </div>
         </div>
 
-        <!-- Módulo: Estadísticas -->
+        <!-- ==========================
+             MÓDULO 5 - ESTADÍSTICAS
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-header-label">Módulo</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Estadísticas</div>
-                <div class="module-subtitle">
-                    Visualización geográfica y análisis de eventos registrados.
-                </div>
+                <div class="module-subtitle">Análisis geográfico y operacional</div>
 
-                <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Mapa de geolocalización</span>
-                        <span class="option-desc">Visualizar eventos sobre el mapa para identificar patrones y zonas críticas.</span>
-                    </div>
-                </a>
+                <div class="module-content">
+
+                    <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
+                        <div class="option-title">Mapa de geolocalización</div>
+                        <div class="option-desc">Visualiza eventos sobre el mapa.</div>
+                    </a>
+
+                </div>
             </div>
         </div>
 
-        <!-- Módulo: Otros / Configuración -->
+        <!-- ==========================
+             MÓDULO 6 - OTROS
+        ========================== -->
         <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-header-label">Configuración</div>
+            <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otros</div>
-                <div class="module-subtitle">
-                    Opciones de cuenta, soporte y administración del sistema.
+                <div class="module-subtitle">Accesos de cuenta y administración</div>
+
+                <div class="module-content">
+
+                    <a href="{% url 'cambio_clave' %}" class="module-option">
+                        <div class="option-title">Cambio de clave</div>
+                        <div class="option-desc">Actualizar contraseña.</div>
+                    </a>
+
+                    <a href="{% url 'manuales_usuario' %}" class="module-option">
+                        <div class="option-title">Manuales</div>
+                        <div class="option-desc">Documentos de apoyo.</div>
+                    </a>
+
+                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                    <a href="{% url 'crear_usuario' %}" class="module-option">
+                        <div class="option-title">Configuración de usuarios</div>
+                        <div class="option-desc">Administración de cuentas del sistema.</div>
+                    </a>
+                    {% endif %}
+
+                    <a href="{% url 'logout' %}" class="module-option">
+                        <div class="option-title">Salir</div>
+                        <div class="option-desc">Cerrar sesión de forma segura.</div>
+                    </a>
+
                 </div>
-
-                <a href="{% url 'cambio_clave' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Cambio de clave</span>
-                        <span class="option-desc">Actualizar la contraseña de acceso al sistema.</span>
-                    </div>
-                </a>
-
-                <a href="{% url 'manuales_usuario' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Manuales de usuario</span>
-                        <span class="option-desc">Descargar o revisar documentos de ayuda y procedimientos.</span>
-                    </div>
-                </a>
-
-                {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                <a href="{% url 'crear_usuario' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Configuración de usuarios</span>
-                        <span class="option-desc">Crear, modificar y administrar cuentas de usuarios del sistema.</span>
-                    </div>
-                </a>
-                {% endif %}
-
-                <a href="{% url 'logout' %}" class="module-option">
-                    <span class="bullet"></span>
-                    <div class="option-text">
-                        <span class="option-title">Salir del sistema</span>
-                        <span class="option-desc">Cerrar sesión de GeoDepol de forma segura.</span>
-                    </div>
-                </a>
             </div>
         </div>
 
     </div>
 
+
     <!-- ==========================
-         PANEL INFERIOR: CONTENIDO + BITÁCORA
+         PANEL INFERIOR
     ========================== -->
     <div class="row mt-3">
 
-        <!-- Panel: Eventos en validación (usa tu block content habitual) -->
         <div class="col-md-8">
             <div class="panel-card">
                 <div class="tag">Eventos · Validación</div>
@@ -543,26 +399,19 @@
             </div>
         </div>
 
-        <!-- Panel: Bitácora en vivo -->
         <div class="col-md-4">
             <div class="panel-card">
                 <div class="tag">Bitácora · Operativa</div>
                 <div class="panel-title">Bitácora en vivo</div>
-                <p class="hero-sub" style="font-size:0.86rem; margin-bottom:12px;">
-                    Últimas actualizaciones registradas en el sistema.
-                </p>
 
                 <div class="list-item">
                     <div class="list-item-title">Evento EVT-221 actualizado</div>
                     <small>Comando Central · hace 5 min</small>
                 </div>
+
                 <div class="list-item">
                     <div class="list-item-title">Parte PAR-441 ingresado</div>
                     <small>Unidad Sur · hace 12 min</small>
-                </div>
-                <div class="list-item">
-                    <div class="list-item-title">Validación completada en EVT-200</div>
-                    <small>Fiscalía · hace 28 min</small>
                 </div>
 
             </div>
@@ -572,12 +421,31 @@
 
 </div>
 
+
 <!-- ==========================
-     SCRIPTS
+     JS PARA EXPANSIÓN DE TARJETAS
 ========================== -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-{% block script %}{% endblock %}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+<script>
+function toggleModule(card) {
+
+    // Si ya está abierta, se cierra
+    if (card.classList.contains("open")) {
+        card.classList.remove("open");
+        card.querySelector(".module-content").style.display = "none";
+        return;
+    }
+
+    // Cerrar cualquier otra tarjeta abierta
+    document.querySelectorAll(".module-card.open").forEach(c => {
+        c.classList.remove("open");
+        c.querySelector(".module-content").style.display = "none";
+    });
+
+    // Abrir esta tarjeta
+    card.classList.add("open");
+    card.querySelector(".module-content").style.display = "block";
+}
+</script>
 
 </body>
 </html>
