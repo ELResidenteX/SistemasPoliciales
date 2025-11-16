@@ -19,15 +19,42 @@
             overflow-x: hidden;
         }
 
-        a { text-decoration: none; }
+        a { text-decoration: none; color: inherit; }
+
+        .navbar-custom {
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(8px);
+            padding: 14px 25px;
+            margin-bottom: 30px;
+        }
+
+        .navbar-custom .nav-link {
+            color: #e5e7eb !important;
+            font-size: 0.92rem;
+            margin-right: 20px;
+        }
+
+        .navbar-custom .dropdown-menu {
+            background: #111827;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .dropdown-item {
+            color: #d1d5db !important;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
 
         .container-dashboard {
             max-width: 1500px;
             margin: auto;
-            padding: 40px 30px;
+            padding: 0px 30px 40px;
         }
 
-        /* CARD PRINCIPAL HERO */
         .hero-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(12px);
@@ -70,7 +97,6 @@
             font-weight: 500;
         }
 
-        /* MÉTRICAS */
         .metric-box {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
@@ -90,7 +116,6 @@
             color: #9ca3af;
         }
 
-        /* TARJETAS SECUNDARIAS */
         .panel-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
@@ -137,7 +162,6 @@
             margin-bottom: 10px;
         }
 
-        /* LISTADOS */
         .list-item {
             padding: 12px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -152,15 +176,104 @@
         }
 
     </style>
-
 </head>
 
 <body>
 
+<!-- ======================= MENÚ SUPERIOR ======================= -->
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <a class="navbar-brand text-white fw-bold" href="#">GeoDepol</a>
+
+    <button class="navbar-toggler bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarMenu">
+
+        <ul class="navbar-nav me-auto">
+
+            <!-- EVENTOS POLICIALES -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Eventos Policiales</a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'nuevo_evento' %}">Nuevo evento</a></li>
+                    <li><a class="dropdown-item" href="{% url 'buscar_evento' %}">Buscar evento</a></li>
+                    <li><a class="dropdown-item" href="{% url 'evento_en_validacion' %}">Eventos en validación</a></li>
+                    <li><a class="dropdown-item" href="#">Repositorio de partes</a></li>
+                    <li><a class="dropdown-item" href="#">Actas del detenido</a></li>
+                    <li><a class="dropdown-item" href="{% url 'vista_busqueda_partes' %}">Búsqueda de partes</a></li>
+                </ul>
+            </li>
+
+            <!-- INFRACCIÓN AL TRÁNSITO -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Infracción al Tránsito</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'nueva_infraccion' %}">Nueva infracción</a></li>
+                    <li><a class="dropdown-item" href="{% url 'vista_busqueda_partes_infracciones' %}">Buscar infracción</a></li>
+                </ul>
+            </li>
+
+            <!-- CONSTANCIAS -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Constancias</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Nueva constancia</a></li>
+                    <li><a class="dropdown-item" href="#">Buscar constancia</a></li>
+                </ul>
+            </li>
+
+            <!-- OTRAS INFRACCIONES -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Otras Infracciones</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Control vehicular</a></li>
+                    <li><a class="dropdown-item" href="#">Control entidades financieras</a></li>
+                    <li><a class="dropdown-item" href="#">Fiscalización de alcoholes</a></li>
+                </ul>
+            </li>
+
+            <!-- ESTADÍSTICAS -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Estadísticas</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'estadisticas_geolocalizacion' %}">Mapa de geolocalización</a></li>
+                </ul>
+            </li>
+
+            <!-- OTROS -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Otros</a>
+                <ul class="dropdown-menu">
+
+                    <li><a class="dropdown-item" href="{% url 'cambio_clave' %}">Cambio de clave</a></li>
+                    <li><a class="dropdown-item" href="{% url 'manuales_usuario' %}">Manuales usuario</a></li>
+
+                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                    <li><a class="dropdown-item" href="{% url 'crear_usuario' %}">Configuración de usuarios</a></li>
+                    {% endif %}
+
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
+
+                </ul>
+            </li>
+
+        </ul>
+
+        <span class="text-light small">
+            {{ nombre_usuario }} — {{ rol_usuario }}
+        </span>
+
+    </div>
+</nav>
+
+<!-- ======================= DASHBOARD ======================= -->
+
 <div class="container-dashboard">
 
-    <!-- ================= HERO PRINCIPAL ================= -->
-
+    <!-- HERO PRINCIPAL -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
 
@@ -198,16 +311,15 @@
 
     </div>
 
-    <!-- ================= TARJETAS SECUNDARIAS ================= -->
-
+    <!-- TARJETAS SECUNDARIAS -->
     <div class="row">
 
-        <!-- TARJETA IZQUIERDA: NUEVO EVENTO -->
         <div class="col-md-6">
             <div class="panel-card">
 
                 <div class="tag">Crear Evento · Tiempo estimado: 2 min</div>
                 <div class="panel-title">Registrar un nuevo evento policial</div>
+
                 <div class="panel-subtitle">
                     Define datos iniciales del procedimiento, adjunta información operativa y valida cuando corresponda.
                 </div>
@@ -223,12 +335,12 @@
             </div>
         </div>
 
-        <!-- TARJETA DERECHA: BUSCAR PARTES -->
         <div class="col-md-6">
             <div class="panel-card">
 
                 <div class="tag">Búsqueda de partes · Resultado inmediato</div>
                 <div class="panel-title">Busca partes y documentos operativos</div>
+
                 <div class="panel-subtitle">
                     Consulta partes policiales, infracciones y actas según número, fecha o unidad responsable.
                 </div>
@@ -257,11 +369,9 @@
 
     </div>
 
-    <!-- ================= PANEL INFERIOR ================= -->
-
+    <!-- PANEL INFERIOR -->
     <div class="row">
 
-        <!-- EVENTOS EN VALIDACIÓN -->
         <div class="col-md-8">
             <div class="panel-card">
 
@@ -275,12 +385,12 @@
             </div>
         </div>
 
-        <!-- BITÁCORA EN VIVO -->
         <div class="col-md-4">
             <div class="panel-card">
 
                 <div class="tag">Bitácora · Operativa</div>
                 <div class="panel-title">Bitácora en vivo</div>
+
                 <div class="panel-subtitle">Últimas actualizaciones del sistema</div>
 
                 <div class="list-item">
@@ -305,13 +415,9 @@
 
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block script %}{% endblock %}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 
 </body>
 </html>
-
-
-
