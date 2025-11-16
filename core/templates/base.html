@@ -21,40 +21,13 @@
 
         a { text-decoration: none; color: inherit; }
 
-        .navbar-custom {
-            background: rgba(255,255,255,0.03);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(8px);
-            padding: 14px 25px;
-            margin-bottom: 30px;
-        }
-
-        .navbar-custom .nav-link {
-            color: #e5e7eb !important;
-            font-size: 0.92rem;
-            margin-right: 20px;
-        }
-
-        .navbar-custom .dropdown-menu {
-            background: #111827;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-
-        .dropdown-item {
-            color: #d1d5db !important;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
         .container-dashboard {
             max-width: 1500px;
             margin: auto;
-            padding: 0px 30px 40px;
+            padding: 40px 30px;
         }
 
+        /* HERO PRINCIPAL */
         .hero-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(12px);
@@ -62,7 +35,7 @@
             padding: 45px 50px;
             border: 1px solid rgba(255,255,255,0.05);
             box-shadow: 0 0 50px rgba(0,0,0,0.45);
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .hero-title {
@@ -97,6 +70,7 @@
             font-weight: 500;
         }
 
+        /* MÉTRICAS */
         .metric-box {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
@@ -116,26 +90,37 @@
             color: #9ca3af;
         }
 
+        /* TARJETAS GENERALES */
         .panel-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
             border-radius: 18px;
-            padding: 30px;
+            padding: 24px 24px 20px;
             backdrop-filter: blur(12px);
             box-shadow: 0 0 45px rgba(0,0,0,0.3);
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
 
         .panel-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .panel-subtitle {
             color: #9ca3af;
-            font-size: 0.86rem;
-            margin-bottom: 18px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.12);
+            color: #d1d5db;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
         }
 
         .form-control {
@@ -152,18 +137,8 @@
             box-shadow: none;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.12);
-            color: #d1d5db;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
-        }
-
         .list-item {
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
@@ -175,101 +150,53 @@
             color: #9ca3af;
         }
 
+        .text-soft {
+            color: #9ca3af;
+            font-size: 0.87rem;
+        }
+
+        /* TARJETAS DE MÓDULOS */
+        .module-card .action-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.9rem;
+            color: #e5e7eb;
+        }
+
+        .module-card .action-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .module-card .bullet {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #3b82f6;
+            margin-right: 8px;
+        }
+
+        .module-card .action-main {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info-bar {
+            background: rgba(34,197,94,0.1);
+            border-left: 4px solid #22c55e;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            color: #bbf7d0;
+        }
+
     </style>
 </head>
 
 <body>
-
-<!-- ======================= MENÚ SUPERIOR ======================= -->
-
-<nav class="navbar navbar-expand-lg navbar-custom">
-    <a class="navbar-brand text-white fw-bold" href="#">GeoDepol</a>
-
-    <button class="navbar-toggler bg-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarMenu">
-
-        <ul class="navbar-nav me-auto">
-
-            <!-- EVENTOS POLICIALES -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Eventos Policiales</a>
-
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'nuevo_evento' %}">Nuevo evento</a></li>
-                    <li><a class="dropdown-item" href="{% url 'buscar_evento' %}">Buscar evento</a></li>
-                    <li><a class="dropdown-item" href="{% url 'evento_en_validacion' %}">Eventos en validación</a></li>
-                    <li><a class="dropdown-item" href="#">Repositorio de partes</a></li>
-                    <li><a class="dropdown-item" href="#">Actas del detenido</a></li>
-                    <li><a class="dropdown-item" href="{% url 'vista_busqueda_partes' %}">Búsqueda de partes</a></li>
-                </ul>
-            </li>
-
-            <!-- INFRACCIÓN AL TRÁNSITO -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Infracción al Tránsito</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'nueva_infraccion' %}">Nueva infracción</a></li>
-                    <li><a class="dropdown-item" href="{% url 'vista_busqueda_partes_infracciones' %}">Buscar infracción</a></li>
-                </ul>
-            </li>
-
-            <!-- CONSTANCIAS -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Constancias</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Nueva constancia</a></li>
-                    <li><a class="dropdown-item" href="#">Buscar constancia</a></li>
-                </ul>
-            </li>
-
-            <!-- OTRAS INFRACCIONES -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Otras Infracciones</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Control vehicular</a></li>
-                    <li><a class="dropdown-item" href="#">Control entidades financieras</a></li>
-                    <li><a class="dropdown-item" href="#">Fiscalización de alcoholes</a></li>
-                </ul>
-            </li>
-
-            <!-- ESTADÍSTICAS -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Estadísticas</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'estadisticas_geolocalizacion' %}">Mapa de geolocalización</a></li>
-                </ul>
-            </li>
-
-            <!-- OTROS -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Otros</a>
-                <ul class="dropdown-menu">
-
-                    <li><a class="dropdown-item" href="{% url 'cambio_clave' %}">Cambio de clave</a></li>
-                    <li><a class="dropdown-item" href="{% url 'manuales_usuario' %}">Manuales usuario</a></li>
-
-                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                    <li><a class="dropdown-item" href="{% url 'crear_usuario' %}">Configuración de usuarios</a></li>
-                    {% endif %}
-
-                    <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
-
-                </ul>
-            </li>
-
-        </ul>
-
-        <span class="text-light small">
-            {{ nombre_usuario }} — {{ rol_usuario }}
-        </span>
-
-    </div>
-</nav>
-
-<!-- ======================= DASHBOARD ======================= -->
 
 <div class="container-dashboard">
 
@@ -287,127 +214,301 @@
         <a href="{% url 'manuales_usuario' %}" class="btn-secondary-modern">Ver manuales</a>
 
         <div class="row mt-4">
-
             <div class="col-md-3 offset-md-9">
-
                 <div class="metric-box">
                     <div class="metric-number">24</div>
                     <div class="metric-label">Eventos activos</div>
                 </div>
-
                 <div class="metric-box">
                     <div class="metric-number">8</div>
                     <div class="metric-label">Eventos en validación</div>
                 </div>
-
                 <div class="metric-box">
                     <div class="metric-number">12</div>
                     <div class="metric-label">Partes registrados hoy</div>
                 </div>
-
             </div>
+        </div>
+    </div>
 
+    {% if request.user.is_authenticated and request.user.perfilusuario %}
+    <div class="user-info-bar">
+        Usuario: {{ nombre_usuario }} · Rol: {{ rol_usuario }} · Unidad:
+        {% if unidad_usuario %}
+            {{ unidad_usuario }}
+        {% else %}
+            <span class="text-soft">Sin unidad asignada</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- CUADRADOS / MÓDULOS PRINCIPALES -->
+    <div class="row">
+
+        <!-- Eventos Policiales -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Módulo</div>
+                <div class="panel-title">Eventos Policiales</div>
+                <div class="panel-subtitle">
+                    Registro, consulta y validación de eventos y partes policiales.
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'nuevo_evento' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Nuevo evento policial
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'buscar_evento' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Buscar evento
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'evento_en_validacion' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Eventos en validación
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Repositorio de partes
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Actas del detenido
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'vista_busqueda_partes' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Búsqueda de partes
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infracción al Tránsito -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Módulo</div>
+                <div class="panel-title">Infracción al Tránsito</div>
+                <div class="panel-subtitle">
+                    Gestión de infracciones y partes asociados al tránsito.
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'nueva_infraccion' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Nueva infracción
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'vista_busqueda_partes_infracciones' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Buscar infracción
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Constancias -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Módulo</div>
+                <div class="panel-title">Constancias</div>
+                <div class="panel-subtitle">
+                    Registro de constancias y certificados solicitados por la ciudadanía.
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Nueva constancia
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Buscar constancia
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Otras Infracciones -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Módulo</div>
+                <div class="panel-title">Otras Infracciones</div>
+                <div class="panel-subtitle">
+                    Controles y fiscalizaciones especiales de apoyo a la gestión.
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Control vehicular
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Control entidades financieras
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="#">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Fiscalización de alcoholes
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Módulo</div>
+                <div class="panel-title">Estadísticas</div>
+                <div class="panel-subtitle">
+                    Visualización geográfica y análisis de eventos registrados.
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'estadisticas_geolocalizacion' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Mapa de geolocalización
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Otros -->
+        <div class="col-md-4">
+            <div class="panel-card module-card">
+                <div class="tag">Configuración</div>
+                <div class="panel-title">Otros</div>
+                <div class="panel-subtitle">
+                    Opciones de cuenta, soporte y administración del sistema.
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'cambio_clave' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Cambio de clave
+                        </div>
+                    </a>
+                </div>
+
+                <div class="action-link">
+                    <a href="{% url 'manuales_usuario' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Manuales de usuario
+                        </div>
+                    </a>
+                </div>
+
+                {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                <div class="action-link">
+                    <a href="{% url 'crear_usuario' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Configuración de usuarios
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                <div class="action-link">
+                    <a href="{% url 'logout' %}">
+                        <div class="action-main">
+                            <span class="bullet"></span>
+                            Salir del sistema
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
 
     </div>
 
-    <!-- TARJETAS SECUNDARIAS -->
-    <div class="row">
-
-        <div class="col-md-6">
-            <div class="panel-card">
-
-                <div class="tag">Crear Evento · Tiempo estimado: 2 min</div>
-                <div class="panel-title">Registrar un nuevo evento policial</div>
-
-                <div class="panel-subtitle">
-                    Define datos iniciales del procedimiento, adjunta información operativa y valida cuando corresponda.
-                </div>
-
-                <ul class="text-soft">
-                    <li>Datos de ocurrencia, zona y situación inicial.</li>
-                    <li>Equipo policial, turno y responsables.</li>
-                    <li>Validación por unidad y posterior envío a Fiscalía.</li>
-                </ul>
-
-                <a href="{% url 'nuevo_evento' %}" class="btn-blue mt-3">Nuevo evento</a>
-
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="panel-card">
-
-                <div class="tag">Búsqueda de partes · Resultado inmediato</div>
-                <div class="panel-title">Busca partes y documentos operativos</div>
-
-                <div class="panel-subtitle">
-                    Consulta partes policiales, infracciones y actas según número, fecha o unidad responsable.
-                </div>
-
-                <form method="GET" action="{% url 'vista_busqueda_partes' %}">
-                    <input type="text" name="q" class="form-control mb-3" placeholder="Buscar por número de parte, evento o funcionario">
-                </form>
-
-                <div class="list-item">
-                    <div class="list-item-title">PAR-3342</div>
-                    <small>Robo a comercio — Mirete 842 · Actualizado hace 12 min</small>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-item-title">PAR-3318</div>
-                    <small>Violencia intrafamiliar — Barrio El Rosario · Actualizado hace 25 min</small>
-                </div>
-
-                <div class="list-item">
-                    <div class="list-item-title">PAR-3311</div>
-                    <small>Colisión múltiple — Autopista Sur · Actualizado hace 41 min</small>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-    <!-- PANEL INFERIOR -->
-    <div class="row">
+    <!-- PANEL INFERIOR: EVENTOS + BITÁCORA -->
+    <div class="row mt-3">
 
         <div class="col-md-8">
             <div class="panel-card">
-
                 <div class="tag">Eventos · Validación</div>
                 <div class="panel-title">Eventos en validación</div>
 
                 {% block content %}
                 {% include "core/presentacion.html" %}
                 {% endblock %}
-
             </div>
         </div>
 
         <div class="col-md-4">
             <div class="panel-card">
-
                 <div class="tag">Bitácora · Operativa</div>
                 <div class="panel-title">Bitácora en vivo</div>
-
                 <div class="panel-subtitle">Últimas actualizaciones del sistema</div>
 
                 <div class="list-item">
                     <div class="list-item-title">Evento EVT-221 actualizado</div>
                     <small>Comando Central · hace 5 min</small>
                 </div>
-
                 <div class="list-item">
                     <div class="list-item-title">Parte PAR-441 ingresado</div>
                     <small>Unidad Sur · hace 12 min</small>
                 </div>
-
                 <div class="list-item">
                     <div class="list-item-title">Validación completada en EVT-200</div>
                     <small>Fiscalía · hace 28 min</small>
                 </div>
-
             </div>
         </div>
 
@@ -421,3 +522,5 @@
 
 </body>
 </html>
+
+
