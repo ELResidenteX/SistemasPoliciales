@@ -4,390 +4,314 @@
     {% load static %}
     <meta charset="UTF-8">
 
-    <title>{% block title %}Sistema Policial{% endblock %}</title>
+    <title>{% block title %}GeoDepol{% endblock %}</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Fuente Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-        /* ==============================
-           ESTÉTICA GLOBAL – TEMA DARK
-        ============================== */
+
         body {
-            background: #0c0f14;
+            background: #0d1117;
             font-family: "Inter", sans-serif;
             color: #e5e7eb;
+            overflow-x: hidden;
         }
 
         a { text-decoration: none; }
 
-        /* ==============================
-           SIDEBAR
-        ============================== */
-        .sidebar {
-            width: 250px;
-            min-height: 100vh;
-            background: #0f1621;
-            border-right: 1px solid rgba(255,255,255,0.06);
-            padding: 25px 20px;
+        .container-dashboard {
+            max-width: 1500px;
+            margin: auto;
+            padding: 40px 30px;
         }
 
-        .sidebar h3 {
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            color: #9ca3af;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .accordion-button {
+        /* CARD PRINCIPAL HERO */
+        .hero-card {
             background: rgba(255,255,255,0.03);
-            color: #d1d5db;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border: none;
-            transition: 0.3s;
-        }
-
-        .accordion-button:not(.collapsed) {
-            background: rgba(59,130,246,0.20);
-            color: #3b82f6;
-            font-weight: 600;
-        }
-
-        .accordion-body ul li a {
-            display: block;
-            color: #9ca3af;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.86rem;
-        }
-
-        .accordion-body ul li a:hover {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-        }
-
-        /* ==============================
-           CONTENIDO PRINCIPAL
-        ============================== */
-        .main {
-            padding: 40px;
-        }
-
-        /* ==============================
-           TARJETAS GLASSMORPHISM
-        ============================== */
-        .glass-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 30px;
             backdrop-filter: blur(12px);
-            box-shadow: 0 0 50px rgba(0,0,0,0.35);
-            margin-bottom: 35px;
+            border-radius: 22px;
+            padding: 45px 50px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 50px rgba(0,0,0,0.45);
+            margin-bottom: 40px;
         }
 
-        /* ==============================
-           HERO PRINCIPAL
-        ============================== */
         .hero-title {
             font-size: 2.2rem;
             font-weight: 600;
+            margin-bottom: 12px;
         }
 
         .hero-sub {
             font-size: 1rem;
             color: #9ca3af;
             margin-bottom: 25px;
+            max-width: 650px;
         }
 
-        .btn-primary-modern {
+        .btn-blue {
             background: #3b82f6;
-            color: #fff;
+            color: white;
             border: none;
-            padding: 10px 22px;
+            padding: 10px 26px;
             border-radius: 7px;
             font-weight: 500;
-            transition: 0.2s;
+            margin-right: 10px;
         }
 
-        .btn-primary-modern:hover {
-            background: #2563eb;
+        .btn-secondary-modern {
+            background: #1f2937;
+            color: #d1d5db;
+            border: 1px solid #374151;
+            padding: 10px 26px;
+            border-radius: 7px;
+            font-weight: 500;
         }
 
-        /* ==============================
-           MÉTRICAS HERO DERECHA
-        ============================== */
+        /* MÉTRICAS */
         .metric-box {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.08);
-            padding: 18px 20px;
-            border-radius: 12px;
+            padding: 18px 22px;
+            border-radius: 14px;
             margin-bottom: 12px;
         }
 
         .metric-number {
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             font-weight: 600;
             color: #3b82f6;
         }
 
         .metric-label {
+            font-size: 0.86rem;
             color: #9ca3af;
-            font-size: 0.8rem;
         }
 
-        /* ==============================
-           INPUTS
-        ============================== */
+        /* TARJETAS SECUNDARIAS */
+        .panel-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 18px;
+            padding: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 45px rgba(0,0,0,0.3);
+            margin-bottom: 35px;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .panel-subtitle {
+            color: #9ca3af;
+            font-size: 0.86rem;
+            margin-bottom: 18px;
+        }
+
         .form-control {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
             color: white;
-            border-radius: 7px;
+            border-radius: 8px;
         }
 
         .form-control:focus {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.12);
             border-color: #3b82f6;
-            box-shadow: none;
             color: white;
+            box-shadow: none;
         }
 
-        /* ==============================
-           TITULOS CARDS
-        ============================== */
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 5px;
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.12);
+            color: #d1d5db;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
         }
 
-        .section-sub {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-        }
-
-        /* ==============================
-           EVENTOS Y BITÁCORA
-        ============================== */
+        /* LISTADOS */
         .list-item {
-            padding: 10px 0;
+            padding: 12px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .list-item-title {
+            font-weight: 500;
         }
 
         .list-item small {
             color: #9ca3af;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 4px 8px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: #d1d5db;
-        }
-
     </style>
+
 </head>
 
 <body>
 
-<div class="d-flex">
+<div class="container-dashboard">
 
-    <!-- ============================================
-         SIDEBAR
-    ============================================ -->
-    <div class="sidebar">
+    <!-- ================= HERO PRINCIPAL ================= -->
 
-        <h3>Menú</h3>
+    <div class="hero-card">
+        <div class="tag">GeoDepol · Centro Operativo</div>
 
-        <div class="accordion" id="menuAcordeon">
+        <h1 class="hero-title">Gestión integral de eventos y partes en tiempo real</h1>
 
-            <!-- EVENTOS POLICIALES -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#eventos">
-                        Eventos Policiales
-                    </button>
-                </h2>
-                <div id="eventos" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-                            <li><a href="{% url 'nuevo_evento' %}">Nuevo</a></li>
-                            <li><a href="{% url 'buscar_evento' %}">Buscar Evento</a></li>
-                            <li><a href="{% url 'evento_en_validacion' %}">Eventos en Validación</a></li>
-                            <li><a href="#">Repositorio de partes</a></li>
-                            <li><a href="#">Actas del Detenido</a></li>
-                            <li><a href="{% url 'vista_busqueda_partes' %}">Búsqueda de partes</a></li>
-                        </ul>
-                    </div>
+        <p class="hero-sub">
+            Coordina eventos policiales, valida reportes, gestiona partes y administra información operativa sin perder trazabilidad.
+        </p>
+
+        <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
+        <a href="{% url 'manuales_usuario' %}" class="btn-secondary-modern">Ver manuales</a>
+
+        <div class="row mt-4">
+
+            <div class="col-md-3 offset-md-9">
+
+                <div class="metric-box">
+                    <div class="metric-number">24</div>
+                    <div class="metric-label">Eventos activos</div>
                 </div>
-            </div>
 
-            <!-- INFRACCIÓN TRÁNSITO -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#transito">
-                        Infracción al Tránsito
-                    </button>
-                </h2>
-                <div id="transito" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-                            <li><a href="{% url 'nueva_infraccion' %}">Nueva Infracción</a></li>
-                            <li><a href="{% url 'vista_busqueda_partes_infracciones' %}">Búsqueda de parte</a></li>
-                        </ul>
-                    </div>
+                <div class="metric-box">
+                    <div class="metric-number">8</div>
+                    <div class="metric-label">Eventos en validación</div>
                 </div>
-            </div>
 
-            <!-- CONSTANCIAS -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#constancias">
-                        Constancias
-                    </button>
-                </h2>
-                <div id="constancias" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-                            <li><a href="#">Nueva</a></li>
-                            <li><a href="#">Buscar constancia</a></li>
-                        </ul>
-                    </div>
+                <div class="metric-box">
+                    <div class="metric-number">12</div>
+                    <div class="metric-label">Partes registrados hoy</div>
                 </div>
-            </div>
 
-            <!-- OTRAS -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#otras">
-                        Otras Infracciones
-                    </button>
-                </h2>
-                <div id="otras" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-                            <li><a href="#">Control vehicular</a></li>
-                            <li><a href="#">Control entidades financieras</a></li>
-                            <li><a href="#">Fiscalización de alcoholes</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ESTADISTICAS -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#estadisticas">
-                        Estadísticas
-                    </button>
-                </h2>
-                <div id="estadisticas" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-                            <li><a href="{% url 'estadisticas_geolocalizacion' %}">Mapa de geolocalización</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- OTROS -->
-            <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#otros">
-                        Otros
-                    </button>
-                </h2>
-                <div id="otros" class="accordion-collapse collapse">
-                    <div class="accordion-body p-2">
-                        <ul class="list-unstyled">
-
-                            <li><a href="{% url 'cambio_clave' %}">Cambio de clave</a></li>
-                            <li><a href="{% url 'manuales_usuario' %}">Manuales</a></li>
-
-                            {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                            <li><a href="{% url 'crear_usuario' %}">Configuración de usuarios</a></li>
-                            {% endif %}
-
-                            <li><a href="{% url 'logout' %}">Salir</a></li>
-
-                        </ul>
-                    </div>
-                </div>
             </div>
 
         </div>
+
     </div>
 
-    <!-- ============================================
-         CONTENIDO PRINCIPAL – DISEÑO EXACTO
-    ============================================ -->
-    <div class="main flex-grow-1">
+    <!-- ================= TARJETAS SECUNDARIAS ================= -->
 
-        <!-- ==== TARJETA SUPERIOR (HERO) ==== -->
+    <div class="row">
 
-        <div class="glass-card">
+        <!-- TARJETA IZQUIERDA: NUEVO EVENTO -->
+        <div class="col-md-6">
+            <div class="panel-card">
 
-            <span class="tag">Sistema Policial · Centro Operativo</span>
-
-            <h1 class="hero-title mt-3">
-                Gestión integral de eventos y partes en tiempo real
-            </h1>
-
-            <p class="hero-sub">
-                Coordina operativos, valida reportes y revisa decisiones críticas con rapidez.
-                Visualiza el estado de cada evento sin perder trazabilidad.
-            </p>
-
-            <button class="btn-primary-modern">Crear evento</button>
-            <button class="btn-primary-modern" style="background:#1f2937;border:1px solid #374151;">Ver protocolos</button>
-
-            <div class="row mt-4">
-
-                <div class="col-md-3 offset-md-9">
-
-                    <div class="metric-box">
-                        <div class="metric-number">24</div>
-                        <div class="metric-label">Eventos activos</div>
-                    </div>
-
-                    <div class="metric-box">
-                        <div class="metric-number">8</div>
-                        <div class="metric-label">Validaciones pendientes</div>
-                    </div>
-
-                    <div class="metric-box">
-                        <div class="metric-number">12</div>
-                        <div class="metric-label">Equipos en turno</div>
-                    </div>
-
+                <div class="tag">Crear Evento · Tiempo estimado: 2 min</div>
+                <div class="panel-title">Registrar un nuevo evento policial</div>
+                <div class="panel-subtitle">
+                    Define datos iniciales del procedimiento, adjunta información operativa y valida cuando corresponda.
                 </div>
-            </div>
 
+                <ul class="text-soft">
+                    <li>Datos de ocurrencia, zona y situación inicial.</li>
+                    <li>Equipo policial, turno y responsables.</li>
+                    <li>Validación por unidad y posterior envío a Fiscalía.</li>
+                </ul>
+
+                <a href="{% url 'nuevo_evento' %}" class="btn-blue mt-3">Nuevo evento</a>
+
+            </div>
         </div>
 
-        <!-- ==== AQUI SE CARGAN TUS VISTAS REALES ==== -->
-        {% block content %}
-        {% include "core/presentacion.html" %}
-        {% endblock %}
+        <!-- TARJETA DERECHA: BUSCAR PARTES -->
+        <div class="col-md-6">
+            <div class="panel-card">
+
+                <div class="tag">Búsqueda de partes · Resultado inmediato</div>
+                <div class="panel-title">Busca partes y documentos operativos</div>
+                <div class="panel-subtitle">
+                    Consulta partes policiales, infracciones y actas según número, fecha o unidad responsable.
+                </div>
+
+                <form method="GET" action="{% url 'vista_busqueda_partes' %}">
+                    <input type="text" name="q" class="form-control mb-3" placeholder="Buscar por número de parte, evento o funcionario">
+                </form>
+
+                <div class="list-item">
+                    <div class="list-item-title">PAR-3342</div>
+                    <small>Robo a comercio — Mirete 842 · Actualizado hace 12 min</small>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-title">PAR-3318</div>
+                    <small>Violencia intrafamiliar — Barrio El Rosario · Actualizado hace 25 min</small>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-title">PAR-3311</div>
+                    <small>Colisión múltiple — Autopista Sur · Actualizado hace 41 min</small>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= PANEL INFERIOR ================= -->
+
+    <div class="row">
+
+        <!-- EVENTOS EN VALIDACIÓN -->
+        <div class="col-md-8">
+            <div class="panel-card">
+
+                <div class="tag">Eventos · Validación</div>
+                <div class="panel-title">Eventos en validación</div>
+
+                {% block content %}
+                {% include "core/presentacion.html" %}
+                {% endblock %}
+
+            </div>
+        </div>
+
+        <!-- BITÁCORA EN VIVO -->
+        <div class="col-md-4">
+            <div class="panel-card">
+
+                <div class="tag">Bitácora · Operativa</div>
+                <div class="panel-title">Bitácora en vivo</div>
+                <div class="panel-subtitle">Últimas actualizaciones del sistema</div>
+
+                <div class="list-item">
+                    <div class="list-item-title">Evento EVT-221 actualizado</div>
+                    <small>Comando Central · hace 5 min</small>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-title">Parte PAR-441 ingresado</div>
+                    <small>Unidad Sur · hace 12 min</small>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-item-title">Validación completada en EVT-200</div>
+                    <small>Fiscalía · hace 28 min</small>
+                </div>
+
+            </div>
+        </div>
 
     </div>
 
 </div>
 
-<!-- Scripts -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block script %}{% endblock %}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 
 </body>
 </html>
+
+
+
