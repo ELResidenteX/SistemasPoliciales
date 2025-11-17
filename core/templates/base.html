@@ -13,114 +13,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
+        /* ===============================
+           TARJETAS MODERNAS GLASS-LIGHT
+        ================================*/
+        .card-modern {
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 18px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.35);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-modern-header {
+            background: linear-gradient(90deg, #2563eb, #1e40af);
+            border-radius: 14px 14px 0 0;
+            padding: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.07rem;
+        }
 
         /* ===============================
-   TARJETAS MODERNAS GLASS-LIGHT
-================================*/
-.card-modern {
-    background: rgba(255,255,255,0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 18px;
-    padding: 25px;
-    border: 1px solid rgba(255,255,255,0.35);
-    box-shadow: 0 6px 25px rgba(0,0,0,0.12);
-}
+           INPUTS MODERNOS
+        ================================*/
+        .form-modern input,
+        .form-modern select,
+        .form-modern textarea {
+            background: rgba(255,255,255,0.8) !important;
+            border: 1px solid #d0d5dd !important;
+            padding: 10px 14px !important;
+            border-radius: 10px !important;
+            transition: all 0.25s ease-in-out !important;
+            font-size: 0.95rem;
+        }
 
-/* Header moderno */
-.card-modern-header {
-    background: linear-gradient(90deg, #2563eb, #1e40af);
-    border-radius: 14px 14px 0 0;
-    padding: 16px;
-    color: white;
-    font-weight: 600;
-    font-size: 1.07rem;
-}
+        .form-modern input:focus,
+        .form-modern select:focus,
+        .form-modern textarea:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 4px rgba(59,130,246,0.7) !important;
+            background: white !important;
+        }
 
-/* ===============================
-   INPUTS MODERNOS
-================================*/
-.form-modern input,
-.form-modern select,
-.form-modern textarea {
-    background: rgba(255,255,255,0.8) !important;
-    border: 1px solid #d0d5dd !important;
-    padding: 10px 14px !important;
-    border-radius: 10px !important;
-    transition: all 0.25s ease-in-out !important;
-    font-size: 0.95rem;
-}
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
 
-.form-modern input:focus,
-.form-modern select:focus,
-.form-modern textarea:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 4px rgba(59,130,246,0.7) !important;
-    background: white !important;
-}
+        .section-title::before {
+            content: "•";
+            color: #2563eb;
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
 
-/* ===============================
-   TITULOS ELEGANTES
-================================*/
-.section-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-}
+        .mod-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+            margin: 15px 0;
+        }
 
-.section-title::before {
-    content: "•";
-    color: #2563eb;
-    font-size: 1.8rem;
-    margin-right: 10px;
-}
+        .btn-modern-primary {
+            background: #2563eb;
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
 
-/* ===============================
-   SEPARADOR MODERNO
-================================*/
-.mod-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
-    margin: 15px 0;
-}
+        .btn-modern-primary:hover {
+            background: #1d4ed8;
+        }
 
-/* ===============================
-   BOTONES MODERNOS
-================================*/
-.btn-modern-primary {
-    background: #2563eb;
-    border: none;
-    color: white;
-    padding: 10px 25px;
-    border-radius: 8px;
-    transition: 0.2s;
-}
+        .btn-modern-secondary {
+            background: #e5e7eb;
+            padding: 10px 25px;
+            border-radius: 8px;
+            color: #374151;
+        }
 
-.btn-modern-primary:hover {
-    background: #1d4ed8;
-}
+        .btn-modern-secondary:hover {
+            background: #d1d5db;
+        }
 
-.btn-modern-secondary {
-    background: #e5e7eb;
-    padding: 10px 25px;
-    border-radius: 8px;
-    color: #374151;
-}
-
-.btn-modern-secondary:hover {
-    background: #d1d5db;
-}
-
-/* ===============================
-   MAPA
-================================*/
-#mini-map {
-    border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
+        #mini-map {
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
 
         /* ==========================
            ESTILO GLOBAL
@@ -187,7 +173,6 @@
 
         /* ==========================
            TARJETAS DE MÓDULOS
-           (expansibles tipo acordeón)
         ========================== */
 
         .module-card {
@@ -207,28 +192,24 @@
             transform: translateY(-3px);
         }
 
-        /* Título centrado */
         .module-title {
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 6px;
         }
 
-        /* Subtítulo centrado */
         .module-subtitle {
             font-size: 0.9rem;
             color: #9ca3af;
             margin-bottom: 15px;
         }
 
-        /* Contenedor escondido */
         .module-content {
             display: none;
             margin-top: 20px;
             text-align: left;
         }
 
-        /* Animación suave al expandir */
         .module-card.open .module-content {
             animation: fadeIn 0.25s ease;
         }
@@ -238,7 +219,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Opciones internas clickeables */
         .module-option {
             display: block;
             padding: 12px 14px;
@@ -263,10 +243,6 @@
             color: #9ca3af;
         }
 
-        /* ==========================
-           PANELS INFERIORES
-        ========================== */
-
         .panel-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
@@ -281,17 +257,13 @@
             font-weight: 600;
             margin-bottom: 10px;
         }
-
     </style>
-
 </head>
 <body>
 
 <div class="container-dashboard">
 
-    <!-- ==========================
-         HERO
-    ========================== -->
+    <!-- HERO -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
 
@@ -301,20 +273,17 @@
             Coordina eventos policiales, valida reportes, gestiona partes e información operativa con trazabilidad completa.
         </p>
 
-        <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
+        <!-- BOTÓN QUE ABRE MODAL CON EL FORMULARIO -->
+        <button type="button" class="btn-blue"
+                onclick="abrirFormularioGeoDepol('{% url 'nuevo_evento' %}', 'Nuevo Evento Policial')">
+            Crear evento policial
+        </button>
     </div>
 
-
-    <!-- ==========================
-         MÓDULOS COMO CUADROS GRANDES
-         (expansibles)
-    ========================== -->
-
+    <!-- MÓDULOS -->
     <div class="row">
 
-        <!-- ==========================
-             MÓDULO 1 - EVENTOS POLICIALES
-        ========================== -->
+        <!-- MÓDULO 1 - EVENTOS POLICIALES -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Eventos Policiales</div>
@@ -322,43 +291,35 @@
 
                 <div class="module-content">
 
-                    <a href="{% url 'nuevo_evento' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'nuevo_evento' %}', 'Nuevo Evento Policial'); event.stopPropagation();">
                         <div class="option-title">Nuevo evento policial</div>
                         <div class="option-desc">Crear un nuevo registro de incidente.</div>
-                    </a>
+                    </div>
 
-                    <a href="{% url 'buscar_evento' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'buscar_evento' %}', 'Buscar Evento'); event.stopPropagation();">
                         <div class="option-title">Buscar evento</div>
                         <div class="option-desc">Consultar por número, fecha o zona.</div>
-                    </a>
+                    </div>
 
-                    <a href="{% url 'evento_en_validacion' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'evento_en_validacion' %}', 'Eventos en Validación'); event.stopPropagation();">
                         <div class="option-title">Eventos en validación</div>
                         <div class="option-desc">Revisa los procedimientos pendientes.</div>
-                    </a>
+                    </div>
 
-                    <a href="#" class="module-option">
-                        <div class="option-title">Repositorio de partes</div>
-                        <div class="option-desc">Histórico de partes registrados.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Actas del detenido</div>
-                        <div class="option-desc">Consulta las actas asociadas.</div>
-                    </a>
-
-                    <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'vista_busqueda_partes' %}', 'Búsqueda de partes'); event.stopPropagation();">
                         <div class="option-title">Búsqueda de partes</div>
-                        <div class="option-desc">Consulta por número o funcionario.</div>
-                    </a>
+                        <div class="option-desc">Consulta partes enviados a Fiscalía.</div>
+                    </div>
 
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 2 - INFRACCIÓN AL TRÁNSITO
-        ========================== -->
+        <!-- MÓDULO 2 - INFRACCIÓN AL TRÁNSITO -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Infracción al Tránsito</div>
@@ -366,95 +327,84 @@
 
                 <div class="module-content">
 
-                    <a href="{% url 'nueva_infraccion' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'nueva_infraccion' %}', 'Nueva Infracción de Tránsito'); event.stopPropagation();">
                         <div class="option-title">Nueva infracción</div>
                         <div class="option-desc">Registrar una infracción vehicular.</div>
-                    </a>
+                    </div>
 
-                    <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'vista_busqueda_partes_infracciones' %}', 'Buscar Infracciones'); event.stopPropagation();">
                         <div class="option-title">Buscar infracción</div>
                         <div class="option-desc">Consultar por fecha, patente o número.</div>
-                    </a>
+                    </div>
 
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 3 - CONSTANCIAS
-        ========================== -->
+        <!-- MÓDULO 3 - CONSTANCIAS -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Constancias</div>
                 <div class="module-subtitle">Registro de constancias de ciudadanos</div>
 
                 <div class="module-content">
-
-                    <a href="#" class="module-option">
+                    <div class="module-option">
                         <div class="option-title">Nueva constancia</div>
                         <div class="option-desc">Ingreso de constancias generales.</div>
-                    </a>
+                    </div>
 
-                    <a href="#" class="module-option">
+                    <div class="module-option">
                         <div class="option-title">Buscar constancia</div>
                         <div class="option-desc">Consulta por fecha o motivo.</div>
-                    </a>
-
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 4 - OTRAS INFRACCIONES
-        ========================== -->
+        <!-- MÓDULO 4 - OTRAS INFRACCIONES -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otras Infracciones</div>
                 <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
 
                 <div class="module-content">
-
-                    <a href="#" class="module-option">
+                    <div class="module-option">
                         <div class="option-title">Control vehicular</div>
                         <div class="option-desc">Registra fiscalizaciones en ruta.</div>
-                    </a>
+                    </div>
 
-                    <a href="#" class="module-option">
+                    <div class="module-option">
                         <div class="option-title">Control entidades financieras</div>
                         <div class="option-desc">Registra fiscalizaciones bancarias.</div>
-                    </a>
+                    </div>
 
-                    <a href="#" class="module-option">
+                    <div class="module-option">
                         <div class="option-title">Fiscalización de alcoholes</div>
                         <div class="option-desc">Control de expendio de alcoholes.</div>
-                    </a>
-
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 5 - ESTADÍSTICAS
-        ========================== -->
+        <!-- MÓDULO 5 - ESTADÍSTICAS -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Estadísticas</div>
                 <div class="module-subtitle">Análisis geográfico y operacional</div>
 
                 <div class="module-content">
-
-                    <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'estadisticas_geolocalizacion' %}', 'Mapa de geolocalización'); event.stopPropagation();">
                         <div class="option-title">Mapa de geolocalización</div>
                         <div class="option-desc">Visualiza eventos sobre el mapa.</div>
-                    </a>
-
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 6 - OTROS
-        ========================== -->
+        <!-- MÓDULO 6 - OTROS -->
         <div class="col-md-4">
             <div class="module-card" onclick="toggleModule(this)">
                 <div class="module-title">Otros</div>
@@ -462,21 +412,24 @@
 
                 <div class="module-content">
 
-                    <a href="{% url 'cambio_clave' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'cambio_clave' %}', 'Cambio de clave'); event.stopPropagation();">
                         <div class="option-title">Cambio de clave</div>
                         <div class="option-desc">Actualizar contraseña.</div>
-                    </a>
+                    </div>
 
-                    <a href="{% url 'manuales_usuario' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'manuales_usuario' %}', 'Manuales del sistema'); event.stopPropagation();">
                         <div class="option-title">Manuales</div>
                         <div class="option-desc">Documentos de apoyo.</div>
-                    </a>
+                    </div>
 
                     {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                    <a href="{% url 'crear_usuario' %}" class="module-option">
+                    <div class="module-option"
+                         onclick="abrirFormularioGeoDepol('{% url 'crear_usuario' %}', 'Configuración de usuarios'); event.stopPropagation();">
                         <div class="option-title">Configuración de usuarios</div>
                         <div class="option-desc">Administración de cuentas del sistema.</div>
-                    </a>
+                    </div>
                     {% endif %}
 
                     <a href="{% url 'logout' %}" class="module-option">
@@ -490,46 +443,64 @@
 
     </div>
 
-
-    <!-- ==========================
-         PANEL INFERIOR
-    ========================== -->
-    <!-- ==========================
-     PANEL INFERIOR
-     Solo se mostrará cuando una vista lo use
-========================== -->
-
-{% block content %}{% endblock %}
-
-
-    </div>
+    <!-- PANEL INFERIOR: CONTENIDO ESPECÍFICO DE CADA VISTA -->
+    {% block content %}{% endblock %}
 
 </div>
 
+<!-- MODAL REUTILIZABLE GEODEPOL -->
+<div class="modal fade" id="modalGeoDepol" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="modalGeoDepolLabel">GeoDepol</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0">
+        <iframe id="geoDepolFrame" src="" style="width:100%;min-height:80vh;border:0;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ==========================
-     JS PARA EXPANSIÓN DE TARJETAS
-========================== -->
+<!-- JS Bootstrap + lógica -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 function toggleModule(card) {
-
-    // Si ya está abierta, se cierra
     if (card.classList.contains("open")) {
         card.classList.remove("open");
         card.querySelector(".module-content").style.display = "none";
         return;
     }
 
-    // Cerrar cualquier otra tarjeta abierta
     document.querySelectorAll(".module-card.open").forEach(c => {
         c.classList.remove("open");
         c.querySelector(".module-content").style.display = "none";
     });
 
-    // Abrir esta tarjeta
     card.classList.add("open");
     card.querySelector(".module-content").style.display = "block";
 }
+
+function abrirFormularioGeoDepol(url, titulo) {
+    const modalEl = document.getElementById('modalGeoDepol');
+    const iframe = document.getElementById('geoDepolFrame');
+    const titleEl = document.getElementById('modalGeoDepolLabel');
+
+    if (!modalEl || !iframe) return;
+
+    iframe.src = url;
+    if (titleEl) titleEl.textContent = titulo || 'GeoDepol';
+
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
+}
+
+document.getElementById('modalGeoDepol')?.addEventListener('hidden.bs.modal', function () {
+    const iframe = document.getElementById('geoDepolFrame');
+    if (iframe) iframe.src = "";
+});
 </script>
 
 </body>
