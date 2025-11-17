@@ -14,6 +14,114 @@
 
     <style>
 
+        /* ===============================
+   TARJETAS MODERNAS GLASS-LIGHT
+================================*/
+.card-modern {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 25px;
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+}
+
+/* Header moderno */
+.card-modern-header {
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    border-radius: 14px 14px 0 0;
+    padding: 16px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.07rem;
+}
+
+/* ===============================
+   INPUTS MODERNOS
+================================*/
+.form-modern input,
+.form-modern select,
+.form-modern textarea {
+    background: rgba(255,255,255,0.8) !important;
+    border: 1px solid #d0d5dd !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+    transition: all 0.25s ease-in-out !important;
+    font-size: 0.95rem;
+}
+
+.form-modern input:focus,
+.form-modern select:focus,
+.form-modern textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 4px rgba(59,130,246,0.7) !important;
+    background: white !important;
+}
+
+/* ===============================
+   TITULOS ELEGANTES
+================================*/
+.section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.section-title::before {
+    content: "•";
+    color: #2563eb;
+    font-size: 1.8rem;
+    margin-right: 10px;
+}
+
+/* ===============================
+   SEPARADOR MODERNO
+================================*/
+.mod-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+    margin: 15px 0;
+}
+
+/* ===============================
+   BOTONES MODERNOS
+================================*/
+.btn-modern-primary {
+    background: #2563eb;
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-modern-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-modern-secondary {
+    background: #e5e7eb;
+    padding: 10px 25px;
+    border-radius: 8px;
+    color: #374151;
+}
+
+.btn-modern-secondary:hover {
+    background: #d1d5db;
+}
+
+/* ===============================
+   MAPA
+================================*/
+#mini-map {
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
         /* ==========================
            ESTILO GLOBAL
         ========================== */

@@ -5,22 +5,129 @@
 {% block title %}Nuevo Evento Policial{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
 
-  <h2 class="mb-4">{% if editando %}Editar Evento Policial{% else %}Registrar Nuevo Evento Policial{% endif %}</h2>
+<style>
+
+/* ===============================
+   TARJETAS MODERNAS GLASS-LIGHT
+================================*/
+.card-modern {
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 25px;
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+    margin-bottom: 30px;
+}
+
+/* Header moderno */
+.card-modern-header {
+    background: linear-gradient(90deg, #2563eb, #1e40af);
+    border-radius: 14px 14px 0 0;
+    padding: 16px;
+    color: white;
+    font-weight: 600;
+    font-size: 1.07rem;
+}
+
+/* ===============================
+   INPUTS MODERNOS
+================================*/
+.form-modern input,
+.form-modern select,
+.form-modern textarea {
+    background: rgba(255,255,255,0.85) !important;
+    border: 1px solid #d0d5dd !important;
+    padding: 10px 14px !important;
+    border-radius: 10px !important;
+    transition: all 0.25s ease-in-out !important;
+    font-size: 0.95rem;
+}
+
+.form-modern input:focus,
+.form-modern select:focus,
+.form-modern textarea:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 4px rgba(59,130,246,0.7) !important;
+    background: white !important;
+}
+
+/* ===============================
+   SEPARADOR
+================================*/
+.mod-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+    margin: 15px 0;
+}
+
+/* ===============================
+   BOTONES MODERNOS
+================================*/
+.btn-modern-primary {
+    background: #2563eb;
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-modern-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-modern-secondary {
+    background: #e5e7eb;
+    padding: 10px 25px;
+    border-radius: 8px;
+    color: #374151;
+}
+
+.btn-modern-secondary:hover {
+    background: #d1d5db;
+}
+
+/* ===============================
+   MAPA
+================================*/
+#mini-map {
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+</style>
+
+
+<div class="container">
+
+  <h2 class="mb-4">
+    {% if editando %}
+      Editar Evento Policial
+    {% else %}
+      Registrar Nuevo Evento Policial
+    {% endif %}
+  </h2>
 
   {% if evento and evento.participantes.exists %}
     <div class="d-flex justify-content-end mb-3">
-      <button class="btn btn-modern-primary" data-bs-toggle="modal" data-bs-target="#modalEventoCompleto">
+      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEventoCompleto">
         Ver Evento Completo
       </button>
     </div>
   {% endif %}
 
+
+  <!-- -------------------------
+        TABS PRINCIPALES
+  ------------------------- -->
   <ul class="nav nav-tabs mb-4" id="tabsEvento">
     <li class="nav-item">
       <a class="nav-link active" id="tab-evento" href="#contenido-evento" data-bs-toggle="tab">Evento</a>
     </li>
+
     <li class="nav-item">
       {% if evento %}
         <a class="nav-link" id="tab-participante" href="#contenido-participante" data-bs-toggle="tab">Participantes</a>
@@ -28,6 +135,7 @@
         <a class="nav-link disabled">Participantes</a>
       {% endif %}
     </li>
+
     <li class="nav-item">
       {% if evento %}
         <a class="nav-link" id="tab-especie" href="#contenido-especie" data-bs-toggle="tab">Especies</a>
@@ -37,46 +145,57 @@
     </li>
   </ul>
 
+
+
+  <!-- ===============================
+          CONTENIDO DE TABS
+  ================================ -->
   <div class="tab-content">
+
+
+    <!-- ======================================
+            TAB 1 – EVENTO
+    ======================================= -->
     <div class="tab-pane fade show active" id="contenido-evento">
 
       {% if evento and not editando %}
-        <div id="eventoAlert" class="alert-modern-success d-flex justify-content-between align-items-center">
+        <div class="alert alert-success d-flex justify-content-between align-items-center">
           <div>
-            Evento guardado correctamente. Número generado:
+            Evento guardado correctamente. Número de evento:
             <strong>{{ evento.numero_evento }}</strong>
           </div>
-          <a href="{% url 'buscar_evento' %}?numero_evento={{ evento.numero_evento }}" class="btn btn-modern-secondary ms-3">
+          <a href="{% url 'buscar_evento' %}?numero_evento={{ evento.numero_evento }}" class="btn btn-sm btn-outline-light ms-3">
             Ver evento
           </a>
         </div>
       {% endif %}
 
       <form method="post" action="{% if editando %}{% url 'guardar_edicion_evento' evento.id %}{% else %}{% url 'nuevo_evento' %}{% endif %}">
-        {% csrf_token %}
+      {% csrf_token %}
 
-        <div class="card-modern mb-4">
+      <div class="form-modern">
+
+      
+      <!-- ===============================
+           DATOS GENERALES
+      ================================ -->
+      <div class="card-modern">
+        <div class="card-modern-header">📌 Datos Generales del Evento</div>
+
+        <div class="p-3">
 
           {% if form.errors %}
-            <div class="alert alert-danger">
-              <strong>Corrige los errores:</strong>
-              <ul>
-                {% for field in form %}
-                  {% for error in field.errors %}
-                    <li>{{ field.label }}: {{ error }}</li>
-                  {% endfor %}
+          <div class="alert alert-danger">
+            <strong>Corrige los errores:</strong>
+            <ul>
+              {% for field in form %}
+                {% for error in field.errors %}
+                  <li>{{ field.label }}: {{ error }}</li>
                 {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-
-          <!-- ==========================
-               DATOS GENERALES
-          =========================== -->
-          <div class="card-modern-header">
-            Datos Generales del Evento
+              {% endfor %}
+            </ul>
           </div>
-          <p class="card-modern-subtext">Información básica del procedimiento policial.</p>
+          {% endif %}
 
           <div class="row">
             {% for field in form %}
@@ -90,13 +209,18 @@
           </div>
 
         </div>
+      </div>
 
-        <!-- ==========================
-             DELITOS
-        =========================== -->
-        <div class="card-modern mb-4">
-          <div class="card-modern-header">Delitos Asociados</div>
-          <p class="card-modern-subtext">Tipificación penal del hecho.</p>
+
+
+
+      <!-- ===============================
+           DELITOS ASOCIADOS
+      ================================ -->
+      <div class="card-modern">
+        <div class="card-modern-header" style="background:#16a34a;">📌 Delitos Asociados</div>
+
+        <div class="p-3">
 
           <div class="mb-3">{{ form.delito_tipificado.label_tag }}{{ form.delito_tipificado }}</div>
           <div class="mb-3">{{ form.modo_operandi.label_tag }}{{ form.modo_operandi }}</div>
@@ -105,81 +229,98 @@
           <div class="form-check mb-2">{{ form.es_violencia_intrafamiliar }} {{ form.es_violencia_intrafamiliar.label_tag }}</div>
           <div class="form-check mb-2">{{ form.es_accidente_transito }} {{ form.es_accidente_transito.label_tag }}</div>
           <div class="form-check mb-2">{{ form.victima_mujer_presente_guardia }} {{ form.victima_mujer_presente_guardia.label_tag }}</div>
+
         </div>
+      </div>
 
-        <!-- ==========================
-             DIRECCIÓN
-        =========================== -->
-        <div class="card-modern mb-4">
-          <div class="card-modern-header">Dirección de Ocurrencia</div>
-          <p class="card-modern-subtext">Ubicación exacta para georreferenciación.</p>
 
-          <div class="mb-3">{{ form.tipo_lugar.label_tag }}{{ form.tipo_lugar }}</div>
+
+
+      <!-- ===============================
+           DIRECCIÓN / UBICACIÓN
+      ================================ -->
+      <div class="card-modern">
+        <div class="card-modern-header" style="background:#15803d;">📌 Dirección de Ocurrencia</div>
+
+        <div class="p-3">
+
+          <div class="mb-3">
+            {{ form.tipo_lugar.label_tag }}{{ form.tipo_lugar }}
+          </div>
 
           <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Región</label>
-              <select id="region" name="region" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Provincia</label>
-              <select id="provincia" name="provincia" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Comuna</label>
-              <select id="comuna" name="comuna" class="form-select"></select>
-            </div>
+            <div class="col-md-4 mb-3">{{ form.region.label_tag }}{{ form.region }}</div>
+            <div class="col-md-4 mb-3">{{ form.provincia.label_tag }}{{ form.provincia }}</div>
+            <div class="col-md-4 mb-3">{{ form.comuna.label_tag }}{{ form.comuna }}</div>
           </div>
 
           <div class="row">
             <div class="col-md-6 mb-3">{{ form.direccion.label_tag }}{{ form.direccion }}</div>
-            <div class="col-md-3 mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
-            <div class="col-md-3 mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
+            <div class="col-md-6 mb-3">{{ form.numero.label_tag }}{{ form.numero }}</div>
+            <div class="col-md-6 mb-3">{{ form.block.label_tag }}{{ form.block }}</div>
+            <div class="col-md-6 mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
+            <div class="col-md-6 mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
           </div>
 
-          <div class="row">
-            <div class="col-md-4 mb-3">{{ form.villa.label_tag }}{{ form.villa }}</div>
-            <div class="col-md-4 mb-3">{{ form.depto.label_tag }}{{ form.depto }}</div>
-            <div class="col-md-4 mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
-          </div>
-
+          <div class="mb-3">{{ form.km.label_tag }}{{ form.km }}</div>
           <div class="mb-3">{{ form.interseccion.label_tag }}{{ form.interseccion }}</div>
 
           <div class="mb-3">
-            <div id="mini-map" style="height: 300px; border-radius: 12px; overflow: hidden;"></div>
+            <label class="form-label">Mapa de referencia</label>
+            <div id="mini-map" style="height: 300px;"></div>
           </div>
 
         </div>
+      </div>
 
-        <!-- ==========================
-             NARRACIÓN
-        =========================== -->
-        <div class="card-modern mb-4">
-          <div class="card-modern-header">Narración de los Hechos</div>
 
+
+
+      <!-- ===============================
+           NARRACIÓN
+      ================================ -->
+      <div class="card-modern">
+        <div class="card-modern-header" style="background:#15803d;">📌 Narración de los Hechos</div>
+
+        <div class="p-3">
           <div class="mb-3">
-            <label class="form-label">Narración de los hechos</label>
-            <textarea name="narracion_hechos" rows="10" class="form-control">{{ form.narracion_hechos.value }}</textarea>
+            <label for="id_narracion_hechos" class="form-label">Describa los hechos</label>
+            <textarea name="narracion_hechos" id="id_narracion_hechos" rows="8" class="form-control">
+              {{ form.narracion_hechos.value }}
+            </textarea>
           </div>
         </div>
+      </div>
 
-        <div class="d-flex justify-content-between mb-5">
-          <a href="{% url 'home' %}" class="btn-modern-secondary">Cancelar</a>
-          <button type="submit" class="btn-modern-primary">
-            {% if editando %}Actualizar{% else %}Guardar Evento{% endif %}
-          </button>
-        </div>
 
+      <!-- BOTONES ------------------------ -->
+      <div class="d-flex justify-content-between mb-5">
+        <a href="{% url 'home' %}" class="btn-modern-secondary">Cancelar</a>
+        <button type="submit" class="btn-modern-primary">
+          {% if editando %}Actualizar{% else %}Guardar Evento{% endif %}
+        </button>
+      </div>
+
+      </div>
       </form>
 
-    </div>
+    </div> <!-- fin tab evento -->
 
+
+
+    <!-- ======================================
+            TAB PARTICIPANTES
+    ======================================= -->
     {% if evento %}
     <div class="tab-pane fade" id="contenido-participante">
       {% include "core/participantes_tab.html" %}
     </div>
+    {% endif %}
+
+    <!-- ======================================
+            TAB ESPECIES
+    ======================================= -->
+    {% if evento %}
     <div class="tab-pane fade" id="contenido-especie">
       {% include "core/especies_tab.html" %}
     </div>
@@ -188,4 +329,69 @@
   </div>
 
 </div>
+
+
+
+<!-- ======================================
+      MODAL EVENTO COMPLETO
+======================================= -->
+{% if evento and evento.participantes.exists %}
+<div class="modal fade" id="modalEventoCompleto" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Evento Completo – {{ evento.numero_evento }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        {% include "core/evento_completo.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+
+<!-- SCRIPTS -->
+<script src="{% static 'core/js/evento.js' %}"></script>
+<script src="{% static 'core/js/general.js' %}"></script>
+<script src="{% static 'core/js/especie.js' %}"></script>
+<script src="{% static 'core/js/participantes.js' %}"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+
+<script>
+let autocomplete, map, marker;
+
+function initAutocompleteAndMap() {
+
+    const input = document.getElementById("id_direccion");
+
+    autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["geocode"],
+      componentRestrictions: { country: "cl" }
+    });
+
+    map = new google.maps.Map(document.getElementById("mini-map"), {
+      center: { lat: -33.45, lng: -70.66 },
+      zoom: 14,
+    });
+
+    marker = new google.maps.Marker({
+      map: map,
+      draggable: false
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) return;
+      map.setCenter(place.geometry.location);
+      marker.setPosition(place.geometry.location);
+    });
+}
+
+window.onload = initAutocompleteAndMap;
+</script>
+
 {% endblock %}
