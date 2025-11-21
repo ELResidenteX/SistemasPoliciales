@@ -1,269 +1,164 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-        {% load static %}
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}Sistema Policial{% endblock %}</title>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema Policial{% endblock %}</title>
 
-                        <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge bg-secondary">Todos</span>
-                            <span class="badge bg-warning text-dark">Prioridad alta</span>
-                            <span class="badge bg-light text-dark">En revisión</span>
-                        </div>
-
-                        <!-- Rejilla de cuadrados resumen (estético) -->
-                        <div class="dashboard-squares mt-3">
-                            <div class="square-card">
-                                <h6>Eventos</h6>
-                                <div class="value">{{ events_count|default:24 }}</div>
-                            </div>
-                            <div class="square-card">
-                                <h6>Validaciones</h6>
-                                <div class="value">{{ validations_count|default:8 }}</div>
-                            </div>
-                            <div class="square-card">
-                                <h6>Equipos</h6>
-                                <div class="value">{{ equipos_count|default:12 }}</div>
-                            </div>
-                        </div>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Estilos del proyecto -->
-        <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
-        {% block head %}{% endblock %}
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}">
 </head>
-<body class="app-bg">
+<body>
+<div class="d-flex">
 
-<!-- Header moderno -->
-<header class="app-header shadow-sm bg-white">
-    <div class="container-fluid d-flex align-items-center gap-3">
-        <button class="btn btn-ghost d-lg-none" id="toggleSidebar"><i class="fa fa-bars"></i></button>
-        <a class="brand d-flex align-items-center gap-2 text-decoration-none" href="/">
-            <img src="{% static 'core/logo.svg' %}" alt="Logo" class="brand-logo">
-            <span class="brand-title">Sistemas Policiales</span>
-        </a>
+    <!-- Sidebar fija -->
+    <div class="sidebar">
+        <h3>MENÚ</h3>
 
-        <form class="search-form ms-3 d-none d-md-flex" role="search">
-            <input class="form-control form-control-sm" type="search" placeholder="Buscar..." aria-label="Buscar">
-        </form>
+        <div class="accordion" id="menuAcordeon">
 
-        <div class="ms-auto d-flex align-items-center gap-3">
-            <div class="d-none d-md-block text-muted small">{{ nombre_usuario }}</div>
-            <div class="dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{% static 'core/avatar.svg' %}" alt="avatar" class="avatar">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                    <li><a class="dropdown-item" href="{% url 'cambio_clave' %}">Cambio de clave</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="{% url 'logout' %}">Salir</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</header>
-
-<div class="app-body d-flex">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar bg-primary text-white">
-        <div class="sidebar-inner p-3">
-            <h6 class="text-uppercase text-muted small mb-3">Menú</h6>
-            <nav class="nav flex-column nav-pills">
-                <a class="nav-link text-white" data-bs-toggle="collapse" href="#eventos" role="button" aria-expanded="false" aria-controls="eventos"> <i class="fa fa-bullhorn me-2"></i> Eventos policiales</a>
-                <div class="collapse" id="eventos">
-                    <ul class="list-unstyled ps-3 mb-2">
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'nuevo_evento' %}">Nuevo</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'buscar_evento' %}">Buscar Evento</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'evento_en_validacion' %}">Eventos en Validación</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="#">Repositorio de partes</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="#">Actas del Detenido</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'vista_busqueda_partes' %}">Búsqueda de partes</a></li>
-                    </ul>
-                </div>
-
-                <a class="nav-link text-white" data-bs-toggle="collapse" href="#transito" role="button" aria-expanded="false" aria-controls="transito"> <i class="fa fa-car me-2"></i> Infracciones tránsito</a>
-                <div class="collapse" id="transito">
-                    <ul class="list-unstyled ps-3 mb-2">
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'nueva_infraccion' %}">Nueva Infracción</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="{% url 'vista_busqueda_partes_infracciones' %}">Búsqueda de parte</a></li>
-                    </ul>
-                </div>
-
-                <a class="nav-link text-white" data-bs-toggle="collapse" href="#otras" role="button" aria-expanded="false" aria-controls="otras"> <i class="fa fa-clipboard-list me-2"></i> Otras</a>
-                <div class="collapse" id="otras">
-                    <ul class="list-unstyled ps-3 mb-2">
-                        <li><a class="nav-link pl-0 text-white" href="#">Control vehicular</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="#">Control entidades financieras</a></li>
-                        <li><a class="nav-link pl-0 text-white" href="#">Fiscalización de alcoholes</a></li>
-                    </ul>
-                </div>
-
-                <a class="nav-link text-white mt-3" href="{% url 'estadisticas_geolocalizacion' %}"> <i class="fa fa-chart-line me-2"></i> Estadísticas</a>
-
-                <div class="mt-4 border-top pt-3">
-                    <a class="nav-link text-white" href="{% url 'cambio_clave' %}"><i class="fa fa-key me-2"></i>Cambio de clave</a>
-                    <a class="nav-link text-white" href="{% url 'manuales_usuario' %}"><i class="fa fa-book me-2"></i>Manuales</a>
-                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                        <a class="nav-link text-white" href="{% url 'crear_usuario' %}"><i class="fa fa-users-cog me-2"></i>Usuarios</a>
-                    {% endif %}
-                    <a class="nav-link text-white" href="{% url 'logout' %}"><i class="fa fa-sign-out-alt me-2"></i>Salir</a>
-                </div>
-            </nav>
-        </div>
-    </aside>
-
-    <!-- Contenido principal -->
-    <main class="flex-grow-1 p-4 main-content">
-
-        {% if request.user.is_authenticated and request.user.perfilusuario %}
-        <div class="user-info alert alert-light border rounded-3 mb-4 shadow-sm d-flex align-items-center justify-content-between">
-            <div>
-                <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
-                <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
-                <strong>Unidad:</strong>
-                {% if unidad_usuario %}
-                        {{ unidad_usuario }}
-                {% else %}
-                        <span class="text-muted fst-italic">Sin unidad asignada</span>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
-
-
-                {% block content %}
-                <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="hero hero-bg" data-bg="true">
-                <div class="hero-main">
-                    <div class="small-muted">SISTEMA POLICIAL &middot; CENTRO OPERATIVO</div>
-                    <h1>Gestión integral de eventos y partes en tiempo real</h1>
-                    <p>Coordina operativos, valida reportes y comparte decisiones críticas con rapidez. Visualiza el estado de cada evento sin perder trazabilidad.</p>
-
-                    <div class="mt-3 d-flex gap-2">
-                        <a href="{% url 'nuevo_evento' %}" class="cta-btn btn btn-sm">Crear evento</a>
-                        <a href="{% url 'vista_busqueda_partes' %}" class="btn btn-outline-light btn-sm">Ver protocolos</a>
-                    </div>
-                </div>
-
-                <div class="hero-stats">
-                    <div class="stat-card mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="small-muted">EVENTOS ACTIVOS</div>
-                                <div class="h4 mb-0">{{ events_count|default:24 }}</div>
-                            </div>
-                            <div class="text-end small-muted">+3 hoy</div>
-                        </div>
-                    </div>
-                    <div class="stat-card mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="small-muted">VALIDACIONES PENDIENTES</div>
-                                <div class="h5 mb-0">{{ validations_count|default:8 }}</div>
-                            </div>
-                            <div class="text-end small-muted">4 prioridad alta</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="small-muted">EQUIPOS EN TURNO</div>
-                                <div class="h5 mb-0">{{ equipos_count|default:12 }}</div>
-                            </div>
-                            <div class="text-end small-muted">Distribuidos en 4 zonas</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-7 mb-3">
-            <div class="card card-dark square-card-large">
-                <h5 class="mb-2">Registra un nuevo operativo o incidente</h5>
-                <p class="small-muted">Define alcance, recursos asignados y hitos de validación para garantizar trazabilidad y escalamiento oportuno.</p>
-                <ol class="small-muted">
-                    <li>Detalles iniciales: Selecciona tipo de evento, zona de cobertura y unidad responsable.</li>
-                    <li>Recursos y turnos: Asigna móviles, personal y horarios críticos para el operativo.</li>
-                    <li>Validación: Envía para revisión de jefatura y coordina con fiscalía cuando corresponda.</li>
-                </ol>
-
-                <div class="mt-3 d-flex gap-2">
-                    <a href="{% url 'nuevo_evento' %}" class="btn btn-primary btn-sm">Nuevo evento operativo</a>
-                    <a href="#" class="btn btn-outline-light btn-sm">Cargar plantilla previa</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-5 mb-3">
-            <div class="card bg-transparent border-0 p-0">
-                <div class="card-body p-0">
-                    <div class="card-dark mb-3">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h6 class="mb-1">Búsqueda de partes</h6>
-                            <span class="small-muted">Seguimiento inmediato</span>
-                        </div>
-                        <div class="hero-stats dashboard-squares">
-                            <div class="stat-card square-card mb-2">
-                        </div>
-                        <ul class="list-group list-recent mt-2">
-                            <li class="list-group-item"><a href="#" class="text-decoration-none text-white">PAR-5342 &middot; Robo a comercio — Mte 842 <span class="small-muted d-block">Actualizado hace 12 min</span></a></li>
-                            <li class="list-group-item"><a href="#" class="text-decoration-none text-white">PAR-5338 &middot; Violencia intrafamiliar — Barrio El Rosario <span class="small-muted d-block">Actualizado hace 25 min</span></a></li>
-                            <li class="list-group-item"><a href="#" class="text-decoration-none text-white">PAR-5331 &middot; Colisión múltiple — Autopista Sur km 18 <span class="small-muted d-block">Actualizado hace 41 min</span></a></li>
+            <!-- EVENTOS POLICIALES -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#eventos">
+                        EVENTOS POLICIALES
+                    </button>
+                </h2>
+                <div id="eventos" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'nuevo_evento' %}" class="text-white d-block py-1">Nuevo</a></li>
+                            <li><a href="{% url 'buscar_evento' %}" class="text-white d-block py-1">Buscar Evento</a></li>
+                            <li><a href="{% url 'evento_en_validacion' %}" class="text-white d-block py-1">Eventos en Validación</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Repositorio de partes</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Actas del Detenido</a></li>
+                            <li><a href="{% url 'vista_busqueda_partes' %}" class="text-white d-block py-1">Búsqueda de partes</a></li>
                         </ul>
                     </div>
-                            </div>
-                            <div class="stat-card square-card mb-2">
-                        <h6 class="mb-2">Eventos en validación</h6>
-                        <p class="small-muted mb-2">Controla avances, devuelve observaciones y asegura aprobación sin cuellos de botella.</p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge bg-secondary">Todos</span>
-                            <span class="badge bg-warning text-dark">Prioridad alta</span>
-                            <span class="badge bg-light text-dark">En revisión</span>
-                        </div>
-                            </div>
-                            <div class="stat-card square-card">
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-2">
-        <div class="col-12">
-            <div class="card p-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">Bitácora en vivo</h6>
-                    <span class="small-muted">Actualizaciones recientes del centro de control</span>
                 </div>
-                <div class="mt-3 small-muted">No cambiar la lógica del sistema; esta vista usa las rutas y acciones existentes.</div>
             </div>
+
+            <!-- INFRACCIÓN AL TRÁNSITO -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#transito">
+                        INFRACCIÓN AL TRÁNSITO
+                    </button>
+                </h2>
+                <div id="transito" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'nueva_infraccion' %}" class="text-white d-block py-1">Nueva Infracción</a></li>
+                            <li><a href="{% url 'vista_busqueda_partes_infracciones' %}" class="text-white d-block py-1">Búsqueda de parte</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONSTANCIAS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#constancias">
+                        CONSTANCIAS
+                    </button>
+                </h2>
+                <div id="constancias" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white d-block py-1">Nueva</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Buscar constancia</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTRAS INFRACCIONES -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otras">
+                        OTRAS INFRACCIONES
+                    </button>
+                </h2>
+                <div id="otras" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white d-block py-1">Control vehicular</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Control entidades financieras</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Fiscalización de alcoholes</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+           <!-- ✅ ESTADÍSTICAS -->
+<div class="accordion-item bg-transparent border-0">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#estadisticas">
+            ESTADÍSTICAS
+        </button>
+    </h2>
+    <div id="estadisticas" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+        <div class="accordion-body p-2">
+            <ul class="list-unstyled">
+                <li><a href="{% url 'estadisticas_geolocalizacion' %}" class="text-white d-block py-1">Mapa de geolocalización</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+            <!-- OTROS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otros">
+                        OTROS
+                    </button>
+                </h2>
+                <div id="otros" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'cambio_clave' %}" class="text-white d-block py-1">Cambio de clave</a></li>
+                            <li><a href="{% url 'manuales_usuario' %}" class="text-white d-block py-1">Manuales</a></li>
+
+                            {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                                <li><a href="{% url 'crear_usuario' %}" class="text-white d-block py-1">Configuración de usuarios</a></li>
+                            {% endif %}
+
+                            <li><a href="{% url 'logout' %}" class="text-white d-block py-1">Salir</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <!-- Panel principal de contenido -->
+    <div class="main flex-grow-1 p-4">
+
+        {% if request.user.is_authenticated and request.user.perfilusuario %}
+<div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
+    <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
+    <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
+    <strong>Unidad:</strong>
+    {% if unidad_usuario %}
+        {{ unidad_usuario }}
+    {% else %}
+        <span class="text-muted fst-italic">Sin unidad asignada</span>
+    {% endif %}
 </div>
-                {% endblock %}
-    </main>
+{% endif %}
+
+
+        {% block content %}
+        {% include "core/presentacion.html" %}
+        {% endblock %}
+    </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Toggle sidebar on small screens
-    document.addEventListener('DOMContentLoaded', function(){
-        var btn = document.getElementById('toggleSidebar');
-        var sidebar = document.getElementById('sidebar');
-        if(btn){
-            btn.addEventListener('click', function(){
-                sidebar.classList.toggle('collapsed');
-            });
-        }
-    });
-</script>
-
 {% block script %}{% endblock %}
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 
