@@ -40,6 +40,7 @@ from reportlab.pdfgen import canvas
 import os
 import base64
 from core.utils import obtener_unidad_activa
+from core.decorators import allow_iframe
 
 
 
@@ -64,6 +65,7 @@ def home(request):
     return render(request, 'core/home.html')
 
 # ✅ Crear nuevo evento policial
+@allow_iframe
 def nuevo_evento(request):
     evento = None
     participante_form = None
@@ -1048,7 +1050,7 @@ def eventos_por_comuna_json(request):
 
 #graficos delitos   
 
-# 🔹 1. Delitos por tipo
+#  1 Delitos por tipo
 def api_estadisticas_por_delito(request):
     unidad = obtener_unidad_activa()
     comuna = request.GET.get("comuna", "").strip()
@@ -1058,7 +1060,7 @@ def api_estadisticas_por_delito(request):
 
     eventos = EventoPolicial.objects.all()
 
-    # 🔸 Filtrar por unidad activa si existe
+    #  Filtrar por unidad activa si existe
     if unidad:
         eventos = eventos.filter(unidad_policial=unidad)
     if comuna:

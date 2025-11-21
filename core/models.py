@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# 🔹 Modelo de Delito
+#  Modelo de Delito
 class Delito(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
 
@@ -101,7 +101,7 @@ class EventoPolicial(models.Model):
     lng = models.FloatField(null=True, blank=True)
 
 
-    # 🔹 NUEVOS CAMPOS PARA INTEGRAR APP MÓVIL
+    #  NUEVOS CAMPOS PARA INTEGRAR APP MÓVIL
     firma_funcionario = models.ImageField(upload_to="firmas/", null=True, blank=True)
     firma_denunciante = models.ImageField(upload_to="firmas/", null=True, blank=True)
 
@@ -253,7 +253,7 @@ class HistorialEnvioFiscalia(models.Model):
 
     fecha_envio = models.DateTimeField(auto_now_add=True)
 
-    # NUEVO: código único para auditoría
+    # código único para auditoría
     codigo_auditoria = models.CharField(max_length=12, unique=True, editable=False)
 
     class Meta:

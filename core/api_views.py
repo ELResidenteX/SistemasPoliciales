@@ -9,10 +9,7 @@ from core.utils import obtener_unidad_activa
 
 #vista crear evento apP
 class CrearEventoDesdeAppAPIView(APIView):
-    """
-    Crea un evento policial desde la app móvil, asignando automáticamente
-    la unidad activa configurada en el sistema.
-    """
+    
     def post(self, request):
         data = request.data.copy()
         serializer = EventoPolicialAppSerializer(data=data)
@@ -30,9 +27,9 @@ class CrearEventoDesdeAppAPIView(APIView):
                 evento.unidad_policial = unidad
                 evento.save(update_fields=["unidad_policial"])
 
-            # 🔹 Respuesta completa con los campos que la app necesita
+            # Respuesta completa con los campos que la app necesita
             return Response({
-                "message": "✅ Evento creado correctamente",
+                "message": " Evento creado correctamente",
                 "evento_id": evento.id,
                 "numero_evento": evento.numero_evento,
                 "unidad": unidad.nombre if unidad else "Sin unidad asignada"
@@ -40,7 +37,7 @@ class CrearEventoDesdeAppAPIView(APIView):
 
         # Si falla la validación
         return Response({
-            "message": "❌ Error al crear evento",
+            "message": " Error al crear evento",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
 

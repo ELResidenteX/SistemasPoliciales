@@ -11,9 +11,9 @@ class EventoPolicialAppSerializer(serializers.ModelSerializer):
     lugar_procedimiento = serializers.PrimaryKeyRelatedField(queryset=LugarProcedimiento.objects.all())
     tipo_lugar = serializers.PrimaryKeyRelatedField(queryset=TipoLugar.objects.all())
 
-    # ✅ Definición correcta
+    #  Definición correcta
     unidad_policial = serializers.PrimaryKeyRelatedField(
-        queryset=UnidadPolicial.objects.all(),   # <--- NO None
+        queryset=UnidadPolicial.objects.all(),   
         required=False, allow_null=True
     )
 
@@ -23,7 +23,7 @@ class EventoPolicialAppSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventoPolicial
         fields = [
-            'unidad_policial',  # ✅ ya validado correctamente
+            'unidad_policial',  
             'lugar_procedimiento',
             'fecha_ocurrencia',
             'hora_ocurrencia',
