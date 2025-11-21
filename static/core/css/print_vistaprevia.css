@@ -1,0 +1,7 @@
+@media print {
+  body * { visibility: hidden; }
+  .modal-body, .modal-body * { visibility: visible; }
+  .modal-body { position: static !important; overflow: visible !important; max-height: none !important; padding: 0; margin: 0; }
+  .modal-header, .modal-footer, .btn, .modal-backdrop { display: none !important; }
+  html, body { background: white !important; }
+}

@@ -1,35 +1,6 @@
 {% load humanize %}
-
-<style>
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-
-    .modal-body, .modal-body * {
-      visibility: visible;
-    }
-
-    .modal-body {
-      position: static !important;
-      overflow: visible !important;
-      max-height: none !important;
-      padding: 0;
-      margin: 0;
-    }
-
-    .modal-header,
-    .modal-footer,
-    .btn,
-    .modal-backdrop {
-      display: none !important;
-    }
-
-    html, body {
-      background: white !important;
-    }
-  }
-</style>
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/print_vistaprevia.css' %}">
 
 <div class="modal-header">
   <h5 class="modal-title">Vista Previa - Parte Policial</h5>

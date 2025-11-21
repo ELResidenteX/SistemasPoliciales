@@ -190,36 +190,7 @@
 <script src="{% static 'core/js/especie.js' %}"></script>
 <script src="{% static 'core/js/participantes.js' %}"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
-<script>
-  let map, marker, autocomplete;
-
-  function initAutocompleteAndMap() {
-    const input = document.getElementById("id_direccion");
-    autocomplete = new google.maps.places.Autocomplete(input, {
-      types: ["geocode"],
-      componentRestrictions: { country: "cl" }
-    });
-
-    map = new google.maps.Map(document.getElementById("mini-map"), {
-      center: { lat: -33.45, lng: -70.66 },
-      zoom: 14,
-    });
-
-    marker = new google.maps.Marker({
-      map: map,
-      draggable: false
-    });
-
-    autocomplete.addListener("place_changed", function () {
-      const place = autocomplete.getPlace();
-      if (!place.geometry) return;
-      map.setCenter(place.geometry.location);
-      marker.setPosition(place.geometry.location);
-    });
-  }
-
-  window.onload = initAutocompleteAndMap;
-</script>
+<script src="{% static 'core/js/nuevo_evento_map.js' %}"></script>
 {% endblock %}
 
 

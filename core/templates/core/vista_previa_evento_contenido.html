@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load static %}
 
 <div id="vista-previa-parte" style="font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.5;">
   <h2 style="text-align: center;">PARTE POLICIAL N° {{ evento.parte_policial.numero_parte }}</h2>
@@ -88,6 +89,7 @@
   <button class="btn btn-outline-success" onclick="imprimirParte()">🖨️ Imprimir</button>
 </div>
 
+<script src="{% static 'core/js/print_vista_previas.js' %}"></script>
 <script>
   function imprimirParte() {
     const contenido = document.getElementById('vista-previa-parte').innerHTML;

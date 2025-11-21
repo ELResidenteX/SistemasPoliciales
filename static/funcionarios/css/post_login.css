@@ -1,0 +1,17 @@
+body.post-login {
+  background-color: #0f5132;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding-top: 15%;
+}
+.spinner {
+  margin: 20px auto;
+  width: 60px;
+  height: 60px;
+  border: 6px solid #d1e7dd;
+  border-top: 6px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
