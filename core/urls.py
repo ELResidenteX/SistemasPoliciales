@@ -18,6 +18,7 @@ from .views import cargar_unidades_policiales, reset_superadmin, cambiar_unidad_
 urlpatterns = [
     # ✅ Home
     path('', views.home, name='home'),
+    path('dashboard-moderno/', views.dashboard_moderno, name='dashboard_moderno'),
 
     # ✅ Eventos
     path('evento/nuevo/', views.nuevo_evento, name='nuevo_evento'),

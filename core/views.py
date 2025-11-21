@@ -64,6 +64,37 @@ from django.core.paginator import Paginator
 def home(request):
     return render(request, 'core/home.html')
 
+
+# ✅ Dashboard moderno (vista de prueba que usa la plantilla creada)
+@login_required
+def dashboard_moderno(request):
+    unidad = obtener_unidad_activa()
+    try:
+        events_count = EventoPolicial.objects.filter(unidad_policial=unidad).count() if unidad else EventoPolicial.objects.count()
+    except Exception:
+        events_count = EventoPolicial.objects.count()
+
+    try:
+        validations_count = EventoPolicial.objects.filter(estado_validacion='en_validacion', unidad_policial=unidad).count() if unidad else EventoPolicial.objects.filter(estado_validacion='en_validacion').count()
+    except Exception:
+        validations_count = 0
+
+    try:
+        equipos_count = UnidadPolicial.objects.filter().count()
+    except Exception:
+        equipos_count = 0
+
+    context = {
+        'nombre_usuario': request.user.get_full_name() or request.user.username,
+        'rol_usuario': getattr(getattr(request.user, 'perfilusuario', None), 'rol', ''),
+        'unidad_usuario': getattr(getattr(request.user, 'perfilusuario', None), 'unidad_policial', None),
+        'events_count': events_count,
+        'validations_count': validations_count,
+        'equipos_count': equipos_count,
+        'google_maps_api_key': getattr(settings, 'GOOGLE_MAPS_API_KEY', '')
+    }
+    return render(request, 'core/dashboard_moderno.html', context)
+
 # ✅ Crear nuevo evento policial
 
 def nuevo_evento(request):
