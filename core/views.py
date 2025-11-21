@@ -40,7 +40,7 @@ from reportlab.pdfgen import canvas
 import os
 import base64
 from core.utils import obtener_unidad_activa
-from core.decorators import allow_iframe
+
 
 
 
@@ -65,7 +65,7 @@ def home(request):
     return render(request, 'core/home.html')
 
 # ✅ Crear nuevo evento policial
-@allow_iframe
+
 def nuevo_evento(request):
     evento = None
     participante_form = None
