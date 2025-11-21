@@ -3,313 +3,164 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>{% block title %}GeoDepol{% endblock %}</title>
+    <title>{% block title %}Sistema Policial{% endblock %}</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        /* ESTILO GENERAL */
-        body {
-            background: #0d1117;
-            font-family: "Inter", sans-serif;
-            color: #e5e7eb;
-            overflow-x: hidden;
-        }
-
-        a { text-decoration: none; color: inherit;}
-
-        .container-dashboard {
-            max-width: 1500px;
-            margin: auto;
-            padding: 40px 30px;
-            transition: margin-left .3s ease;
-        }
-
-        /* HERO */
-        .tag {
-            padding: 4px 10px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .hero-card {
-            background: rgba(255,255,255,0.03);
-            padding: 45px 50px;
-            border-radius: 22px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 40px;
-        }
-
-        .btn-blue {
-            background: #3b82f6;
-            color: white;
-            padding: 10px 26px;
-            border-radius: 7px;
-        }
-
-        /* CUADROS GRANDES */
-        .module-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 25px;
-            transition: .2s;
-        }
-
-        .module-card:hover {
-            background: rgba(255,255,255,0.07);
-        }
-
-        .module-title { font-size: 1.3rem; font-weight: 600; }
-        .module-subtitle { font-size: 0.9rem; color:#9ca3af; }
-
-        .module-content { display:none; margin-top:20px; }
-
-        .module-option {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        /* SIDEBAR REDUCIDO */
-        #sidebarModulos {
-            width: 290px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding: 30px 20px;
-            background: rgba(255,255,255,0.03);
-            border-right: 1px solid rgba(255,255,255,0.07);
-            height: 100vh;
-            overflow-y: auto;
-            display: none;
-        }
-
-        #sidebarModulos h4 {
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .aside-option {
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        /* CONTENIDO EXPANDIDO A LA DERECHA */
-        .content-expanded {
-            margin-left: 320px !important;
-        }
-
-        /* BOTÓN VOLVER */
-        #btnVolver {
-            display: none;
-            background: #374151;
-            padding: 8px 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            color: white;
-        }
-    </style>
-
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}">
 </head>
 <body>
+<div class="d-flex">
 
-<!-- ==========================
-     SIDEBAR LATERAL (CERRADO POR DEFECTO)
-========================== -->
-<div id="sidebarModulos">
-    <h4>GeoDepol</h4>
+    <!-- Sidebar fija -->
+    <div class="sidebar">
+        <h3>MENÚ</h3>
 
-    <!-- TODAS LAS OPCIONES AQUÍ -->
-    <div class="aside-option" onclick="location.href='{% url 'nuevo_evento' %}'">Nuevo evento policial</div>
-    <div class="aside-option" onclick="location.href='{% url 'buscar_evento' %}'">Buscar evento</div>
-    <div class="aside-option" onclick="location.href='{% url 'evento_en_validacion' %}'">Eventos en validación</div>
-    <div class="aside-option" onclick="location.href='{% url 'vista_busqueda_partes' %}'">Búsqueda de partes</div>
+        <div class="accordion" id="menuAcordeon">
 
-    <hr class="text-secondary">
+            <!-- EVENTOS POLICIALES -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#eventos">
+                        EVENTOS POLICIALES
+                    </button>
+                </h2>
+                <div id="eventos" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'nuevo_evento' %}" class="text-white d-block py-1">Nuevo</a></li>
+                            <li><a href="{% url 'buscar_evento' %}" class="text-white d-block py-1">Buscar Evento</a></li>
+                            <li><a href="{% url 'evento_en_validacion' %}" class="text-white d-block py-1">Eventos en Validación</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Repositorio de partes</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Actas del Detenido</a></li>
+                            <li><a href="{% url 'vista_busqueda_partes' %}" class="text-white d-block py-1">Búsqueda de partes</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <div class="aside-option" onclick="location.href='{% url 'nueva_infraccion' %}'">Nueva infracción</div>
-    <div class="aside-option" onclick="location.href='{% url 'vista_busqueda_partes_infracciones' %}'">Buscar infracción</div>
+            <!-- INFRACCIÓN AL TRÁNSITO -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#transito">
+                        INFRACCIÓN AL TRÁNSITO
+                    </button>
+                </h2>
+                <div id="transito" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'nueva_infraccion' %}" class="text-white d-block py-1">Nueva Infracción</a></li>
+                            <li><a href="{% url 'vista_busqueda_partes_infracciones' %}" class="text-white d-block py-1">Búsqueda de parte</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <hr class="text-secondary">
+            <!-- CONSTANCIAS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#constancias">
+                        CONSTANCIAS
+                    </button>
+                </h2>
+                <div id="constancias" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white d-block py-1">Nueva</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Buscar constancia</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <div class="aside-option">Nueva constancia</div>
-    <div class="aside-option">Buscar constancia</div>
+            <!-- OTRAS INFRACCIONES -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otras">
+                        OTRAS INFRACCIONES
+                    </button>
+                </h2>
+                <div id="otras" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white d-block py-1">Control vehicular</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Control entidades financieras</a></li>
+                            <li><a href="#" class="text-white d-block py-1">Fiscalización de alcoholes</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <hr class="text-secondary">
+           <!-- ✅ ESTADÍSTICAS -->
+<div class="accordion-item bg-transparent border-0">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#estadisticas">
+            ESTADÍSTICAS
+        </button>
+    </h2>
+    <div id="estadisticas" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+        <div class="accordion-body p-2">
+            <ul class="list-unstyled">
+                <li><a href="{% url 'estadisticas_geolocalizacion' %}" class="text-white d-block py-1">Mapa de geolocalización</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-    <div class="aside-option">Control vehicular</div>
-    <div class="aside-option">Control entidades financieras</div>
-    <div class="aside-option">Fiscalización de alcoholes</div>
 
-    <hr class="text-secondary">
+            <!-- OTROS -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-success text-white" type="button" data-bs-toggle="collapse" data-bs-target="#otros">
+                        OTROS
+                    </button>
+                </h2>
+                <div id="otros" class="accordion-collapse collapse" data-bs-parent="#menuAcordeon">
+                    <div class="accordion-body p-2">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'cambio_clave' %}" class="text-white d-block py-1">Cambio de clave</a></li>
+                            <li><a href="{% url 'manuales_usuario' %}" class="text-white d-block py-1">Manuales</a></li>
 
-    <div class="aside-option" onclick="location.href='{% url 'estadisticas_geolocalizacion' %}'">Mapa de geolocalización</div>
+                            {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                                <li><a href="{% url 'crear_usuario' %}" class="text-white d-block py-1">Configuración de usuarios</a></li>
+                            {% endif %}
 
-    <hr class="text-secondary">
+                            <li><a href="{% url 'logout' %}" class="text-white d-block py-1">Salir</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-    <div class="aside-option" onclick="location.href='{% url 'cambio_clave' %}'">Cambio de clave</div>
-    <div class="aside-option" onclick="location.href='{% url 'manuales_usuario' %}'">Manuales del sistema</div>
+        </div>
+    </div>
 
-    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-    <div class="aside-option" onclick="location.href='{% url 'crear_usuario' %}'">Configuración de usuarios</div>
+    <!-- Panel principal de contenido -->
+    <div class="main flex-grow-1 p-4">
+
+        {% if request.user.is_authenticated and request.user.perfilusuario %}
+<div class="alert alert-success mb-4 rounded-3 shadow-sm" role="alert" style="font-size: 0.95rem;">
+    <strong>Usuario:</strong> {{ nombre_usuario }} &nbsp; | &nbsp;
+    <strong>Rol:</strong> {{ rol_usuario }} &nbsp; | &nbsp;
+    <strong>Unidad:</strong>
+    {% if unidad_usuario %}
+        {{ unidad_usuario }}
+    {% else %}
+        <span class="text-muted fst-italic">Sin unidad asignada</span>
     {% endif %}
-
-    <div class="aside-option" onclick="location.href='{% url 'logout' %}'">Salir</div>
-
 </div>
+{% endif %}
 
-<!-- BOTÓN VOLVER -->
-<button id="btnVolver" onclick="volverDashboard()">← Volver</button>
 
-<!-- ==========================
-     DASHBOARD PRINCIPAL
-========================== -->
-<div class="container-dashboard" id="dashboard">
-
-    <!-- HERO -->
-    <div class="hero-card">
-        <div class="tag">GeoDepol · Centro Operativo</div>
-        <h1 class="hero-title">Gestión integral de eventos y partes</h1>
-        <p class="hero-sub">Coordina eventos en tiempo real.</p>
-    </div>
-
-    <!-- CUADROS GRANDES -->
-    <div class="row" id="gridModulos">
-
-        <!-- MÓDULOS COMPLETOS AQUÍ -->
-
-        <!-- 1 -->
-        <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-title">Eventos Policiales</div>
-                <div class="module-subtitle">Registro y gestión</div>
-
-                <div class="module-content">
-
-                    <div class="module-option" onclick="openContent('{% url 'nuevo_evento' %}')">Nuevo evento policial</div>
-                    <div class="module-option" onclick="openContent('{% url 'buscar_evento' %}')">Buscar evento</div>
-                    <div class="module-option" onclick="openContent('{% url 'evento_en_validacion' %}')">Eventos en validación</div>
-                    <div class="module-option" onclick="openContent('{% url 'vista_busqueda_partes' %}')">Búsqueda de partes</div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- 2 -->
-        <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-title">Infracciones</div>
-                <div class="module-subtitle">Gestión de partes</div>
-
-                <div class="module-content">
-                    <div class="module-option" onclick="openContent('{% url 'nueva_infraccion' %}')">Nueva infracción</div>
-                    <div class="module-option" onclick="openContent('{% url 'vista_busqueda_partes_infracciones' %}')">Buscar infracción</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3 -->
-        <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-title">Constancias</div>
-                <div class="module-subtitle">Registros ciudadanos</div>
-
-                <div class="module-content">
-                    <div class="module-option">Nueva constancia</div>
-                    <div class="module-option">Buscar constancia</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4 -->
-        <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-title">Estadísticas</div>
-                <div class="module-subtitle">Mapa y análisis</div>
-
-                <div class="module-content">
-                    <div class="module-option" onclick="openContent('{% url 'estadisticas_geolocalizacion' %}')">Mapa de geolocalización</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5 -->
-        <div class="col-md-4">
-            <div class="module-card">
-                <div class="module-title">Otros</div>
-                <div class="module-subtitle">Administración</div>
-
-                <div class="module-content">
-                    <div class="module-option" onclick="openContent('{% url 'cambio_clave' %}')">Cambio de clave</div>
-                    <div class="module-option" onclick="openContent('{% url 'manuales_usuario' %}')">Manuales</div>
-
-                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                    <div class="module-option" onclick="openContent('{% url 'crear_usuario' %}')">Usuarios</div>
-                    {% endif %}
-
-                    <div class="module-option" onclick="location.href='{% url 'logout' %}'">Salir</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- PANEL DE CONTENIDO -->
-    <div id="panelContenido">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% include "core/presentacion.html" %}
+        {% endblock %}
     </div>
 
 </div>
 
-<!-- JS -->
-<script>
-function toggleModule(card) {
-    const content = card.querySelector(".module-content");
-    const opened = card.classList.contains("open");
-
-    document.querySelectorAll(".module-card.open").forEach(c=>{
-        c.classList.remove("open");
-        c.querySelector(".module-content").style.display = "none";
-    });
-
-    if (!opened) {
-        card.classList.add("open");
-        content.style.display = "block";
-    }
-}
-
-/* CUANDO SE ABRE FORMULARIO */
-function openContent(url) {
-    activarSidebar();
-    location.href = url;
-}
-
-function activarSidebar() {
-    document.getElementById("sidebarModulos").style.display = "block";
-    document.getElementById("dashboard").classList.add("content-expanded");
-    document.getElementById("gridModulos").style.display = "none";
-    document.getElementById("btnVolver").style.display = "inline-block";
-}
-
-function volverDashboard() {
-    document.getElementById("sidebarModulos").style.display = "none";
-    document.getElementById("dashboard").classList.remove("content-expanded");
-    document.getElementById("gridModulos").style.display = "flex";
-    document.getElementById("btnVolver").style.display = "none";
-}
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block script %}{% endblock %}
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
 
 </body>
 </html>
