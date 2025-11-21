@@ -164,4 +164,23 @@
 <script src="{% static 'infracciones/js/participantesinfraccion.js' %}"></script>
 <script src="{% static 'infracciones/js/marcasModelos.js' %}"></script>
 
-<script src="{% static 'infracciones/js/participantes_infraccion_toggle.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkboxEmpadronado = document.getElementById('empadronado');
+    const camposInfractor = document.getElementById('campos-infractor');
+
+    function toggleCampos() {
+      if (checkboxEmpadronado.checked) {
+        camposInfractor.style.display = 'none';
+        // Elimina required de inputs internos
+        camposInfractor.querySelectorAll('input, select').forEach(el => el.required = false);
+      } else {
+        camposInfractor.style.display = 'block';
+        camposInfractor.querySelectorAll('input, select').forEach(el => el.required = true);
+      }
+    }
+
+    checkboxEmpadronado.addEventListener('change', toggleCampos);
+    toggleCampos();
+  });
+</script>

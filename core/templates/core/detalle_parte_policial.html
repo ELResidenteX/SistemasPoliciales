@@ -77,10 +77,19 @@
 {% endblock %}
 
 {% block script %}
+<script src="{% static 'core/js/fiscalias.js' %}"></script>
 <script>
-  window.MODAL_VISTA_PREVIA_PARTE_URL = "{% url 'vista_previa_parte_modal' parte.id %}";
-  window.MODAL_VISTA_PREVIA_PARTE_ID = "{{ parte.id }}";
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modalVistaParte{{ parte.id }}');
+  modal.addEventListener('show.bs.modal', function () {
+    fetch("{% url 'vista_previa_parte_modal' parte.id %}")
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById("modalVistaParteContent{{ parte.id }}").innerHTML = html;
+      });
+  });
+});
 </script>
-<script src="{% static 'core/js/modal_vista_previa_parte.js' %}"></script>
+
 <script src="{% static 'core/js/fiscalias.js' %}"></script>
 {% endblock %}

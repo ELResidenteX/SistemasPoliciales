@@ -1,6 +1,0 @@
-@media print {
-  body * { visibility: hidden; }
-  .container, .container * { visibility: visible; }
-  .container { position: absolute; top: 0; left: 0; width: 100%; }
-  .input-group, .btn, form, nav, .sidebar, header, .no-print { display: none !important; }
-}

@@ -122,7 +122,24 @@
 
 {% block script %}
 <script src="{% static 'core/js/editarEvento.js' %}"></script>
-<script src="{% static 'core/js/evento_en_validacion_modal.js' %}"></script>
-{% endblock %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[id^="modalVistaPrevia"]').forEach(modal => {
+      modal.addEventListener('show.bs.modal', function () {
+        const eventoId = this.id.replace("modalVistaPrevia", "");
+        fetch(`/evento/${eventoId}/vista-previa/`)
+          .then(response => response.text())
+          .then(html => {
+            document.getElementById("modalVistaPreviaContent" + eventoId).innerHTML = html;
+          });
+      });
+    });
+  });
+
+  function mostrarToastAcceso() {
+    const toast = new bootstrap.Toast(document.getElementById('toastAccesoRestringido'));
+    toast.show();
+  }
+</script>
 {% endblock %}
 

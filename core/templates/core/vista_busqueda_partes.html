@@ -83,5 +83,19 @@
 
 {% block script %}
   <script src="{% static 'core/js/autocompletarFiscalia.js' %}"></script>
-  <script src="{% static 'core/js/vista_busqueda_partes_modal.js' %}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('[id^="modalParte"]').forEach(modal => {
+        modal.addEventListener('show.bs.modal', function () {
+          const parteId = this.id.replace("modalParte", "");
+          fetch(`/parte/${parteId}/vista-previa-modal/`)
+            .then(response => response.text())
+            .then(html => {
+              document.getElementById("modalParteContent" + parteId).innerHTML = html;
+            });
+        });
+      });
+    });
+  </script>
 {% endblock %}
