@@ -3,16 +3,14 @@
 <head>
     {% load static %}
     <meta charset="UTF-8">
-
     <title>{% block title %}GeoDepol{% endblock %}</title>
 
-    <!-- Bootstrap 5 -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Fuente moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
+        /* ESTILO GENERAL */
         body {
             background: #0d1117;
             font-family: "Inter", sans-serif;
@@ -20,333 +18,296 @@
             overflow-x: hidden;
         }
 
-        a { text-decoration: none; color: inherit; }
+        a { text-decoration: none; color: inherit;}
 
         .container-dashboard {
             max-width: 1500px;
             margin: auto;
             padding: 40px 30px;
+            transition: margin-left .3s ease;
         }
 
+        /* HERO */
         .tag {
-            display: inline-block;
             padding: 4px 10px;
             background: rgba(255,255,255,0.12);
-            color: #d1d5db;
             border-radius: 6px;
             font-size: 0.75rem;
+            display: inline-block;
             margin-bottom: 10px;
         }
 
-        /* --------------------- HERO ---------------------- */
         .hero-card {
             background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(12px);
-            border-radius: 22px;
             padding: 45px 50px;
+            border-radius: 22px;
             border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 0 50px rgba(0,0,0,0.45);
             margin-bottom: 40px;
         }
 
-        .hero-title { font-size: 2.2rem; font-weight: 600; margin-bottom: 12px; }
-        .hero-sub  { font-size: 1rem; color: #9ca3af; margin-bottom: 25px; max-width: 650px; }
-
-        .btn-blue { background: #3b82f6; color: white; border: none; padding: 10px 26px; border-radius: 7px; font-weight: 500; }
-
-        /* --------------------- SIDEBAR DINÁMICO ---------------------- */
-        .dashboard-layout { display: flex; gap: 35px; width: 100%; transition: all 0.3s ease; }
-
-        .modulos-wrapper {
-            width: 100%;
-            transition: all 0.3s ease;
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 26px;
+            border-radius: 7px;
         }
 
-        .modulos-wrapper.compacto {
-            width: 320px;
-        }
-
-        .panel-formulario {
-            flex-grow: 1;
-            min-height: 300px;
-            transition: all 0.3s ease;
-        }
-
-        /* --------------------- TARJETAS MÓDULOS ---------------------- */
+        /* CUADROS GRANDES */
         .module-card {
             background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,0.07);
             border-radius: 20px;
             padding: 30px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s ease;
             margin-bottom: 25px;
+            transition: .2s;
         }
 
-        .module-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-3px); }
+        .module-card:hover {
+            background: rgba(255,255,255,0.07);
+        }
 
-        .module-title    { font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
-        .module-subtitle { font-size: 0.9rem; color: #9ca3af; margin-bottom: 15px; }
+        .module-title { font-size: 1.3rem; font-weight: 600; }
+        .module-subtitle { font-size: 0.9rem; color:#9ca3af; }
 
-        .module-content { display: none; margin-top: 20px; text-align: left; }
-        .module-card.open .module-content { display: block; }
+        .module-content { display:none; margin-top:20px; }
 
         .module-option {
-            display: block;
-            padding: 12px 14px;
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
             border-radius: 10px;
             margin-bottom: 10px;
+        }
+
+        /* SIDEBAR REDUCIDO */
+        #sidebarModulos {
+            width: 290px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.03);
+            border-right: 1px solid rgba(255,255,255,0.07);
+            height: 100vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        #sidebarModulos h4 {
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .aside-option {
+            padding: 12px;
             background: rgba(255,255,255,0.05);
-            transition: background 0.2s ease, transform 0.15s ease;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
 
-        .module-option:hover {
-            background: rgba(255,255,255,0.10);
-            transform: translateX(3px);
+        /* CONTENIDO EXPANDIDO A LA DERECHA */
+        .content-expanded {
+            margin-left: 320px !important;
         }
 
-        .option-title { font-size: 0.97rem; font-weight: 500; }
-        .option-desc  { font-size: 0.82rem; color: #9ca3af; }
-
+        /* BOTÓN VOLVER */
+        #btnVolver {
+            display: none;
+            background: #374151;
+            padding: 8px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            color: white;
+        }
     </style>
 
 </head>
 <body>
 
-<div class="container-dashboard">
+<!-- ==========================
+     SIDEBAR LATERAL (CERRADO POR DEFECTO)
+========================== -->
+<div id="sidebarModulos">
+    <h4>GeoDepol</h4>
+
+    <!-- TODAS LAS OPCIONES AQUÍ -->
+    <div class="aside-option" onclick="location.href='{% url 'nuevo_evento' %}'">Nuevo evento policial</div>
+    <div class="aside-option" onclick="location.href='{% url 'buscar_evento' %}'">Buscar evento</div>
+    <div class="aside-option" onclick="location.href='{% url 'evento_en_validacion' %}'">Eventos en validación</div>
+    <div class="aside-option" onclick="location.href='{% url 'vista_busqueda_partes' %}'">Búsqueda de partes</div>
+
+    <hr class="text-secondary">
+
+    <div class="aside-option" onclick="location.href='{% url 'nueva_infraccion' %}'">Nueva infracción</div>
+    <div class="aside-option" onclick="location.href='{% url 'vista_busqueda_partes_infracciones' %}'">Buscar infracción</div>
+
+    <hr class="text-secondary">
+
+    <div class="aside-option">Nueva constancia</div>
+    <div class="aside-option">Buscar constancia</div>
+
+    <hr class="text-secondary">
+
+    <div class="aside-option">Control vehicular</div>
+    <div class="aside-option">Control entidades financieras</div>
+    <div class="aside-option">Fiscalización de alcoholes</div>
+
+    <hr class="text-secondary">
+
+    <div class="aside-option" onclick="location.href='{% url 'estadisticas_geolocalizacion' %}'">Mapa de geolocalización</div>
+
+    <hr class="text-secondary">
+
+    <div class="aside-option" onclick="location.href='{% url 'cambio_clave' %}'">Cambio de clave</div>
+    <div class="aside-option" onclick="location.href='{% url 'manuales_usuario' %}'">Manuales del sistema</div>
+
+    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+    <div class="aside-option" onclick="location.href='{% url 'crear_usuario' %}'">Configuración de usuarios</div>
+    {% endif %}
+
+    <div class="aside-option" onclick="location.href='{% url 'logout' %}'">Salir</div>
+
+</div>
+
+<!-- BOTÓN VOLVER -->
+<button id="btnVolver" onclick="volverDashboard()">← Volver</button>
+
+<!-- ==========================
+     DASHBOARD PRINCIPAL
+========================== -->
+<div class="container-dashboard" id="dashboard">
 
     <!-- HERO -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
-
-        <h1 class="hero-title">Gestión integral de eventos y partes en tiempo real</h1>
-
-        <p class="hero-sub">
-            Coordina eventos policiales, valida reportes, gestiona partes e información operativa con trazabilidad completa.
-        </p>
-
-        <button class="btn-blue" onclick="cargarFormulario('{% url 'nuevo_evento' %}')">Crear evento policial</button>
+        <h1 class="hero-title">Gestión integral de eventos y partes</h1>
+        <p class="hero-sub">Coordina eventos en tiempo real.</p>
     </div>
 
-    <!-- --------------------- LAYOUT PRINCIPAL ---------------------- -->
-    <div class="dashboard-layout">
+    <!-- CUADROS GRANDES -->
+    <div class="row" id="gridModulos">
 
-        <!-- --------------------- MÓDULOS A LA IZQUIERDA ---------------------- -->
-        <div id="sidebar-modulos" class="modulos-wrapper">
+        <!-- MÓDULOS COMPLETOS AQUÍ -->
 
-            <div class="row">
+        <!-- 1 -->
+        <div class="col-md-4">
+            <div class="module-card">
+                <div class="module-title">Eventos Policiales</div>
+                <div class="module-subtitle">Registro y gestión</div>
 
-                <!-- MÓDULO 1 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Eventos Policiales</div>
-                        <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
+                <div class="module-content">
 
-                        <div class="module-content">
+                    <div class="module-option" onclick="openContent('{% url 'nuevo_evento' %}')">Nuevo evento policial</div>
+                    <div class="module-option" onclick="openContent('{% url 'buscar_evento' %}')">Buscar evento</div>
+                    <div class="module-option" onclick="openContent('{% url 'evento_en_validacion' %}')">Eventos en validación</div>
+                    <div class="module-option" onclick="openContent('{% url 'vista_busqueda_partes' %}')">Búsqueda de partes</div>
 
-                            <div class="module-option" onclick="cargarFormulario('{% url 'nuevo_evento' %}'); event.stopPropagation();">
-                                <div class="option-title">Nuevo evento policial</div>
-                                <div class="option-desc">Crear un nuevo registro de incidente.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'buscar_evento' %}'); event.stopPropagation();">
-                                <div class="option-title">Buscar evento</div>
-                                <div class="option-desc">Consultar por número, fecha o zona.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'evento_en_validacion' %}'); event.stopPropagation();">
-                                <div class="option-title">Eventos en validación</div>
-                                <div class="option-desc">Revisa los procedimientos pendientes.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'vista_busqueda_partes' %}'); event.stopPropagation();">
-                                <div class="option-title">Búsqueda de partes</div>
-                                <div class="option-desc">Consulta por número o funcionario.</div>
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
-
-                <!-- MÓDULO 2 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Infracción al Tránsito</div>
-                        <div class="module-subtitle">Gestión de infracciones</div>
-
-                        <div class="module-content">
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'nueva_infraccion' %}'); event.stopPropagation();">
-                                <div class="option-title">Nueva infracción</div>
-                                <div class="option-desc">Registrar infracción vehicular.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'vista_busqueda_partes_infracciones' %}'); event.stopPropagation();">
-                                <div class="option-title">Buscar infracción</div>
-                                <div class="option-desc">Consultar registros.</div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MÓDULO 3 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Constancias</div>
-                        <div class="module-subtitle">Registro ciudadano</div>
-
-                        <div class="module-content">
-
-                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
-                                <div class="option-title">Nueva constancia</div>
-                                <div class="option-desc">Ingreso general.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
-                                <div class="option-title">Buscar constancia</div>
-                                <div class="option-desc">Consultar motivo o fecha.</div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MÓDULO 4 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Otras Infracciones</div>
-                        <div class="module-subtitle">Fiscalizaciones</div>
-
-                        <div class="module-content">
-
-                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
-                                <div class="option-title">Control vehicular</div>
-                                <div class="option-desc">Fiscalizaciones en ruta.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
-                                <div class="option-title">Control entidades financieras</div>
-                                <div class="option-desc">Fiscalización bancaria.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
-                                <div class="option-title">Fiscalización de alcoholes</div>
-                                <div class="option-desc">Control expendio.</div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MÓDULO 5 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Estadísticas</div>
-                        <div class="module-subtitle">Análisis operacional</div>
-
-                        <div class="module-content">
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'estadisticas_geolocalizacion' %}'); event.stopPropagation();">
-                                <div class="option-title">Mapa de geolocalización</div>
-                                <div class="option-desc">Visualización por zonas.</div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MÓDULO 6 -->
-                <div class="col-md-12">
-                    <div class="module-card" onclick="toggleModule(this)">
-                        <div class="module-title">Otros</div>
-                        <div class="module-subtitle">Cuenta y administración</div>
-
-                        <div class="module-content">
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'cambio_clave' %}'); event.stopPropagation();">
-                                <div class="option-title">Cambio de clave</div>
-                                <div class="option-desc">Actualizar contraseña.</div>
-                            </div>
-
-                            <div class="module-option" onclick="cargarFormulario('{% url 'manuales_usuario' %}'); event.stopPropagation();">
-                                <div class="option-title">Manuales</div>
-                                <div class="option-desc">Documentación del sistema.</div>
-                            </div>
-
-                            {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                            <div class="module-option" onclick="cargarFormulario('{% url 'crear_usuario' %}'); event.stopPropagation();">
-                                <div class="option-title">Configuración de usuarios</div>
-                                <div class="option-desc">Administración de cuentas.</div>
-                            </div>
-                            {% endif %}
-
-                            <a href="{% url 'logout' %}" class="module-option">
-                                <div class="option-title">Salir</div>
-                                <div class="option-desc">Cerrar sesión.</div>
-                            </a>
-
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <!-- --------------------- PANEL FORMULARIO A LA DERECHA ---------------------- -->
-        <div id="panel-formulario" class="panel-formulario">
-            {% block content %}
-            {% include "core/presentacion.html" %}
-            {% endblock %}
+        <!-- 2 -->
+        <div class="col-md-4">
+            <div class="module-card">
+                <div class="module-title">Infracciones</div>
+                <div class="module-subtitle">Gestión de partes</div>
+
+                <div class="module-content">
+                    <div class="module-option" onclick="openContent('{% url 'nueva_infraccion' %}')">Nueva infracción</div>
+                    <div class="module-option" onclick="openContent('{% url 'vista_busqueda_partes_infracciones' %}')">Buscar infracción</div>
+                </div>
+            </div>
         </div>
 
+        <!-- 3 -->
+        <div class="col-md-4">
+            <div class="module-card">
+                <div class="module-title">Constancias</div>
+                <div class="module-subtitle">Registros ciudadanos</div>
+
+                <div class="module-content">
+                    <div class="module-option">Nueva constancia</div>
+                    <div class="module-option">Buscar constancia</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="col-md-4">
+            <div class="module-card">
+                <div class="module-title">Estadísticas</div>
+                <div class="module-subtitle">Mapa y análisis</div>
+
+                <div class="module-content">
+                    <div class="module-option" onclick="openContent('{% url 'estadisticas_geolocalizacion' %}')">Mapa de geolocalización</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="col-md-4">
+            <div class="module-card">
+                <div class="module-title">Otros</div>
+                <div class="module-subtitle">Administración</div>
+
+                <div class="module-content">
+                    <div class="module-option" onclick="openContent('{% url 'cambio_clave' %}')">Cambio de clave</div>
+                    <div class="module-option" onclick="openContent('{% url 'manuales_usuario' %}')">Manuales</div>
+
+                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                    <div class="module-option" onclick="openContent('{% url 'crear_usuario' %}')">Usuarios</div>
+                    {% endif %}
+
+                    <div class="module-option" onclick="location.href='{% url 'logout' %}'">Salir</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PANEL DE CONTENIDO -->
+    <div id="panelContenido">
+        {% block content %}{% endblock %}
     </div>
 
 </div>
 
-
-<!-- ==========================
-     JS
-========================== -->
+<!-- JS -->
 <script>
 function toggleModule(card) {
-    if (card.classList.contains("open")) {
-        card.classList.remove("open");
-        card.querySelector(".module-content").style.display = "none";
-        return;
-    }
+    const content = card.querySelector(".module-content");
+    const opened = card.classList.contains("open");
 
-    document.querySelectorAll(".module-card.open").forEach(c => {
+    document.querySelectorAll(".module-card.open").forEach(c=>{
         c.classList.remove("open");
         c.querySelector(".module-content").style.display = "none";
     });
 
-    card.classList.add("open");
-    card.querySelector(".module-content").style.display = "block";
+    if (!opened) {
+        card.classList.add("open");
+        content.style.display = "block";
+    }
 }
 
-/* --------------------- CARGAR FORMULARIO A LA DERECHA ---------------------- */
-function cargarFormulario(url) {
+/* CUANDO SE ABRE FORMULARIO */
+function openContent(url) {
+    activarSidebar();
+    location.href = url;
+}
 
-    fetch(url)
-        .then(response => response.text())
-        .then(html => {
+function activarSidebar() {
+    document.getElementById("sidebarModulos").style.display = "block";
+    document.getElementById("dashboard").classList.add("content-expanded");
+    document.getElementById("gridModulos").style.display = "none";
+    document.getElementById("btnVolver").style.display = "inline-block";
+}
 
-            // Convertir en sidebar
-            document.getElementById("sidebar-modulos").classList.add("compacto");
-
-            // Cargar formulario
-            document.getElementById("panel-formulario").innerHTML = html;
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-
-        })
-        .catch(error => {
-            document.getElementById("panel-formulario").innerHTML =
-                '<div class="alert alert-danger">Error al cargar la vista.</div>';
-        });
+function volverDashboard() {
+    document.getElementById("sidebarModulos").style.display = "none";
+    document.getElementById("dashboard").classList.remove("content-expanded");
+    document.getElementById("gridModulos").style.display = "flex";
+    document.getElementById("btnVolver").style.display = "none";
 }
 </script>
 
