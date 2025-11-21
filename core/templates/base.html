@@ -13,10 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
-
-        /* ==========================
-           ESTILO GLOBAL
-        ========================== */
         body {
             background: #0d1117;
             font-family: "Inter", sans-serif;
@@ -42,9 +38,7 @@
             margin-bottom: 10px;
         }
 
-        /* ==========================
-           HERO
-        ========================== */
+        /* --------------------- HERO ---------------------- */
         .hero-card {
             background: rgba(255,255,255,0.03);
             backdrop-filter: blur(12px);
@@ -55,33 +49,30 @@
             margin-bottom: 40px;
         }
 
-        .hero-title {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 12px;
+        .hero-title { font-size: 2.2rem; font-weight: 600; margin-bottom: 12px; }
+        .hero-sub  { font-size: 1rem; color: #9ca3af; margin-bottom: 25px; max-width: 650px; }
+
+        .btn-blue { background: #3b82f6; color: white; border: none; padding: 10px 26px; border-radius: 7px; font-weight: 500; }
+
+        /* --------------------- SIDEBAR DINÁMICO ---------------------- */
+        .dashboard-layout { display: flex; gap: 35px; width: 100%; transition: all 0.3s ease; }
+
+        .modulos-wrapper {
+            width: 100%;
+            transition: all 0.3s ease;
         }
 
-        .hero-sub {
-            font-size: 1rem;
-            color: #9ca3af;
-            margin-bottom: 25px;
-            max-width: 650px;
+        .modulos-wrapper.compacto {
+            width: 320px;
         }
 
-        .btn-blue {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px 26px;
-            border-radius: 7px;
-            font-weight: 500;
+        .panel-formulario {
+            flex-grow: 1;
+            min-height: 300px;
+            transition: all 0.3s ease;
         }
 
-        /* ==========================
-           TARJETAS DE MÓDULOS
-           (expansibles tipo acordeón)
-        ========================== */
-
+        /* --------------------- TARJETAS MÓDULOS ---------------------- */
         .module-card {
             background: rgba(255,255,255,0.04);
             backdrop-filter: blur(14px);
@@ -94,43 +85,14 @@
             margin-bottom: 25px;
         }
 
-        .module-card:hover {
-            background: rgba(255,255,255,0.07);
-            transform: translateY(-3px);
-        }
+        .module-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-3px); }
 
-        /* Título centrado */
-        .module-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
+        .module-title    { font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
+        .module-subtitle { font-size: 0.9rem; color: #9ca3af; margin-bottom: 15px; }
 
-        /* Subtítulo centrado */
-        .module-subtitle {
-            font-size: 0.9rem;
-            color: #9ca3af;
-            margin-bottom: 15px;
-        }
+        .module-content { display: none; margin-top: 20px; text-align: left; }
+        .module-card.open .module-content { display: block; }
 
-        /* Contenedor escondido */
-        .module-content {
-            display: none;
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        /* Animación suave al expandir */
-        .module-card.open .module-content {
-            animation: fadeIn 0.25s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Opciones internas clickeables */
         .module-option {
             display: block;
             padding: 12px 14px;
@@ -145,34 +107,8 @@
             transform: translateX(3px);
         }
 
-        .option-title {
-            font-size: 0.97rem;
-            font-weight: 500;
-        }
-
-        .option-desc {
-            font-size: 0.82rem;
-            color: #9ca3af;
-        }
-
-        /* ==========================
-           PANELS INFERIORES
-        ========================== */
-
-        .panel-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 18px;
-            padding: 28px;
-            backdrop-filter: blur(12px);
-            margin-bottom: 35px;
-        }
-
-        .panel-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
+        .option-title { font-size: 0.97rem; font-weight: 500; }
+        .option-desc  { font-size: 0.82rem; color: #9ca3af; }
 
     </style>
 
@@ -181,9 +117,7 @@
 
 <div class="container-dashboard">
 
-    <!-- ==========================
-         HERO
-    ========================== -->
+    <!-- HERO -->
     <div class="hero-card">
         <div class="tag">GeoDepol · Centro Operativo</div>
 
@@ -193,206 +127,180 @@
             Coordina eventos policiales, valida reportes, gestiona partes e información operativa con trazabilidad completa.
         </p>
 
-        <a href="{% url 'nuevo_evento' %}" class="btn-blue">Crear evento policial</a>
+        <button class="btn-blue" onclick="cargarFormulario('{% url 'nuevo_evento' %}')">Crear evento policial</button>
     </div>
 
+    <!-- --------------------- LAYOUT PRINCIPAL ---------------------- -->
+    <div class="dashboard-layout">
 
-    <!-- ==========================
-         MÓDULOS COMO CUADROS GRANDES
-         (expansibles)
-    ========================== -->
+        <!-- --------------------- MÓDULOS A LA IZQUIERDA ---------------------- -->
+        <div id="sidebar-modulos" class="modulos-wrapper">
 
-    <div class="row">
+            <div class="row">
 
-        <!-- ==========================
-             MÓDULO 1 - EVENTOS POLICIALES
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Eventos Policiales</div>
-                <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
+                <!-- MÓDULO 1 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Eventos Policiales</div>
+                        <div class="module-subtitle">Registro, consulta y validación de incidentes</div>
 
-                <div class="module-content">
+                        <div class="module-content">
 
-                    <a href="{% url 'nuevo_evento' %}" class="module-option">
-                        <div class="option-title">Nuevo evento policial</div>
-                        <div class="option-desc">Crear un nuevo registro de incidente.</div>
-                    </a>
+                            <div class="module-option" onclick="cargarFormulario('{% url 'nuevo_evento' %}'); event.stopPropagation();">
+                                <div class="option-title">Nuevo evento policial</div>
+                                <div class="option-desc">Crear un nuevo registro de incidente.</div>
+                            </div>
 
-                    <a href="{% url 'buscar_evento' %}" class="module-option">
-                        <div class="option-title">Buscar evento</div>
-                        <div class="option-desc">Consultar por número, fecha o zona.</div>
-                    </a>
+                            <div class="module-option" onclick="cargarFormulario('{% url 'buscar_evento' %}'); event.stopPropagation();">
+                                <div class="option-title">Buscar evento</div>
+                                <div class="option-desc">Consultar por número, fecha o zona.</div>
+                            </div>
 
-                    <a href="{% url 'evento_en_validacion' %}" class="module-option">
-                        <div class="option-title">Eventos en validación</div>
-                        <div class="option-desc">Revisa los procedimientos pendientes.</div>
-                    </a>
+                            <div class="module-option" onclick="cargarFormulario('{% url 'evento_en_validacion' %}'); event.stopPropagation();">
+                                <div class="option-title">Eventos en validación</div>
+                                <div class="option-desc">Revisa los procedimientos pendientes.</div>
+                            </div>
 
-                    <a href="#" class="module-option">
-                        <div class="option-title">Repositorio de partes</div>
-                        <div class="option-desc">Histórico de partes registrados.</div>
-                    </a>
+                            <div class="module-option" onclick="cargarFormulario('{% url 'vista_busqueda_partes' %}'); event.stopPropagation();">
+                                <div class="option-title">Búsqueda de partes</div>
+                                <div class="option-desc">Consulta por número o funcionario.</div>
+                            </div>
 
-                    <a href="#" class="module-option">
-                        <div class="option-title">Actas del detenido</div>
-                        <div class="option-desc">Consulta las actas asociadas.</div>
-                    </a>
-
-                    <a href="{% url 'vista_busqueda_partes' %}" class="module-option">
-                        <div class="option-title">Búsqueda de partes</div>
-                        <div class="option-desc">Consulta por número o funcionario.</div>
-                    </a>
-
+                        </div>
+                    </div>
                 </div>
+
+                <!-- MÓDULO 2 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Infracción al Tránsito</div>
+                        <div class="module-subtitle">Gestión de infracciones</div>
+
+                        <div class="module-content">
+
+                            <div class="module-option" onclick="cargarFormulario('{% url 'nueva_infraccion' %}'); event.stopPropagation();">
+                                <div class="option-title">Nueva infracción</div>
+                                <div class="option-desc">Registrar infracción vehicular.</div>
+                            </div>
+
+                            <div class="module-option" onclick="cargarFormulario('{% url 'vista_busqueda_partes_infracciones' %}'); event.stopPropagation();">
+                                <div class="option-title">Buscar infracción</div>
+                                <div class="option-desc">Consultar registros.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 3 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Constancias</div>
+                        <div class="module-subtitle">Registro ciudadano</div>
+
+                        <div class="module-content">
+
+                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
+                                <div class="option-title">Nueva constancia</div>
+                                <div class="option-desc">Ingreso general.</div>
+                            </div>
+
+                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
+                                <div class="option-title">Buscar constancia</div>
+                                <div class="option-desc">Consultar motivo o fecha.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 4 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Otras Infracciones</div>
+                        <div class="module-subtitle">Fiscalizaciones</div>
+
+                        <div class="module-content">
+
+                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
+                                <div class="option-title">Control vehicular</div>
+                                <div class="option-desc">Fiscalizaciones en ruta.</div>
+                            </div>
+
+                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
+                                <div class="option-title">Control entidades financieras</div>
+                                <div class="option-desc">Fiscalización bancaria.</div>
+                            </div>
+
+                            <div class="module-option" onclick="cargarFormulario('#'); event.stopPropagation();">
+                                <div class="option-title">Fiscalización de alcoholes</div>
+                                <div class="option-desc">Control expendio.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 5 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Estadísticas</div>
+                        <div class="module-subtitle">Análisis operacional</div>
+
+                        <div class="module-content">
+
+                            <div class="module-option" onclick="cargarFormulario('{% url 'estadisticas_geolocalizacion' %}'); event.stopPropagation();">
+                                <div class="option-title">Mapa de geolocalización</div>
+                                <div class="option-desc">Visualización por zonas.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MÓDULO 6 -->
+                <div class="col-md-12">
+                    <div class="module-card" onclick="toggleModule(this)">
+                        <div class="module-title">Otros</div>
+                        <div class="module-subtitle">Cuenta y administración</div>
+
+                        <div class="module-content">
+
+                            <div class="module-option" onclick="cargarFormulario('{% url 'cambio_clave' %}'); event.stopPropagation();">
+                                <div class="option-title">Cambio de clave</div>
+                                <div class="option-desc">Actualizar contraseña.</div>
+                            </div>
+
+                            <div class="module-option" onclick="cargarFormulario('{% url 'manuales_usuario' %}'); event.stopPropagation();">
+                                <div class="option-title">Manuales</div>
+                                <div class="option-desc">Documentación del sistema.</div>
+                            </div>
+
+                            {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
+                            <div class="module-option" onclick="cargarFormulario('{% url 'crear_usuario' %}'); event.stopPropagation();">
+                                <div class="option-title">Configuración de usuarios</div>
+                                <div class="option-desc">Administración de cuentas.</div>
+                            </div>
+                            {% endif %}
+
+                            <a href="{% url 'logout' %}" class="module-option">
+                                <div class="option-title">Salir</div>
+                                <div class="option-desc">Cerrar sesión.</div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- ==========================
-             MÓDULO 2 - INFRACCIÓN AL TRÁNSITO
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Infracción al Tránsito</div>
-                <div class="module-subtitle">Gestión de infracciones y partes</div>
-
-                <div class="module-content">
-
-                    <a href="{% url 'nueva_infraccion' %}" class="module-option">
-                        <div class="option-title">Nueva infracción</div>
-                        <div class="option-desc">Registrar una infracción vehicular.</div>
-                    </a>
-
-                    <a href="{% url 'vista_busqueda_partes_infracciones' %}" class="module-option">
-                        <div class="option-title">Buscar infracción</div>
-                        <div class="option-desc">Consultar por fecha, patente o número.</div>
-                    </a>
-
-                </div>
-            </div>
+        <!-- --------------------- PANEL FORMULARIO A LA DERECHA ---------------------- -->
+        <div id="panel-formulario" class="panel-formulario">
+            {% block content %}
+            {% include "core/presentacion.html" %}
+            {% endblock %}
         </div>
-
-        <!-- ==========================
-             MÓDULO 3 - CONSTANCIAS
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Constancias</div>
-                <div class="module-subtitle">Registro de constancias de ciudadanos</div>
-
-                <div class="module-content">
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Nueva constancia</div>
-                        <div class="option-desc">Ingreso de constancias generales.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Buscar constancia</div>
-                        <div class="option-desc">Consulta por fecha o motivo.</div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- ==========================
-             MÓDULO 4 - OTRAS INFRACCIONES
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Otras Infracciones</div>
-                <div class="module-subtitle">Controles y fiscalizaciones especiales</div>
-
-                <div class="module-content">
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Control vehicular</div>
-                        <div class="option-desc">Registra fiscalizaciones en ruta.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Control entidades financieras</div>
-                        <div class="option-desc">Registra fiscalizaciones bancarias.</div>
-                    </a>
-
-                    <a href="#" class="module-option">
-                        <div class="option-title">Fiscalización de alcoholes</div>
-                        <div class="option-desc">Control de expendio de alcoholes.</div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- ==========================
-             MÓDULO 5 - ESTADÍSTICAS
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Estadísticas</div>
-                <div class="module-subtitle">Análisis geográfico y operacional</div>
-
-                <div class="module-content">
-
-                    <a href="{% url 'estadisticas_geolocalizacion' %}" class="module-option">
-                        <div class="option-title">Mapa de geolocalización</div>
-                        <div class="option-desc">Visualiza eventos sobre el mapa.</div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- ==========================
-             MÓDULO 6 - OTROS
-        ========================== -->
-        <div class="col-md-4">
-            <div class="module-card" onclick="toggleModule(this)">
-                <div class="module-title">Otros</div>
-                <div class="module-subtitle">Accesos de cuenta y administración</div>
-
-                <div class="module-content">
-
-                    <a href="{% url 'cambio_clave' %}" class="module-option">
-                        <div class="option-title">Cambio de clave</div>
-                        <div class="option-desc">Actualizar contraseña.</div>
-                    </a>
-
-                    <a href="{% url 'manuales_usuario' %}" class="module-option">
-                        <div class="option-title">Manuales</div>
-                        <div class="option-desc">Documentos de apoyo.</div>
-                    </a>
-
-                    {% if request.user.perfilusuario.rol == "super_admin" or request.user.perfilusuario.rol == "administrador" %}
-                    <a href="{% url 'crear_usuario' %}" class="module-option">
-                        <div class="option-title">Configuración de usuarios</div>
-                        <div class="option-desc">Administración de cuentas del sistema.</div>
-                    </a>
-                    {% endif %}
-
-                    <a href="{% url 'logout' %}" class="module-option">
-                        <div class="option-title">Salir</div>
-                        <div class="option-desc">Cerrar sesión de forma segura.</div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
-    <!-- ==========================
-         PANEL INFERIOR
-    ========================== -->
-    <!-- ==========================
-     PANEL INFERIOR
-     Solo se mostrará cuando una vista lo use
-========================== -->
-
-{% block content %}{% endblock %}
-
 
     </div>
 
@@ -400,27 +308,45 @@
 
 
 <!-- ==========================
-     JS PARA EXPANSIÓN DE TARJETAS
+     JS
 ========================== -->
 <script>
 function toggleModule(card) {
-
-    // Si ya está abierta, se cierra
     if (card.classList.contains("open")) {
         card.classList.remove("open");
         card.querySelector(".module-content").style.display = "none";
         return;
     }
 
-    // Cerrar cualquier otra tarjeta abierta
     document.querySelectorAll(".module-card.open").forEach(c => {
         c.classList.remove("open");
         c.querySelector(".module-content").style.display = "none";
     });
 
-    // Abrir esta tarjeta
     card.classList.add("open");
     card.querySelector(".module-content").style.display = "block";
+}
+
+/* --------------------- CARGAR FORMULARIO A LA DERECHA ---------------------- */
+function cargarFormulario(url) {
+
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+
+            // Convertir en sidebar
+            document.getElementById("sidebar-modulos").classList.add("compacto");
+
+            // Cargar formulario
+            document.getElementById("panel-formulario").innerHTML = html;
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+        })
+        .catch(error => {
+            document.getElementById("panel-formulario").innerHTML =
+                '<div class="alert alert-danger">Error al cargar la vista.</div>';
+        });
 }
 </script>
 
